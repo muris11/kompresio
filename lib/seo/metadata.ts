@@ -115,3 +115,59 @@ export function faqSchema(faqs: Array<{ question: string; answer: string }>) {
     })),
   };
 }
+
+export function organizationSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/icon`,
+    description: siteConfig.description,
+    founder: personSchema(),
+    sameAs: Object.values(siteConfig.social),
+  };
+}
+
+export function personSchema() {
+  return {
+    "@type": "Person",
+    name: siteConfig.developer.name,
+    url: siteConfig.developer.url,
+    jobTitle: siteConfig.developer.jobTitle,
+    sameAs: Object.values(siteConfig.social),
+  };
+}
+
+export function articleSchema({
+  headline,
+  description,
+  image,
+  datePublished,
+  dateModified,
+}: {
+  headline: string;
+  description: string;
+  image: string;
+  datePublished: string;
+  dateModified?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline,
+    description,
+    image: image.startsWith("http") ? image : `${siteConfig.url}${image}`,
+    author: personSchema(),
+    publisher: {
+      "@type": "Organization",
+      name: siteConfig.name,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteConfig.url}/icon`,
+      },
+    },
+    datePublished,
+    dateModified: dateModified ?? datePublished,
+  };
+}

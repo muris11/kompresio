@@ -21,274 +21,712 @@ export type BlogPost = {
 };
 
 export const blogPosts: BlogPost[] = [
+  // --- Compression (8 posts) ---
   {
     slug: "how-to-compress-images-without-losing-quality",
     title: "How to Compress Images Without Losing Quality",
-    description:
-      "A practical guide to reducing image size while keeping photos and website assets sharp.",
+    description: "A practical guide to reducing image size while keeping photos and website assets sharp.",
     category: "Compression",
     readTime: "5 min read",
     publishedAt: "2026-05-21",
     relatedTools: ["compress-image", "convert-to-webp", "resize-image"],
     sections: [
-      {
-        heading: "Start With The Right Dimensions",
-        body:
-          "Most heavy images are larger than the place where they will be displayed. Resize large photos before compression so the encoder has fewer pixels to store.",
-      },
-      {
-        heading: "Use Balanced Quality",
-        body:
-          "For web photos, quality between 75 and 82 is often a practical range. It reduces file size heavily while keeping visual artifacts hard to notice.",
-      },
-      {
-        heading: "Export Modern Formats",
-        body:
-          "WebP and AVIF can be much smaller than JPG or PNG for web delivery. Use PNG only when you need exact lossless output or compatibility with a specific workflow.",
-      },
+      { heading: "Start With The Right Dimensions", body: "Yes, you can compress images without losing visible quality. The most effective first step is matching image dimensions to their display size. A 6000x4000 pixel camera photo displayed in a 600px-wide card can be resized by 90% before compression even begins, eliminating millions of unnecessary pixels that would otherwise bloat the file." },
+      { heading: "Use Balanced Quality", body: "For web photos, quality between 75 and 82 is often a practical range. It reduces file size heavily while keeping visual artifacts hard to notice." },
+      { heading: "Export Modern Formats", body: "WebP and AVIF can be much smaller than JPG or PNG for web delivery. Use PNG only when you need exact lossless output." },
     ],
   },
   {
+    slug: "best-quality-settings-for-jpg-compression",
+    title: "Best Quality Settings for JPG Compression",
+    description: "Find the right quality range for different types of JPG images, from web photos to print-ready files.",
+    category: "Compression",
+    readTime: "5 min read",
+    publishedAt: "2026-05-22",
+    relatedTools: ["compress-image", "compress-jpg", "image-analyzer"],
+    sections: [
+      { heading: "Web Photos Do Not Need 100% Quality", body: "The best quality setting for JPG compression depends on your use case. For website photos, quality 75 to 85 is optimal — it typically reduces file size by 60-80% compared to quality 100 while keeping the visual difference nearly imperceptible on standard displays." },
+      { heading: "Product Photos Benefit From Higher Quality", body: "Marketplace and e-commerce photos benefit from quality settings around 85 to 90 so the texture and detail of the product remain visible even when zoomed in." },
+      { heading: "Low Quality Has Its Place", body: "For thumbnails, previews, or moodboard images, quality values around 50 to 60 can still look acceptable while producing very small files." },
+    ],
+  },
+  {
+    slug: "png-compression-tips-for-web-developers",
+    title: "PNG Compression Tips for Web Developers",
+    description: "Reduce PNG file size without losing transparency or introducing visual artifacts.",
+    category: "Compression",
+    readTime: "6 min read",
+    publishedAt: "2026-05-23",
+    relatedTools: ["compress-image", "compress-png", "convert-to-webp"],
+    sections: [
+      { heading: "Remove Unnecessary Channels", body: "The quickest way to reduce PNG file size is removing the alpha channel if transparency is not needed. Converting a transparent PNG to JPEG can reduce file size by 50-70% instantly. For graphics that must stay PNG, stripping the alpha channel alone can cut 20-33% of the file weight." },
+      { heading: "Posterize When Possible", body: "Screenshots and flat-color graphics compress better in PNG when the color palette is reduced. Tools that limit colors to 256 or fewer can make PNG files much smaller." },
+      { heading: "Consider WebP For Transparent PNGs", body: "WebP supports transparency and often produces smaller files than PNG at similar quality. Use it when browser support matches your audience." },
+    ],
+  },
+  {
+    slug: "lossy-vs-lossless-image-compression",
+    title: "Lossy vs Lossless Image Compression: What Is the Difference",
+    description: "Understand when to use lossy compression for smaller files and when lossless output is worth the extra weight.",
+    category: "Compression",
+    readTime: "7 min read",
+    publishedAt: "2026-05-24",
+    relatedTools: ["compress-image", "convert-to-webp", "image-analyzer"],
+    sections: [
+      { heading: "Lossy Drops Data To Save Space", body: "Lossy compression removes visual information the human eye is less likely to notice. The result is a smaller file with no visible difference at practical quality levels." },
+      { heading: "Lossless Preserves Every Pixel", body: "Lossless compression keeps the exact original pixels. File sizes are larger, but the image is identical to the source." },
+      { heading: "Choose Based On Use Case", body: "Use lossy for web photos, social media, and email attachments. Use lossless for screenshots, medical images, and archival copies." },
+    ],
+  },
+  {
+    slug: "how-to-compress-images-for-email",
+    title: "How to Compress Images for Email",
+    description: "Email clients reject oversized images. Learn the right size and quality thresholds for email-friendly attachments.",
+    category: "Compression",
+    readTime: "5 min read",
+    publishedAt: "2026-05-25",
+    relatedTools: ["compress-image", "resize-image", "convert-to-webp"],
+    sections: [
+      { heading: "Stay Under 10 MB Per Attachment", body: "Many email services block attachments larger than 10 MB or 25 MB. Compress images before attaching so the email is delivered without errors." },
+      { heading: "Resize Very Large Photos First", body: "Cameras produce images that are much larger than what an email reader needs. Resize to 1600 px on the longest side before compression." },
+      { heading: "Stick With JPG For Compatibility", body: "JPG is the safest format for email attachments. WebP and AVIF are not supported by all email clients." },
+    ],
+  },
+  {
+    slug: "how-to-batch-compress-thousands-of-images",
+    title: "How to Batch Compress Thousands of Images",
+    description: "Scale your image optimization workflow for large libraries with consistent presets and manifest-driven exports.",
+    category: "Compression",
+    readTime: "8 min read",
+    publishedAt: "2026-05-26",
+    relatedTools: ["batch-converter", "compress-image", "convert-to-webp"],
+    sections: [
+      { heading: "Use One Preset Per Batch", body: "Choose one output format, quality value, and resize rule for all files in the batch. Mixed settings lead to inconsistent exports." },
+      { heading: "Process In Manageable Queues", body: "Most browser-based tools support queues of up to 50 files. Split larger batches into multiple runs with the same preset." },
+      { heading: "Audit With Summary Manifests", body: "A ZIP export with summary.json and summary.csv gives you a record of every file's original size, output size, format, and processing time." },
+    ],
+  },
+  {
+    slug: "how-to-reduce-image-size-for-website",
+    title: "How to Reduce Image Size for Website Performance",
+    description: "Practical techniques for cutting image weight while keeping your site looking professional.",
+    category: "Compression",
+    readTime: "6 min read",
+    publishedAt: "2026-05-27",
+    relatedTools: ["compress-image", "resize-image", "convert-to-webp"],
+    sections: [
+      { heading: "Match Dimensions To Display Size", body: "Serving a 4000 px photo in a 600 px card wastes bandwidth. Resize images to match their largest display size." },
+      { heading: "Use Next-Gen Formats", body: "WebP and AVIF can reduce image weight by 30 to 50 percent compared to JPG at similar visual quality." },
+      { heading: "Lazy Load Below The Fold", body: "Combine image optimization with lazy loading so offscreen images do not block the initial page render." },
+    ],
+  },
+  {
+    slug: "how-to-compress-svg-files",
+    title: "How to Compress SVG Files",
+    description: "SVG files can be optimized by cleaning up unused code, simplifying paths, and removing unnecessary metadata.",
+    category: "Compression",
+    readTime: "5 min read",
+    publishedAt: "2026-05-28",
+    relatedTools: ["compress-image", "image-analyzer"],
+    sections: [
+      { heading: "Remove Unused Defs And Metadata", body: "SVG files from design tools often include editor metadata, hidden layers, and unused definitions that can be safely removed." },
+      { heading: "Simplify Path Data", body: "Path coordinates can often be reduced in precision without visible changes. Tools that round coordinates to fewer decimals produce smaller SVG files." },
+      { heading: "Minify The Markup", body: "Remove unnecessary whitespace, comments, and repetitive grouping elements to produce a clean SVG that renders identically." },
+    ],
+  },
+  // --- Formats (8 posts) ---
+  {
     slug: "jpg-vs-png-vs-webp-vs-avif",
     title: "JPG vs PNG vs WebP vs AVIF",
-    description:
-      "Understand when to use each image format for websites, documents, and marketplace photos.",
+    description: "Understand when to use each image format for websites, documents, and marketplace photos.",
     category: "Formats",
     readTime: "6 min read",
     publishedAt: "2026-05-21",
     relatedTools: ["convert-to-webp", "convert-to-avif", "image-analyzer"],
     sections: [
-      {
-        heading: "JPG Is Still Useful For Photos",
-        body:
-          "JPG is widely supported and works well for photographs, but it can be heavier than modern formats at similar visual quality.",
-      },
-      {
-        heading: "PNG Is Best For Transparency And Screenshots",
-        body:
-          "PNG keeps sharp edges and transparency, but large PNG photos often become unnecessarily heavy.",
-      },
-      {
-        heading: "WebP And AVIF Are Built For The Web",
-        body:
-          "WebP has broad browser support and AVIF can compress even further in modern browsers. Use both with fallbacks when compatibility matters.",
-      },
-    ],
-  },
-  {
-    slug: "how-to-resize-product-photos-for-marketplace",
-    title: "How to Resize Product Photos for Marketplace",
-    description:
-      "Prepare clean product photos with square dimensions, sensible file size, and consistent exports.",
-    category: "Resize",
-    readTime: "4 min read",
-    publishedAt: "2026-05-21",
-    relatedTools: ["resize-image", "compress-image", "metadata-cleaner"],
-    sections: [
-      {
-        heading: "Use A Square Preset",
-        body:
-          "Many marketplace catalogs look best with 1:1 product images. A 1000 by 1000 pixel export is a practical starting point.",
-      },
-      {
-        heading: "Compress After Resizing",
-        body:
-          "Resize first, then compress. This avoids wasting time compressing pixels that will be removed later.",
-      },
-      {
-        heading: "Keep Metadata Clean",
-        body:
-          "Before publishing product photos, remove unnecessary camera and software metadata from the exported image.",
-      },
-    ],
-  },
-  {
-    slug: "how-to-remove-metadata-from-photos",
-    title: "How to Remove Metadata from Photos",
-    description:
-      "Learn what image metadata is and why removing it can improve privacy before sharing photos online.",
-    category: "Privacy",
-    readTime: "5 min read",
-    publishedAt: "2026-05-21",
-    relatedTools: ["metadata-cleaner", "compress-image", "image-analyzer"],
-    sections: [
-      {
-        heading: "What Metadata Can Contain",
-        body:
-          "Photo metadata can include device model, capture date, software names, orientation data, and sometimes location details.",
-      },
-      {
-        heading: "Re-encoding Removes Common Metadata",
-        body:
-          "Browser-based tools can remove common metadata by decoding the visible pixels and exporting a fresh image file.",
-      },
-      {
-        heading: "Keep A Private Original",
-        body:
-          "Store the original file locally if you need it, then share the cleaned export publicly.",
-      },
-    ],
-  },
-  {
-    slug: "how-to-prepare-images-for-nextjs",
-    title: "How to Prepare Images for Next.js Websites",
-    description:
-      "A developer-focused workflow for resizing, converting, naming, and optimizing image assets before shipping.",
-    category: "Developer",
-    readTime: "7 min read",
-    publishedAt: "2026-05-21",
-    relatedTools: ["convert-to-webp", "resize-image", "compress-image"],
-    sections: [
-      {
-        heading: "Resize Source Assets",
-        body:
-          "Avoid shipping oversized source images. Export hero, card, and thumbnail assets close to their largest displayed dimensions.",
-      },
-      {
-        heading: "Use Descriptive Filenames",
-        body:
-          "A filename like product-photo-webp-compressed.webp is easier to manage than a camera export name with random numbers.",
-      },
-      {
-        heading: "Test Visual Quality",
-        body:
-          "Compression settings should be checked on real images. Text, gradients, and faces can reveal artifacts at different thresholds.",
-      },
-    ],
-  },
-  {
-    slug: "how-image-optimization-improves-core-web-vitals",
-    title: "How Image Optimization Improves Core Web Vitals",
-    description:
-      "Image size, dimensions, and format decisions directly affect load speed, layout stability, and perceived responsiveness.",
-    category: "SEO",
-    readTime: "6 min read",
-    publishedAt: "2026-05-21",
-    relatedTools: ["image-analyzer", "convert-to-webp", "compress-image"],
-    sections: [
-      {
-        heading: "Large Images Slow LCP",
-        body:
-          "The largest visible image often becomes the LCP element. Smaller optimized assets can load faster and improve user experience.",
-      },
-      {
-        heading: "Stable Dimensions Reduce CLS",
-        body:
-          "Export images at predictable dimensions and reserve space in layouts so content does not jump during loading.",
-      },
-      {
-        heading: "Batch Workflows Save Time",
-        body:
-          "When teams process many assets, consistent presets and ZIP export help keep optimization repeatable.",
-      },
+      { heading: "JPG Is Still Useful For Photos", body: "JPG is widely supported and works well for photographs, but it can be heavier than modern formats at similar visual quality." },
+      { heading: "PNG Is Best For Transparency And Screenshots", body: "PNG keeps sharp edges and transparency, but large PNG photos often become unnecessarily heavy." },
+      { heading: "WebP And AVIF Are Built For The Web", body: "WebP has broad browser support and AVIF can compress even further in modern browsers." },
     ],
   },
   {
     slug: "how-to-convert-heic-to-jpg-cleanly",
     title: "How to Convert HEIC to JPG Cleanly",
-    description:
-      "Turn iPhone HEIC photos into compatible JPG files while keeping export quality practical for forms, marketplaces, and documents.",
+    description: "Turn iPhone HEIC photos into compatible JPG files while keeping export quality practical.",
     category: "Formats",
     readTime: "5 min read",
     publishedAt: "2026-05-21",
     relatedTools: ["heic-to-jpg", "metadata-cleaner", "image-analyzer"],
     sections: [
-      {
-        heading: "Why HEIC Needs A Converter",
-        body:
-          "HEIC is efficient for phones, but many forms, legacy systems, document portals, and marketplace uploaders still expect JPG or PNG. Convert the file before submitting it so the receiving platform does not reject the upload.",
-      },
-      {
-        heading: "Use JPG For Compatibility",
-        body:
-          "JPG remains the safest target when the receiving system does not clearly support WebP. Use a balanced quality value so the photo stays readable while the file size remains manageable.",
-      },
-      {
-        heading: "Clean Metadata Before Sharing",
-        body:
-          "Phone photos may include camera, software, date, and location-related metadata. Run a metadata clean export when the file will be shared publicly or sent outside your private workflow.",
-      },
+      { heading: "Why HEIC Needs A Converter", body: "HEIC is efficient for phones but many systems still expect JPG. Convert before submitting." },
+      { heading: "Use JPG For Compatibility", body: "JPG remains the safest target. Use a balanced quality value so the photo stays readable." },
+      { heading: "Clean Metadata Before Sharing", body: "Phone photos may include camera and location metadata. Clean before sharing publicly." },
     ],
   },
   {
-    slug: "how-to-build-a-batch-image-workflow",
-    title: "How to Build a Batch Image Workflow",
-    description:
-      "A repeatable process for converting, resizing, cleaning, and exporting many images with predictable filenames and ZIP manifests.",
-    category: "Workflow",
-    readTime: "8 min read",
-    publishedAt: "2026-05-21",
-    relatedTools: ["batch-converter", "convert-to-webp", "metadata-cleaner"],
+    slug: "what-is-webp-format-and-why-use-it",
+    title: "What Is WebP Format and Why Use It",
+    description: "Learn how WebP works, how it compares to older formats, and when to adopt it for your projects.",
+    category: "Formats",
+    readTime: "6 min read",
+    publishedAt: "2026-05-29",
+    relatedTools: ["convert-to-webp", "compress-image", "image-analyzer"],
     sections: [
-      {
-        heading: "Start With One Shared Preset",
-        body:
-          "Batch work becomes reliable when every file uses the same output format, quality, resize rule, and metadata policy. This prevents one file from quietly shipping with the wrong settings.",
-      },
-      {
-        heading: "Export With A Manifest",
-        body:
-          "A ZIP with summary.json and summary.csv gives teams a simple audit trail: original name, output name, file size, dimensions, format, and processing time.",
-      },
-      {
-        heading: "Keep Originals Separate",
-        body:
-          "Do not overwrite source assets. Keep originals in one folder and processed outputs in a clear export folder so it is easy to rerun the workflow with different settings.",
-      },
+      { heading: "WebP Supports Both Lossy And Lossless", body: "Unlike JPG which is only lossy and PNG which is only lossless, WebP can do both. This makes it flexible for different image types." },
+      { heading: "Transparency Without The PNG Weight", body: "WebP supports alpha transparency with smaller file sizes than PNG. For transparent web graphics WebP is often the better choice." },
+      { heading: "Browser Support Is Broad", body: "WebP works in Chrome, Firefox, Safari, Edge, and many other modern browsers. Usage is safe for most web audiences." },
+    ],
+  },
+  {
+    slug: "what-is-avif-format-and-when-to-use-it",
+    title: "What Is AVIF Format and When to Use It",
+    description: "Explore the next-generation image format that offers better compression than WebP for modern browsers.",
+    category: "Formats",
+    readTime: "7 min read",
+    publishedAt: "2026-05-30",
+    relatedTools: ["convert-to-avif", "convert-to-webp", "image-analyzer"],
+    sections: [
+      { heading: "AVIF Uses AV1 Video Compression", body: "AVIF applies the same compression technology as AV1 video. This gives it better compression efficiency than older image formats." },
+      { heading: "Quality Per Kilobyte Is Best In Class", body: "At the same file size AVIF typically shows fewer artifacts than WebP or JPG. This makes it useful for data-sensitive projects." },
+      { heading: "Browser Coverage Is Growing", body: "AVIF is supported in Chrome, Firefox, and Safari. For public sites, use WebP as a fallback for browsers that do not support AVIF yet." },
+    ],
+  },
+  {
+    slug: "gif-vs-webp-which-is-better-for-animations",
+    title: "GIF vs WebP: Which Is Better for Animations",
+    description: "Compare animated GIF and WebP to decide which format gives smaller files and better quality for motion graphics.",
+    category: "Formats",
+    readTime: "5 min read",
+    publishedAt: "2026-06-01",
+    relatedTools: ["convert-to-webp", "compress-image", "batch-converter"],
+    sections: [
+      { heading: "GIF Files Are Large And Limited", body: "GIF supports only 256 colors and produces large files for anything beyond simple motion. It is the least efficient animation format still in use." },
+      { heading: "Animated WebP Is A Direct Replacement", body: "WebP supports animation with full color and better compression. Most modern browsers can play animated WebP files." },
+      { heading: "Use Video For Complex Animation", body: "For video-quality motion, consider using MP4 or WebM instead of either GIF or animated WebP." },
+    ],
+  },
+  {
+    slug: "bmp-to-jpg-converter-guide",
+    title: "How to Convert BMP to JPG Online",
+    description: "BMP files are uncompressed and large. Converting to JPG reduces file size dramatically without visible changes.",
+    category: "Formats",
+    readTime: "4 min read",
+    publishedAt: "2026-06-02",
+    relatedTools: ["compress-image", "convert-to-webp", "resize-image"],
+    sections: [
+      { heading: "BMP Stores Raw Pixel Data", body: "BMP files do not compress the image data. This makes them very large compared to JPG or PNG versions of the same image." },
+      { heading: "JPG Reduces Size Immediately", body: "Converting a BMP to JPG with quality 85 can reduce the file size by 90 percent or more with no visible change." },
+      { heading: "PNG Is An Alternative For Screenshots", body: "If the BMP contains text or sharp edges, PNG may preserve the quality better than JPG while still reducing file size." },
+    ],
+  },
+  {
+    slug: "tiff-to-jpg-conversion-guide",
+    title: "How to Convert TIFF to JPG",
+    description: "TIFF files are common in photography and scanning workflows. Convert them to JPG for web-friendly sharing.",
+    category: "Formats",
+    readTime: "5 min read",
+    publishedAt: "2026-06-03",
+    relatedTools: ["compress-image", "resize-image", "metadata-cleaner"],
+    sections: [
+      { heading: "TIFF Is Designed For Print And Archival", body: "TIFF files preserve every detail but are too large for email, websites, or document upload systems." },
+      { heading: "JPG Makes Files Upload-Ready", body: "A single TIFF page can be 50 MB or more. Converting to JPG at balanced quality brings it under 5 MB." },
+      { heading: "Batch Convert Multiple TIFF Pages", body: "When processing scanned documents, convert all TIFF pages to JPG in one batch so the outputs share consistent settings." },
+    ],
+  },
+  {
+    slug: "image-file-size-comparison-by-format",
+    title: "Image File Size Comparison by Format",
+    description: "See how the same image compresses in JPG, PNG, WebP, and AVIF at different quality levels.",
+    category: "Formats",
+    readTime: "7 min read",
+    publishedAt: "2026-06-04",
+    relatedTools: ["convert-to-webp", "convert-to-avif", "image-analyzer"],
+    sections: [
+      { heading: "The Same Image Varies By Format", body: "A 10 MB JPG photo can become a 3 MB WebP or a 2 MB AVIF at similar visual quality. The format choice matters more than the quality slider." },
+      { heading: "PNG Is The Heaviest Option", body: "For photographic content, PNG is usually 2x to 4x larger than WebP. It should be reserved for screenshots and graphics with sharp edges." },
+      { heading: "AVIF Shines On Detailed Textures", body: "Images with fine detail, gradients, and natural textures show the biggest savings with AVIF compared to older formats." },
+    ],
+  },
+  // --- Resize (6 posts) ---
+  {
+    slug: "how-to-resize-product-photos-for-marketplace",
+    title: "How to Resize Product Photos for Marketplace",
+    description: "Prepare clean product photos with square dimensions, sensible file size, and consistent exports.",
+    category: "Resize",
+    readTime: "4 min read",
+    publishedAt: "2026-05-21",
+    relatedTools: ["resize-image", "compress-image", "metadata-cleaner"],
+    sections: [
+      { heading: "Use A Square Preset", body: "1:1 product images work well for most catalogs. A 1000x1000 pixel export is a practical starting point." },
+      { heading: "Compress After Resizing", body: "Resize first then compress. This avoids wasting resources on pixels that will be removed." },
+      { heading: "Keep Metadata Clean", body: "Remove camera and software metadata from product photos before publishing." },
+    ],
+  },
+  {
+    slug: "how-to-resize-images-for-instagram",
+    title: "How to Resize Images for Instagram",
+    description: "Prepare images that fit Instagram feed posts, stories, and profile pictures with the right aspect ratios.",
+    category: "Resize",
+    readTime: "5 min read",
+    publishedAt: "2026-06-05",
+    relatedTools: ["resize-image", "crop-image", "compress-image"],
+    sections: [
+      { heading: "Feed Posts Work Best At 1080x1080", body: "Instagram compresses images larger than 1080 px. Exporting a square 1080x1080 image gives you control over the final quality." },
+      { heading: "Stories Use 1080x1920", body: "Instagram stories and reels use a 9:16 aspect ratio. Resize to 1080x1920 for full-screen display." },
+      { heading: "Profile Photos Are 320x320 Minimum", body: "While the display size is small, upload a higher resolution like 512x512 so Instagram has room to compress without visible artifacts." },
+    ],
+  },
+  {
+    slug: "how-to-resize-images-for-youtube-thumbnails",
+    title: "How to Resize Images for YouTube Thumbnails",
+    description: "Create eye-catching YouTube thumbnails at the correct resolution for maximum click-through rate.",
+    category: "Resize",
+    readTime: "4 min read",
+    publishedAt: "2026-06-06",
+    relatedTools: ["resize-image", "compress-image", "convert-to-webp"],
+    sections: [
+      { heading: "Use 1280x720 Resolution", body: "YouTube recommends 1280x720 pixels for thumbnails. This is the standard size that looks good on all devices." },
+      { heading: "Stay Under 2 MB", body: "YouTube may compress thumbnails larger than 2 MB. Export at quality 80 to keep the file size under this limit." },
+      { heading: "Use Bold Contrast", body: "Thumbnails compete for attention in a grid. High contrast colors and readable text at small sizes work best." },
+    ],
+  },
+  {
+    slug: "how-to-resize-images-for-linkedin",
+    title: "How to Resize Images for LinkedIn",
+    description: "Get the right image dimensions for LinkedIn profile covers, posts, articles, and company pages.",
+    category: "Resize",
+    readTime: "5 min read",
+    publishedAt: "2026-06-07",
+    relatedTools: ["resize-image", "crop-image", "compress-image"],
+    sections: [
+      { heading: "Profile Banners Need 1584x396", body: "LinkedIn cover images use a 4:1 ratio. Resize to 1584x396 for sharp display across devices." },
+      { heading: "Share Images Look Best At 1200x627", body: "LinkedIn link previews and image posts use a 1.91:1 ratio. Export at 1200x627 for clean social sharing." },
+      { heading: "Company Logo Works At 300x300", body: "A square 300x300 logo image is the standard for LinkedIn company pages." },
+    ],
+  },
+  {
+    slug: "image-dimensions-for-social-media-2026",
+    title: "Image Dimensions for Social Media 2026",
+    description: "A reference guide to the correct image sizes for every major social media platform.",
+    category: "Resize",
+    readTime: "8 min read",
+    publishedAt: "2026-06-08",
+    relatedTools: ["resize-image", "crop-image", "batch-converter"],
+    sections: [
+      { heading: "Platform Sizes Change Regularly", body: "Social media platforms update their recommended image sizes periodically. Check the latest guidelines before preparing assets." },
+      { heading: "Square 1:1 Works Everywhere", body: "A 1080x1080 square image is accepted by Instagram, Facebook, LinkedIn, and Twitter. It is the safest fallback size." },
+      { heading: "Export At 2x For Retina Displays", body: "Most platforms display images at 1x but support 2x resolution. Exporting at double size ensures sharpness on high-density screens." },
+    ],
+  },
+  {
+    slug: "how-to-resize-images-for-wordpress",
+    title: "How to Resize Images for WordPress",
+    description: "Optimize images before uploading to WordPress to keep your media library lean and your pages fast.",
+    category: "Resize",
+    readTime: "5 min read",
+    publishedAt: "2026-06-09",
+    relatedTools: ["resize-image", "compress-image", "convert-to-webp"],
+    sections: [
+      { heading: "Resize Before Upload", body: "WordPress creates multiple thumbnail sizes from every upload. Resize large source images first so the generated thumbnails are not bloated." },
+      { heading: "Use WebP For Native Performance", body: "WordPress supports WebP natively. Convert images to WebP before uploading for smaller media files." },
+      { heading: "Clean Filenames Help SEO", body: "Rename images before uploading. A file named blue-widget-product-photo.webp helps search engines understand the content." },
+    ],
+  },
+  // --- SEO (6 posts) ---
+  {
+    slug: "how-image-optimization-improves-core-web-vitals",
+    title: "How Image Optimization Improves Core Web Vitals",
+    description: "Image size, dimensions, and format decisions directly affect load speed, layout stability, and perceived responsiveness.",
+    category: "SEO",
+    readTime: "6 min read",
+    publishedAt: "2026-05-21",
+    relatedTools: ["image-analyzer", "convert-to-webp", "compress-image"],
+    sections: [
+      { heading: "Large Images Slow LCP", body: "The largest visible image often becomes the LCP element. Smaller optimized assets can load faster." },
+      { heading: "Stable Dimensions Reduce CLS", body: "Export images at predictable dimensions and reserve space in layouts." },
+      { heading: "Batch Workflows Save Time", body: "Consistent presets and ZIP export help keep optimization repeatable." },
     ],
   },
   {
     slug: "when-to-use-image-analyzer-before-compressing",
     title: "When to Use Image Analyzer Before Compressing",
-    description:
-      "Use an image audit to understand dimensions, metadata, memory cost, format, and optimization opportunities before changing the file.",
+    description: "Use an image audit to understand dimensions, metadata, memory cost, and optimization opportunities before changing the file.",
     category: "SEO",
     readTime: "6 min read",
     publishedAt: "2026-05-21",
     relatedTools: ["image-analyzer", "compress-image", "resize-image"],
     sections: [
-      {
-        heading: "Analyze Before Guessing",
-        body:
-          "Compression settings depend on the source file. A 9000px photo, a transparent PNG, and a small WebP need different output choices, so inspect the file before applying a generic preset.",
-      },
-      {
-        heading: "Check Metadata Risk",
-        body:
-          "Analyzer output can reveal whether readable metadata exists. If the file will be public, clean metadata before sharing the optimized version.",
-      },
-      {
-        heading: "Turn Findings Into Actions",
-        body:
-          "Use analysis to decide the next step: resize oversized dimensions, convert heavy JPG or PNG files to WebP, keep PNG for transparency, or create PDF output for document submission.",
-      },
+      { heading: "Analyze Before Guessing", body: "A 9000px photo, a transparent PNG, and a small WebP need different output choices. Inspect before applying a preset." },
+      { heading: "Check Metadata Risk", body: "Analyzer output reveals whether readable metadata exists. Clean before sharing." },
+      { heading: "Turn Findings Into Actions", body: "Use analysis to decide the next step: resize, convert, or keep the original." },
     ],
   },
   {
+    slug: "how-to-optimize-images-for-seo",
+    title: "How to Optimize Images for SEO",
+    description: "Image optimization helps search rankings through faster load times, proper metadata, and descriptive filenames.",
+    category: "SEO",
+    readTime: "7 min read",
+    publishedAt: "2026-06-10",
+    relatedTools: ["compress-image", "resize-image", "convert-to-webp"],
+    sections: [
+      { heading: "Filenames Tell Search Engines What The Image Contains", body: "A file named DSC_1234.jpg tells a search engine nothing. Rename it to red-leather-wallet-product.jpg before uploading." },
+      { heading: "Alt Text Describes The Image For Accessibility And SEO", body: "Write clear alt text that describes what the image shows. Avoid keyword stuffing and keep it under 125 characters." },
+      { heading: "File Size Affects Page Speed Rankings", body: "Google uses page speed as a ranking factor. Compressed images load faster and contribute to better search performance." },
+    ],
+  },
+  {
+    slug: "how-to-create-seo-friendly-image-names",
+    title: "How to Create SEO-Friendly Image Names",
+    description: "Use descriptive, hyphenated filenames that help search engines and content management systems organize assets.",
+    category: "SEO",
+    readTime: "5 min read",
+    publishedAt: "2026-06-11",
+    relatedTools: ["compress-image", "convert-to-webp", "batch-converter"],
+    sections: [
+      { heading: "Use Hyphens Between Words", body: "Search engines treat hyphens as word separators. Use blue-widget-photo.jpg instead of blue_widget_photo.jpg or blueWidgetPhoto.jpg." },
+      { heading: "Include The Subject And Context", body: "Describe the image content clearly. A filename like black-leather-wallet-on-wooden-table.jpg is more useful than IMG_2026.jpg." },
+      { heading: "Match Filename To Page Content", body: "If the image is on a product page for blue widgets, the filename should reference blue widgets so search engines connect them." },
+    ],
+  },
+  {
+    slug: "structured-data-for-images-seo-guide",
+    title: "Structured Data for Images: An SEO Guide",
+    description: "Use schema markup to help search engines understand and display your images in rich results.",
+    category: "SEO",
+    readTime: "6 min read",
+    publishedAt: "2026-06-12",
+    relatedTools: ["image-analyzer", "compress-image", "convert-to-webp"],
+    sections: [
+      { heading: "ImageObject Schema Tells Google What The Image Shows", body: "Adding ImageObject structured data with a caption, description, and author helps search engines understand the image content." },
+      { heading: "Product Images Benefit From Markup", body: "E-commerce product images with schema markup can appear in Google Shopping and image search results with richer previews." },
+      { heading: "Use Breadcrumb Schema For Image Galleries", body: "Breadcrumb structured data on portfolio and gallery pages helps search engines navigate the image hierarchy." },
+    ],
+  },
+  {
+    slug: "image-sitemap-best-practices",
+    title: "Image Sitemap Best Practices for Better Indexing",
+    description: "Submit image sitemaps to search engines so your visual content gets discovered and indexed faster.",
+    category: "SEO",
+    readTime: "5 min read",
+    publishedAt: "2026-06-13",
+    relatedTools: ["convert-to-webp", "compress-image", "resize-image"],
+    sections: [
+      { heading: "Include Every Important Image", body: "An image sitemap should list the images that matter for search, not every decorative icon or thumbnail." },
+      { heading: "Use Descriptive Captions In The Sitemap", body: "The image caption and title fields in the sitemap help search engines understand what each image represents." },
+      { heading: "Update The Sitemap When Images Change", body: "When you replace or remove important images, update the image sitemap so search engines do not index outdated content." },
+    ],
+  },
+  // --- Privacy (5 posts) ---
+  {
+    slug: "how-to-remove-metadata-from-photos",
+    title: "How to Remove Metadata from Photos",
+    description: "Learn what image metadata is and why removing it can improve privacy before sharing photos online.",
+    category: "Privacy",
+    readTime: "5 min read",
+    publishedAt: "2026-05-21",
+    relatedTools: ["metadata-cleaner", "compress-image", "image-analyzer"],
+    sections: [
+      { heading: "What Metadata Can Contain", body: "Photo metadata can include device model, capture date, software, and sometimes location details." },
+      { heading: "Re-encoding Removes Common Metadata", body: "Browser-based tools decode pixels and export a fresh image, removing most hidden metadata." },
+      { heading: "Keep A Private Original", body: "Store the original locally and share the cleaned export publicly." },
+    ],
+  },
+  {
+    slug: "what-is-exif-metadata-in-photos",
+    title: "What Is EXIF Metadata in Photos",
+    description: "Understand the hidden data stored inside every digital photo and how it affects your privacy online.",
+    category: "Privacy",
+    readTime: "6 min read",
+    publishedAt: "2026-06-14",
+    relatedTools: ["metadata-cleaner", "image-analyzer", "compress-image"],
+    sections: [
+      { heading: "EXIF Stands For Exchangeable Image File Format", body: "EXIF is a standard that stores camera settings, date, time, and sometimes GPS coordinates inside image files." },
+      { heading: "Smartphones Add Location Data", body: "Many smartphones tag photos with GPS coordinates by default. This means your exact location can be embedded in shared images." },
+      { heading: "Social Media Platforms Strip Some Metadata", body: "Platforms like Instagram and Facebook remove EXIF data when you upload. But direct file sharing keeps the metadata intact." },
+    ],
+  },
+  {
+    slug: "how-to-remove-gps-location-from-photos",
+    title: "How to Remove GPS Location from Photos",
+    description: "Strip geolocation data from your images before sharing them online to protect your privacy.",
+    category: "Privacy",
+    readTime: "5 min read",
+    publishedAt: "2026-06-15",
+    relatedTools: ["metadata-cleaner", "image-analyzer"],
+    sections: [
+      { heading: "GPS Data Reveals Where The Photo Was Taken", body: "Cameras and phones can embed latitude and longitude coordinates in the image metadata. This reveals your precise location." },
+      { heading: "Re-encoding Strips Most Location Tags", body: "Exporting the image through a browser-based tool removes GPS metadata because the output is a fresh file." },
+      { heading: "Check Before Sharing On Public Platforms", body: "Always verify that location data has been removed before uploading to marketplaces, forums, or social media." },
+    ],
+  },
+  {
+    slug: "privacy-risks-of-sharing-photos-online",
+    title: "Privacy Risks of Sharing Photos Online",
+    description: "Hidden metadata in photos can expose your location, device, and habits. Learn what to remove before publishing.",
+    category: "Privacy",
+    readTime: "7 min read",
+    publishedAt: "2026-06-16",
+    relatedTools: ["metadata-cleaner", "image-analyzer", "compress-image"],
+    sections: [
+      { heading: "Metadata Can Reveal More Than You Expect", body: "A single photo can include the camera serial number, the exact time it was taken, and the GPS coordinates of your home." },
+      { heading: "Screenshots Contain System Information", body: "Screenshots can include the device model, operating system version, and the application used to capture the screen." },
+      { heading: "Clean Metadata Before Every Public Upload", body: "Make metadata cleaning a habit before uploading to marketplaces, social platforms, or document portals." },
+    ],
+  },
+  {
+    slug: "how-to-check-if-photo-has-metadata",
+    title: "How to Check If a Photo Has Metadata",
+    description: "Use an image analyzer to inspect hidden EXIF data before deciding whether to clean or share the file.",
+    category: "Privacy",
+    readTime: "4 min read",
+    publishedAt: "2026-06-17",
+    relatedTools: ["image-analyzer", "metadata-cleaner"],
+    sections: [
+      { heading: "Use An Analyzer Tool First", body: "An image analyzer scans the file and shows all readable metadata tags, organized by category and sensitivity." },
+      { heading: "Look For Location And Camera Tags", body: "GPS, camera model, and software tags are the most common sensitive metadata fields found in photos." },
+      { heading: "Decide Whether To Clean Or Keep Original", body: "If the image contains sensitive metadata, run a metadata clean export. Keep the original for personal archives." },
+    ],
+  },
+  // --- Developer (7 posts) ---
+  {
+    slug: "how-to-prepare-images-for-nextjs",
+    title: "How to Prepare Images for Next.js Websites",
+    description: "A developer-focused workflow for resizing, converting, naming, and optimizing image assets before shipping.",
+    category: "Developer",
+    readTime: "7 min read",
+    publishedAt: "2026-05-21",
+    relatedTools: ["convert-to-webp", "resize-image", "compress-image"],
+    sections: [
+      { heading: "Resize Source Assets", body: "Export hero, card, and thumbnail assets close to their largest displayed dimensions." },
+      { heading: "Use Descriptive Filenames", body: "A filename like product-photo-compressed.webp is easier to manage than random camera exports." },
+      { heading: "Test Visual Quality", body: "Compression settings should be checked on real images before shipping." },
+    ],
+  },
+  {
+    slug: "how-to-automate-image-optimization-in-ci-cd",
+    title: "How to Automate Image Optimization in CI/CD",
+    description: "Add image compression and format conversion to your build pipeline for consistent asset delivery.",
+    category: "Developer",
+    readTime: "8 min read",
+    publishedAt: "2026-06-18",
+    relatedTools: ["convert-to-webp", "compress-image", "batch-converter"],
+    sections: [
+      { heading: "Add A Build Step For Image Assets", body: "Running image optimization as part of your build pipeline ensures every deployment ships the smallest possible assets." },
+      { heading: "Use Consistent Presets Across The Team", body: "Define quality, format, and resize rules in a shared config so every developer produces the same output." },
+      { heading: "Fail The Build On Oversized Images", body: "Set a maximum file size threshold. If an optimized image exceeds the limit, the build should warn or fail." },
+    ],
+  },
+  {
+    slug: "how-to-convert-images-to-webp-for-react-apps",
+    title: "How to Convert Images to WebP for React Apps",
+    description: "Prepare WebP assets for React components with fallback images in the picture element for browser compatibility.",
+    category: "Developer",
+    readTime: "6 min read",
+    publishedAt: "2026-06-19",
+    relatedTools: ["convert-to-webp", "resize-image", "compress-image"],
+    sections: [
+      { heading: "Use The Picture Element For Fallbacks", body: "The picture element lets you serve WebP to supported browsers and fall back to JPG or PNG for older ones." },
+      { heading: "Export Multiple Sizes For Responsive Images", body: "Create 3 or 4 versions of each image at different widths. The srcset attribute lets the browser pick the right size." },
+      { heading: "Name Files By Size For Easy Reference", body: "Including the width in the filename like hero-1920.webp and hero-800.webp makes responsive exports easier to manage." },
+    ],
+  },
+  {
+    slug: "nextjs-image-optimization-best-practices",
+    title: "Next.js Image Optimization Best Practices",
+    description: "Get the most out of Next.js Image component with properly prepared source images and configuration.",
+    category: "Developer",
+    readTime: "7 min read",
+    publishedAt: "2026-06-20",
+    relatedTools: ["convert-to-webp", "resize-image", "compress-image"],
+    sections: [
+      { heading: "Pre-optimize Source Images Before Import", body: "Next.js can optimize images at build time, but starting with a 10 MB photo wastes processing power. Compress and resize before adding to the project." },
+      { heading: "Use Width And Height To Prevent CLS", body: "The Next.js Image component needs explicit width and height to reserve space. Always provide these even for responsive images." },
+      { heading: "Choose The Right Loading Strategy", body: "Use priority loading for hero images and lazy loading for below-the-fold content to balance performance and perceived speed." },
+    ],
+  },
+  {
+    slug: "how-to-use-webp-with-fallback",
+    title: "How to Use WebP with Fallback for Browser Support",
+    description: "Serve WebP images to modern browsers while providing JPG or PNG fallbacks for older ones.",
+    category: "Developer",
+    readTime: "5 min read",
+    publishedAt: "2026-06-21",
+    relatedTools: ["convert-to-webp", "compress-image", "batch-converter"],
+    sections: [
+      { heading: "The Picture Element Handles Fallbacks Gracefully", body: "The HTML picture element lets you list multiple source formats. The browser picks the first one it supports." },
+      { heading: "Convert Both WebP And JPG Versions", body: "When preparing assets, generate both .webp and .jpg versions so the picture element has both sources available." },
+      { heading: "Test Fallbacks In Safari And Legacy Browsers", body: "Safari supports WebP from version 14 onward. Test your fallback setup in older browsers to confirm the JPG version loads." },
+    ],
+  },
+  {
+    slug: "image-optimization-for-vercel-deployment",
+    title: "Image Optimization for Vercel Deployment",
+    description: "Prepare and configure images for optimal delivery on Vercel with client-side processing and CDN caching.",
+    category: "Developer",
+    readTime: "6 min read",
+    publishedAt: "2026-06-22",
+    relatedTools: ["convert-to-webp", "resize-image", "compress-image"],
+    sections: [
+      { heading: "Client-Side Processing Reduces Server Load", body: "Processing images in the browser before uploading to Vercel reduces serverless function execution time and cost." },
+      { heading: "Use Vercel Image Optimization With Care", body: "Vercel can optimize images on the fly, but it counts against function execution limits. Pre-optimize where possible." },
+      { heading: "Set Proper Cache Headers For Static Assets", body: "Configure your vercel.json to cache image assets with a long max-age header so repeat visits load from the CDN." },
+    ],
+  },
+  {
+    slug: "how-to-rename-batch-images-programmatically",
+    title: "How to Rename Batch Images Programmatically",
+    description: "Apply consistent naming patterns to multiple image files for better organization and SEO-friendly filenames.",
+    category: "Developer",
+    readTime: "5 min read",
+    publishedAt: "2026-06-23",
+    relatedTools: ["batch-converter", "compress-image", "convert-to-webp"],
+    sections: [
+      { heading: "Use A Consistent Prefix For Each Batch", body: "Adding a project or category prefix to every file makes the output easy to sort and identify." },
+      { heading: "Include The Date For Version Control", body: "Adding the export date to filenames helps track which version of an asset is current and which is outdated." },
+      { heading: "Use Hyphenated Lowercase Names For Web Assets", body: "SEO-friendly filenames use hyphens between words and keep everything lowercase for consistent URL formatting." },
+    ],
+  },
+  // --- Workflow (5 posts) ---
+  {
+    slug: "how-to-build-a-batch-image-workflow",
+    title: "How to Build a Batch Image Workflow",
+    description: "A repeatable process for converting, resizing, cleaning, and exporting many images with predictable filenames and ZIP manifests.",
+    category: "Workflow",
+    readTime: "8 min read",
+    publishedAt: "2026-05-21",
+    relatedTools: ["batch-converter", "convert-to-webp", "metadata-cleaner"],
+    sections: [
+      { heading: "Start With One Shared Preset", body: "Every file uses the same format, quality, resize rule, and metadata policy for consistency." },
+      { heading: "Export With A Manifest", body: "A ZIP with summary.json and summary.csv gives teams an audit trail for every file." },
+      { heading: "Keep Originals Separate", body: "Do not overwrite source assets. Store originals and processed outputs in separate folders." },
+    ],
+  },
+  {
+    slug: "image-processing-workflow-for-ecommerce",
+    title: "Image Processing Workflow for E-Commerce",
+    description: "A complete workflow for processing product photos at scale for online stores and marketplaces.",
+    category: "Workflow",
+    readTime: "7 min read",
+    publishedAt: "2026-06-24",
+    relatedTools: ["batch-converter", "resize-image", "metadata-cleaner"],
+    sections: [
+      { heading: "Process All Product Photos With One Preset", body: "Using a shared quality and resize preset across all product images creates a consistent look on your store pages." },
+      { heading: "Name Files By SKU For Easy Matching", body: "Using the product SKU as the filename makes it easy to match images to the right product listing." },
+      { heading: "Keep A Clean Export Folder For Each Batch", body: "Organizing exports by date or batch number helps track which images are ready for upload." },
+    ],
+  },
+  {
+    slug: "how-to-create-a-photo-optimization-checklist",
+    title: "How to Create a Photo Optimization Checklist",
+    description: "A repeatable checklist that ensures every image leaving your workflow is properly sized, formatted, and cleaned.",
+    category: "Workflow",
+    readTime: "5 min read",
+    publishedAt: "2026-06-25",
+    relatedTools: ["compress-image", "resize-image", "metadata-cleaner"],
+    sections: [
+      { heading: "Step 1: Check Dimensions", body: "Verify the image is not larger than the maximum display size. Resize oversized images." },
+      { heading: "Step 2: Check Format And Quality", body: "Choose the appropriate format and quality based on the image content and target platform." },
+      { heading: "Step 3: Strip Metadata And Rename", body: "Remove hidden metadata and apply a descriptive SEO-friendly filename before export." },
+    ],
+  },
+  {
+    slug: "how-to-prepare-images-for-print-vs-web",
+    title: "How to Prepare Images for Print vs Web",
+    description: "Understand the different requirements for print-ready images and web-optimized images.",
+    category: "Workflow",
+    readTime: "6 min read",
+    publishedAt: "2026-06-26",
+    relatedTools: ["resize-image", "compress-image", "image-analyzer"],
+    sections: [
+      { heading: "Print Needs High Resolution And CMYK", body: "Print images should be at least 300 DPI at the final print size. Most print workflows use CMYK color space." },
+      { heading: "Web Images Use RGB And Lower Resolution", body: "Screen images only need 72 DPI. RGB color space is standard for digital displays." },
+      { heading: "Keep Separate Workflows For Print And Web", body: "Do not use the same exported file for both print and web. The resolution, color space, and format requirements differ." },
+    ],
+  },
+  {
+    slug: "how-to-organize-digital-image-assets",
+    title: "How to Organize Digital Image Assets",
+    description: "A practical system for naming, storing, and retrieving image files across projects and teams.",
+    category: "Workflow",
+    readTime: "6 min read",
+    publishedAt: "2026-06-27",
+    relatedTools: ["batch-converter", "compress-image", "convert-to-webp"],
+    sections: [
+      { heading: "Use A Consistent Folder Structure", body: "Organize images by project, then by type. A folder like /project-name/product-photos/raw/ keeps everything findable." },
+      { heading: "Version Your Final Exports", body: "Add a version number or export date to finalized images so team members know which file is the latest version." },
+      { heading: "Archive Raw Files Separately", body: "Keep camera-original files in a separate archive folder. Only processed, optimized files should go into the active project folder." },
+    ],
+  },
+  // --- Document (5 posts) ---
+  {
     slug: "how-to-create-image-to-pdf-for-documents",
     title: "How to Create an Image to PDF Document",
-    description:
-      "Convert document photos and scanned images into a clean PDF with the right page size, orientation, margin, and image quality.",
+    description: "Convert document photos and scanned images into a clean PDF with the right page size, orientation, margin, and image quality.",
     category: "Document",
     readTime: "5 min read",
     publishedAt: "2026-05-21",
     relatedTools: ["image-to-pdf", "resize-image", "metadata-cleaner"],
     sections: [
-      {
-        heading: "Choose The Page Size First",
-        body:
-          "A4 is common for many documents, while Letter is common in US workflows. Pick the page size before export so every image scales predictably inside the PDF.",
-      },
-      {
-        heading: "Use Margins For Readability",
-        body:
-          "A small margin keeps photos away from the paper edge and makes the PDF easier to print, review, or upload to forms that render page previews.",
-      },
-      {
-        heading: "Compress Source Images Before PDF",
-        body:
-          "Very large photos can make PDFs unnecessarily heavy. Resize and use balanced image quality before generating the PDF so the document stays upload-friendly.",
-      },
+      { heading: "Choose The Page Size First", body: "A4 is common for many documents while Letter is standard in US workflows." },
+      { heading: "Use Margins For Readability", body: "A small margin keeps photos away from the paper edge for easier printing and review." },
+      { heading: "Compress Source Images Before PDF", body: "Resize and compress before generating the PDF so the document stays upload-friendly." },
+    ],
+  },
+  {
+    slug: "how-to-scan-and-convert-documents-to-pdf",
+    title: "How to Scan and Convert Documents to PDF",
+    description: "Turn phone photos of documents into professional PDF files suitable for forms, submissions, and archiving.",
+    category: "Document",
+    readTime: "5 min read",
+    publishedAt: "2026-06-28",
+    relatedTools: ["image-to-pdf", "resize-image", "compress-image"],
+    sections: [
+      { heading: "Take Clean Photos Of Each Page", body: "Capture each document page in good lighting with the phone parallel to the paper. Avoid shadows and glare." },
+      { heading: "Resize Before Combining Into PDF", body: "Resize each page image to a reasonable dimension like 1600 px wide so the PDF does not become too large." },
+      { heading: "Choose A4 Portrait For Most Documents", body: "A4 portrait orientation matches standard document paper and works well for most forms and submissions." },
+    ],
+  },
+  {
+    slug: "how-to-reduce-pdf-file-size-from-images",
+    title: "How to Reduce PDF File Size from Images",
+    description: "Optimize the images inside a PDF to produce a smaller document that is easier to email and upload.",
+    category: "Document",
+    readTime: "5 min read",
+    publishedAt: "2026-06-29",
+    relatedTools: ["image-to-pdf", "compress-image", "resize-image"],
+    sections: [
+      { heading: "Compress Each Image Before Adding To PDF", body: "The largest contributor to PDF file size is the source images. Compress each image before combining them into a PDF." },
+      { heading: "Use Quality 80 For Document Images", body: "Documents with text and simple graphics do not need high quality. Quality 80 keeps text readable while reducing file size." },
+      { heading: "Resize Large Scans To Fit The Page", body: "A scanned document page at 300 DPI can be very large. Resize to match the PDF page dimensions before export." },
+    ],
+  },
+  {
+    slug: "how-to-combine-multiple-images-into-one-pdf",
+    title: "How to Combine Multiple Images Into One PDF",
+    description: "Merge several images into a single PDF document with consistent page settings for easy distribution.",
+    category: "Document",
+    readTime: "4 min read",
+    publishedAt: "2026-06-30",
+    relatedTools: ["image-to-pdf", "resize-image", "compress-image"],
+    sections: [
+      { heading: "Upload All Images In Order", body: "Add images to the queue in the order you want them to appear in the PDF. The tool preserves the queue sequence." },
+      { heading: "Use The Same Settings For Every Page", body: "Apply one quality, page size, and orientation to all pages so the document looks consistent." },
+      { heading: "Download The Combined PDF", body: "The tool produces a single PDF file with one image per page, ready for submission or sharing." },
+    ],
+  },
+  {
+    slug: "best-image-settings-for-document-upload",
+    title: "Best Image Settings for Document Upload",
+    description: "Forms and document portals often reject files that are too large. Use these settings to ensure your upload goes through.",
+    category: "Document",
+    readTime: "4 min read",
+    publishedAt: "2026-07-01",
+    relatedTools: ["compress-image", "resize-image", "image-to-pdf"],
+    sections: [
+      { heading: "Resize To 800px Width For Standard Forms", body: "Most document upload systems do not need high resolution. 800 px width is enough for readable document scans." },
+      { heading: "Use JPEG Quality 75 For Documents", body: "Text and simple graphics look clean at quality 75. This keeps the file well under common upload limits." },
+      { heading: "Stay Under 5 MB Per Document Page", body: "Many portals limit individual uploads to 5 or 10 MB. Compress each page to stay safely under the limit." },
     ],
   },
 ];

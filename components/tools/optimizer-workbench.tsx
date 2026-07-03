@@ -49,9 +49,17 @@ import {
   type ProcessingSettings,
 } from "@/lib/image/client-processing";
 import { formatBytes, validateImageFile } from "@/lib/image/image-rules";
+import {
+  applyGuardrailFix,
+  buildFileProfile,
+  evaluateGuardrails,
+} from "@/lib/image/quality-guardrails";
 import { getToolCapabilities } from "@/lib/image/tool-behavior";
 import { cn } from "@/lib/utils";
+import type { GuardrailFix, GuardrailResult } from "@/types/guardrail";
 import type { ToolDefinition, ToolMode } from "@/types/tool";
+
+import { GuardrailWarnings } from "@/components/tools/quality-guardrail-warnings";
 
 type QueueStatus =
   | "waiting"
@@ -136,6 +144,12 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
   const [settings, setSettings] = useState<ProcessingSettings>(() =>
     defaultSettings(tool),
   );
+  const [guardrailResult, setGuardrailResult] = useState<GuardrailResult>({
+    hasIssues: false,
+    hasErrors: false,
+    warnings: [],
+  });
+  const hasAdaptedRef = useRef(false);
 
   const capabilities = useMemo(
     () => getToolCapabilities(tool.mode),
@@ -156,6 +170,8 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
 
   useEffect(() => {
     setSettings(defaultSettings(tool));
+    hasAdaptedRef.current = false;
+    setGuardrailResult({ hasIssues: false, hasErrors: false, warnings: [] });
   }, [tool]);
 
   const onDrop = useCallback(
@@ -209,6 +225,22 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
                 : item,
             ),
           );
+
+          if (!hasAdaptedRef.current && itemsRef.current.length === 0) {
+            hasAdaptedRef.current = true;
+            const recommendation = buildQueueRecommendation(file, dimensions);
+            setSettings((current) => ({
+              ...current,
+              quality: recommendation.quality,
+              outputFormat: recommendation.format,
+              stripMetadata: recommendation.stripMetadata,
+              resizeEnabled: Boolean(recommendation.resizeWidth),
+              width: recommendation.resizeWidth || current.width,
+              height: 0,
+              keepAspectRatio: true,
+              preset: "smart",
+            }));
+          }
         } catch {
           setItems((current) =>
             current.map((item) =>
@@ -238,6 +270,24 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
   useEffect(() => {
     itemsRef.current = items;
   }, [items]);
+
+  useEffect(() => {
+    if (selectedItem?.dimensions) {
+      const fileProfile = buildFileProfile(
+        selectedItem.file.type,
+        selectedItem.file.size,
+        selectedItem.dimensions.width,
+        selectedItem.dimensions.height,
+      );
+      const result = evaluateGuardrails(settings, fileProfile);
+      setGuardrailResult(result);
+    } else if (selectedItem?.file) {
+      const result = evaluateGuardrails(settings);
+      setGuardrailResult(result);
+    } else {
+      setGuardrailResult({ hasIssues: false, hasErrors: false, warnings: [] });
+    }
+  }, [settings, selectedItem]);
 
   useEffect(() => {
     return () => {
@@ -471,6 +521,10 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
     }));
   }
 
+  function handleApplyGuardrailFix(fix: GuardrailFix) {
+    setSettings((current) => applyGuardrailFix(current, fix));
+  }
+
   async function downloadAllResults() {
     const readyItems = items
       .filter((item): item is QueueItem & { result: ProcessedResult } =>
@@ -533,6 +587,11 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             onPreset={applyPreset}
             onRecommendation={applyRecommendation}
             hasRecommendation={Boolean(selectedItem?.recommendation)}
+          />
+          <GuardrailWarnings
+            warnings={guardrailResult.warnings}
+            hasErrors={guardrailResult.hasErrors}
+            onApplyFix={handleApplyGuardrailFix}
           />
           <ActionPanel
             tool={tool}

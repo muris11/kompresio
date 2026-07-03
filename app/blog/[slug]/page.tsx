@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { blogPosts, getBlogPost } from "@/lib/constants/blog";
 import { tools } from "@/lib/constants/tools";
-import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
+import { articleSchema, breadcrumbSchema, createPageMetadata, faqSchema } from "@/lib/seo/metadata";
 import type { ToolDefinition } from "@/types/tool";
 
 type BlogDetailProps = {
@@ -57,11 +57,25 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Blog", path: "/blog" },
-          { name: post.title, path: `/blog/${post.slug}` },
-        ])}
+        data={[
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+          articleSchema({
+            headline: post.title,
+            description: post.description,
+            image: `/blog/${post.slug}/opengraph-image`,
+            datePublished: post.publishedAt,
+          }),
+          faqSchema(
+            post.sections.map((s) => ({
+              question: s.heading,
+              answer: s.body,
+            })),
+          ),
+        ]}
       />
       <article className="border-b border-slate-200 bg-slate-50">
         <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">

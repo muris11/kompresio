@@ -25,17 +25,33 @@ import { featuredTools } from "@/lib/constants/tools";
 export function PopularTools() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
-      <SectionHeading
-        eyebrow="Popular tools"
-        title="One workflow for image optimization"
-        description="Use the most common tools immediately, then expand into batch, privacy, and developer workflows when needed."
-      />
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <SectionHeading
+          eyebrow="Popular tools"
+          title="One workflow for image optimization"
+          description="Use the most common tools immediately, then expand into batch, privacy, and developer workflows when needed."
+        />
+        <Link href="/tools" className="hidden shrink-0 sm:flex">
+          <Button variant="secondary">
+            View all tools
+            <ArrowRight className="size-4" />
+          </Button>
+        </Link>
+      </div>
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {featuredTools.map((tool, index) => (
           <Reveal key={tool.slug} delay={index * 0.04}>
             <ToolCard tool={tool} />
           </Reveal>
         ))}
+      </div>
+      <div className="mt-6 text-center sm:hidden">
+        <Button asChild variant="secondary">
+          <Link href="/tools">
+            View all tools
+            <ArrowRight className="size-4" />
+          </Link>
+        </Button>
       </div>
     </section>
   );

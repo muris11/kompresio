@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { siteConfig } from "@/lib/constants/site";
-import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
+import { breadcrumbSchema, createPageMetadata, organizationSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Company",
@@ -86,10 +86,20 @@ export default function CompanyPage() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Company", path: "/company" },
-        ])}
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            name: "About Kompresio",
+            description:
+              "Kompresio is a browser-first image optimization toolkit for compression, conversion, resize, metadata cleaning, analysis, and document workflows.",
+            mainEntity: organizationSchema(),
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Company", path: "/company" },
+          ]),
+        ]}
       />
 
       <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.2),transparent_34%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">

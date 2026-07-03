@@ -49,7 +49,7 @@ const footerColumns = [
 export function SiteFooter() {
   return (
     <footer className="border-t border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="px-4 py-12 md:px-6">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <div className="max-w-sm space-y-4">
             <Logo />

@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "Kompresio",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.center.biz.id",
   description:
     "Compress JPG, PNG, WebP, AVIF, and HEIC images directly in your browser. Convert to WebP, resize, clean metadata, and download optimized images in seconds.",
   appName: process.env.NEXT_PUBLIC_APP_NAME || "Kompresio",
@@ -8,6 +8,12 @@ export const siteConfig = {
     name: "Rifqy Saputra",
     url: "https://rifqysaputra.dev",
     label: "rifqysaputra.dev",
+    jobTitle: "Developer",
+  },
+  social: {
+    github: "https://github.com/rifqysaputra",
+    twitter: "https://x.com/rifqysaputra",
+    linkedin: "https://linkedin.com/in/rifqysaputra",
   },
   links: {
     company: "/company",

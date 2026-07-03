@@ -14,7 +14,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/86 backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 items-center justify-between px-4 md:h-20 md:px-6">
         <Logo />
 
         <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
@@ -55,7 +55,7 @@ export function SiteHeader() {
         )}
       >
         <div className="overflow-hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4" aria-label="Mobile navigation">
+          <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile navigation">
             {primaryNav.map((item) => (
               <Link
                 key={item.href}

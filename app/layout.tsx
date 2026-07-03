@@ -3,7 +3,9 @@ import { IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/lib/constants/site";
+import { organizationSchema } from "@/lib/seo/metadata";
 import "./globals.css";
 
 const jakartaSans = Plus_Jakarta_Sans({
@@ -44,13 +46,12 @@ export const metadata: Metadata = {
   publisher: "Kompresio",
   other: {
     "developed-by": siteConfig.developer.label,
+    "google-site-verification": "3HizIgkv3ixXoTBD3JukOfZZkzQFtC-pGBARnYNpGmo",
   },
+  referrer: "strict-origin-when-cross-origin",
   icons: {
-    icon: [
-      { url: "/favicon.svg?v=3", type: "image/svg+xml" },
-      { url: "/icon", type: "image/png", sizes: "64x64" },
-    ],
-    apple: [{ url: "/apple-icon", type: "image/png", sizes: "180x180" }],
+    icon: [{ url: "/icon.png", type: "image/png", sizes: "64x64" }],
+    apple: [{ url: "/icon.png", type: "image/png", sizes: "180x180" }],
   },
   robots: {
     index: true,
@@ -100,6 +101,7 @@ export default function RootLayout({
       className={`${jakartaSans.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col overflow-x-hidden">
+        <JsonLd data={organizationSchema()} />
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />

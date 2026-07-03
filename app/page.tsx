@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { BlogHighlights } from "@/components/marketing/home-blog-highlights";
+import { FormatComparison } from "@/components/marketing/home-format-comparison";
 import { HomeHero } from "@/components/marketing/home-hero";
 import {
   BeforeAfterDemo,
@@ -10,6 +12,8 @@ import {
   UseCases,
   WhyKompresio,
 } from "@/components/marketing/home-sections";
+import { StatsSection } from "@/components/marketing/home-stats";
+import { Testimonials } from "@/components/marketing/home-testimonials";
 import { JsonLd } from "@/components/seo/json-ld";
 import { createPageMetadata, websiteSchema } from "@/lib/seo/metadata";
 
@@ -26,11 +30,15 @@ export default function Home() {
       <JsonLd data={websiteSchema()} />
       <HomeHero />
       <PopularTools />
+      <StatsSection />
       <BeforeAfterDemo />
       <HowItWorks />
       <SupportedFormats />
+      <FormatComparison />
       <WhyKompresio />
       <UseCases />
+      <Testimonials />
+      <BlogHighlights />
       <HomepageCta />
     </>
   );

@@ -79,7 +79,7 @@ This repository contains the MVP implementation for Kompresio:
 - `/opengraph-image`
 - `/twitter-image`
 - `/icon`
-- `/apple-icon`
+- `/icon.png`
 
 ## Tool Coverage
 
@@ -150,8 +150,6 @@ kompresio/
 |   |-- layout.tsx
 |   |-- page.tsx
 |   |-- globals.css
-|   |-- icon.tsx
-|   |-- apple-icon.tsx
 |   |-- manifest.ts
 |   |-- robots.ts
 |   `-- sitemap.ts
@@ -171,7 +169,9 @@ kompresio/
 |   |-- seo/
 |   `-- utils.ts
 |-- public/
-|   `-- favicon.svg
+|   |-- favicon.svg
+|   |-- icon.png
+|   |-- logo.png
 |-- types/
 |-- package.json
 |-- vitest.config.ts
@@ -219,7 +219,7 @@ The app can run without custom environment variables for local MVP development.
 Recommended production variable:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://kompresio.app
+NEXT_PUBLIC_SITE_URL=https://kompresio.center.biz.id
 ```
 
 Optional future variables can be added for analytics, storage, authentication, billing, or cloud processing.

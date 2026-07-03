@@ -925,7 +925,7 @@ https://kompresio.vercel.app
 Production target:
 
 ```txt
-https://kompresio.app
+https://kompresio.center.biz.id
 ```
 
 Fallback:

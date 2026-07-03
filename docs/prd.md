@@ -843,10 +843,10 @@ Untuk homepage:
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Kompresio",
-  "url": "https://kompresio.app",
+  "url": "https://kompresio.center.biz.id",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://kompresio.app/tools?q={search_term_string}",
+    "target": "https://kompresio.center.biz.id/tools?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -884,13 +884,13 @@ Untuk semua halaman detail:
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "https://kompresio.app"
+      "item": "https://kompresio.center.biz.id"
     },
     {
       "@type": "ListItem",
       "position": 2,
       "name": "Tools",
-      "item": "https://kompresio.app/tools"
+      "item": "https://kompresio.center.biz.id/tools"
     }
   ]
 }
@@ -1166,7 +1166,7 @@ After adding domain:
 Recommended env:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://kompresio.app
+NEXT_PUBLIC_SITE_URL=https://kompresio.center.biz.id
 NEXT_PUBLIC_APP_NAME=Kompresio
 NEXT_PUBLIC_DEFAULT_LOCALE=en
 NEXT_PUBLIC_ENABLE_ANALYTICS=true
@@ -1372,7 +1372,7 @@ kompresio/
 ```tsx
 import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.center.biz.id";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -1470,7 +1470,7 @@ export const metadata: Metadata = {
 ```ts
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.center.biz.id";
 
 const staticRoutes = [
   "",
@@ -1511,7 +1511,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 ```ts
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://kompresio.center.biz.id";
 
 export default function robots(): MetadataRoute.Robots {
   return {
