@@ -225,7 +225,7 @@ async function removeBackgroundFromImage(
   const blob = await removeBackground(file, {
     model: "isnet_fp16",
     output: {
-      format: mimeForFormat(outputFormat),
+      format: outputFormat === "webp" ? "image/webp" : "image/png",
       quality,
     },
   });
