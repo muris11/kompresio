@@ -29,12 +29,20 @@ describe("tool-specific behavior", () => {
       canConvert: false,
       canZip: true,
     });
+
+    expect(getToolCapabilities("remove-bg")).toMatchObject({
+      canCompress: false,
+      canConvert: true,
+      canResize: false,
+      canZip: true,
+    });
   });
 
   it("resolves primary output per tool instead of using one generic export", () => {
     expect(resolvePrimaryOutput("webp", "original")).toBe("webp");
     expect(resolvePrimaryOutput("avif", "jpeg")).toBe("avif");
     expect(resolvePrimaryOutput("heic", "webp")).toBe("webp");
+    expect(resolvePrimaryOutput("remove-bg", "original")).toBe("png");
     expect(resolvePrimaryOutput("metadata", "original")).toBe("jpeg");
     expect(resolvePrimaryOutput("batch", "png")).toBe("png");
     expect(resolvePrimaryOutput("compress", "png")).toBe("png");
@@ -57,7 +65,9 @@ describe("tool-specific behavior", () => {
   });
 
   it("scales an image into a PDF page while preserving aspect ratio", () => {
-    expect(scaleIntoPage({ width: 1600, height: 900 }, { width: 595, height: 842 })).toEqual({
+    expect(
+      scaleIntoPage({ width: 1600, height: 900 }, { width: 595, height: 842 }),
+    ).toEqual({
       width: 555,
       height: 312,
       x: 20,

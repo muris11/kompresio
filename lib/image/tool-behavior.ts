@@ -27,15 +27,53 @@ export type PageBox = {
 
 export function getToolCapabilities(mode: ToolMode): ToolCapabilities {
   return {
-    canCompress: ["compress", "webp", "avif", "resize", "crop", "metadata", "batch", "heic"].includes(mode),
-    canConvert: ["compress", "webp", "avif", "resize", "crop", "metadata", "batch", "heic"].includes(mode),
-    canResize: ["compress", "webp", "avif", "resize", "crop", "batch"].includes(mode),
+    canCompress: [
+      "compress",
+      "webp",
+      "avif",
+      "resize",
+      "crop",
+      "metadata",
+      "batch",
+      "heic",
+    ].includes(mode),
+    canConvert: [
+      "compress",
+      "webp",
+      "avif",
+      "resize",
+      "crop",
+      "metadata",
+      "batch",
+      "heic",
+      "remove-bg",
+    ].includes(mode),
+    canResize: ["compress", "webp", "avif", "resize", "crop", "batch"].includes(
+      mode,
+    ),
     canCrop: mode === "crop",
-    canCleanMetadata: ["compress", "webp", "resize", "metadata", "batch"].includes(mode),
+    canCleanMetadata: [
+      "compress",
+      "webp",
+      "resize",
+      "metadata",
+      "batch",
+    ].includes(mode),
     canAnalyze: ["analyzer", "metadata"].includes(mode),
     canCreatePdf: mode === "pdf",
     canConvertHeic: mode === "heic",
-    canZip: ["compress", "webp", "avif", "resize", "crop", "metadata", "batch", "heic", "analyzer"].includes(mode),
+    canZip: [
+      "compress",
+      "webp",
+      "avif",
+      "resize",
+      "crop",
+      "metadata",
+      "batch",
+      "heic",
+      "analyzer",
+      "remove-bg",
+    ].includes(mode),
   };
 }
 
@@ -46,6 +84,7 @@ export function resolvePrimaryOutput(
   if (mode === "webp") return "webp";
   if (mode === "avif") return "avif";
   if (mode === "heic") return requested === "webp" ? "webp" : "jpeg";
+  if (mode === "remove-bg") return requested === "webp" ? "webp" : "png";
   if (mode === "metadata") return requested === "original" ? "jpeg" : requested;
   if (mode === "batch") return requested === "original" ? "webp" : requested;
   return requested;
@@ -81,14 +120,13 @@ export function calculateCenteredCrop(
   };
 }
 
-export function scaleIntoPage(
-  image: PageBox,
-  page: PageBox,
-  margin = 20,
-) {
+export function scaleIntoPage(image: PageBox, page: PageBox, margin = 20) {
   const availableWidth = page.width - margin * 2;
   const availableHeight = page.height - margin * 2;
-  const scale = Math.min(availableWidth / image.width, availableHeight / image.height);
+  const scale = Math.min(
+    availableWidth / image.width,
+    availableHeight / image.height,
+  );
   const width = Math.round(image.width * scale);
   const height = Math.round(image.height * scale);
 

@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
     "@radix-ui/react-slot": "^1.2.4",
     "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",

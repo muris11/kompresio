@@ -1,6 +1,5 @@
 "use client";
 
-import Cropper, { type Area, type Point } from "react-easy-crop";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
@@ -26,6 +25,7 @@ import Image from "next/image";
 import type * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone, type Accept } from "react-dropzone";
+import Cropper, { type Area, type Point } from "react-easy-crop";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,12 +48,17 @@ import {
   type ProcessedResult,
   type ProcessingSettings,
 } from "@/lib/image/client-processing";
-import { getToolCapabilities } from "@/lib/image/tool-behavior";
 import { formatBytes, validateImageFile } from "@/lib/image/image-rules";
+import { getToolCapabilities } from "@/lib/image/tool-behavior";
 import { cn } from "@/lib/utils";
 import type { ToolDefinition, ToolMode } from "@/types/tool";
 
-type QueueStatus = "waiting" | "processing" | "completed" | "failed" | "skipped";
+type QueueStatus =
+  | "waiting"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "skipped";
 
 type QueueItem = {
   id: string;
@@ -84,7 +89,12 @@ const presets = [
   { id: "web", label: "Web Optimized", quality: 82, format: "webp" },
   { id: "marketplace", label: "Marketplace", quality: 84, format: "webp" },
   { id: "document", label: "Document Upload", quality: 76, format: "jpeg" },
-] satisfies Array<{ id: string; label: string; quality: number; format: OutputFormat }>;
+] satisfies Array<{
+  id: string;
+  label: string;
+  quality: number;
+  format: OutputFormat;
+}>;
 
 const resizePresets = [
   { label: "Instagram Square", width: 1080, height: 1080 },
@@ -106,7 +116,10 @@ const cropPresets = [
   { id: "crop-photo", label: "3:2", ratio: 3 / 2 },
 ];
 
-const statusVariant: Record<QueueStatus, "default" | "muted" | "success" | "warning" | "destructive"> = {
+const statusVariant: Record<
+  QueueStatus,
+  "default" | "muted" | "success" | "warning" | "destructive"
+> = {
   waiting: "muted",
   processing: "default",
   completed: "success",
@@ -260,7 +273,9 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
         ? {
             ...settings,
             cropArea:
-              settings.cropAreaSourceId === item.id ? settings.cropArea : undefined,
+              settings.cropAreaSourceId === item.id
+                ? settings.cropArea
+                : undefined,
           }
         : settings;
 
@@ -541,19 +556,23 @@ function defaultSettings(tool: ToolDefinition): ProcessingSettings {
     quality:
       mode === "metadata"
         ? 92
-        : mode === "pdf"
-          ? 86
-          : mode === "resize"
-            ? 84
-            : 78,
+        : mode === "remove-bg"
+          ? 90
+          : mode === "pdf"
+            ? 86
+            : mode === "resize"
+              ? 84
+              : 78,
     outputFormat:
       mode === "webp" || mode === "batch"
         ? "webp"
         : mode === "avif"
           ? "avif"
-          : mode === "heic" || mode === "metadata"
-            ? "jpeg"
-            : "original",
+          : mode === "remove-bg"
+            ? "png"
+            : mode === "heic" || mode === "metadata"
+              ? "jpeg"
+              : "original",
     resizeEnabled: mode === "resize",
     width: mode === "resize" ? 1200 : mode === "pdf" ? 1600 : 1600,
     height: mode === "resize" ? 630 : 0,
@@ -597,13 +616,20 @@ function Dropzone({
         </span>
         <div>
           <h2 className="text-base font-bold text-slate-950">
-            {isDragActive ? "Release to add images" : "Drop images here or browse"}
+            {isDragActive
+              ? "Release to add images"
+              : "Drop images here or browse"}
           </h2>
           <p className="mt-1 text-sm leading-6 text-slate-600">
             Supports {tool.supportedFormats.join(", ")} for this tool.
           </p>
         </div>
-        <Button type="button" variant="secondary" className="w-full" onClick={open}>
+        <Button
+          type="button"
+          variant="secondary"
+          className="w-full"
+          onClick={open}
+        >
           <ImageIcon className="size-4" />
           Browse images
         </Button>
@@ -745,21 +771,27 @@ function PreviewPanel({
       ? "PDF document"
       : mode === "analyzer"
         ? "Analysis report"
-        : "Optimized";
+        : mode === "remove-bg"
+          ? "Background removed"
+          : "Optimized";
 
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col justify-between gap-3 border-b border-slate-200 p-5 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-lg font-bold text-slate-950">
-            {mode === "analyzer" ? "Inspection preview" : "Before and after preview"}
+            {mode === "analyzer"
+              ? "Inspection preview"
+              : "Before and after preview"}
           </h2>
           <p className="text-sm text-slate-500">
             {mode === "pdf"
               ? "Create a single downloadable PDF from the queue."
               : mode === "analyzer"
                 ? "Generate a JSON report and readable metadata summary."
-                : "Compare visible quality before downloading."}
+                : mode === "remove-bg"
+                  ? "AI removes the background while preserving your subject."
+                  : "Compare visible quality before downloading."}
           </p>
         </div>
         {item.warning ? (
@@ -956,9 +988,7 @@ function CropEditorSurface({
     <Card className="overflow-hidden">
       <div className="flex items-center justify-between border-b border-slate-200 p-5">
         <div>
-          <h2 className="text-base font-bold text-slate-950">
-            Crop editor
-          </h2>
+          <h2 className="text-base font-bold text-slate-950">Crop editor</h2>
           <p className="text-sm text-slate-500">
             Drag the image and adjust zoom before exporting.
           </p>
@@ -1021,13 +1051,7 @@ function CropEditorSurface({
   );
 }
 
-function InspectionPanel({
-  item,
-  mode,
-}: {
-  item?: QueueItem;
-  mode: ToolMode;
-}) {
+function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
   if (mode !== "analyzer" && mode !== "metadata") {
     return null;
   }
@@ -1057,7 +1081,9 @@ function InspectionPanel({
             Metadata, dimensions, memory estimate, and optimization advice.
           </p>
         </div>
-        <Badge variant={analysis.sensitiveMetadataCount ? "warning" : "success"}>
+        <Badge
+          variant={analysis.sensitiveMetadataCount ? "warning" : "success"}
+        >
           {analysis.sensitiveMetadataCount
             ? `${analysis.sensitiveMetadataCount} sensitive`
             : "No sensitive tags"}
@@ -1074,8 +1100,14 @@ function InspectionPanel({
                 : "Unknown"
             }
           />
-          <InspectionMetric label="Megapixels" value={`${analysis.megapixels} MP`} />
-          <InspectionMetric label="Metadata tags" value={analysis.metadataCount} />
+          <InspectionMetric
+            label="Megapixels"
+            value={`${analysis.megapixels} MP`}
+          />
+          <InspectionMetric
+            label="Metadata tags"
+            value={analysis.metadataCount}
+          />
         </div>
 
         {analysis.recommendation.notes.length ? (
@@ -1085,7 +1117,10 @@ function InspectionPanel({
             </p>
             <ul className="mt-3 space-y-2">
               {analysis.recommendation.notes.map((note) => (
-                <li key={note} className="flex gap-2 text-sm leading-6 text-slate-700">
+                <li
+                  key={note}
+                  className="flex gap-2 text-sm leading-6 text-slate-700"
+                >
                   <CheckCircle2 className="mt-1 size-4 shrink-0 text-blue-600" />
                   {note}
                 </li>
@@ -1142,7 +1177,9 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
             <span className="min-w-0 truncate font-semibold text-slate-800">
               {tag.group ? `${tag.group}.${tag.name}` : tag.name}
             </span>
-            <span className="min-w-0 truncate text-slate-600">{tag.value || "-"}</span>
+            <span className="min-w-0 truncate text-slate-600">
+              {tag.value || "-"}
+            </span>
             <Badge variant={tag.sensitive ? "warning" : "muted"}>
               {tag.sensitive ? "Sensitive" : "Normal"}
             </Badge>
@@ -1153,19 +1190,9 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
   );
 }
 
-function ResultSummary({
-  item,
-  mode,
-}: {
-  item?: QueueItem;
-  mode: ToolMode;
-}) {
+function ResultSummary({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
   const result = item?.result;
-  const originalSize = result
-    ? result.originalSize
-    : item
-      ? item.file.size
-      : 0;
+  const originalSize = result ? result.originalSize : item ? item.file.size : 0;
   const dimensions = result
     ? `${result.width}x${result.height}`
     : item?.dimensions
@@ -1219,7 +1246,9 @@ function ResultSummary({
             metric.strong && "border-emerald-200 bg-emerald-50",
           )}
         >
-          <p className="text-xs font-semibold uppercase text-slate-500">{metric.label}</p>
+          <p className="text-xs font-semibold uppercase text-slate-500">
+            {metric.label}
+          </p>
           <p className="mt-2 break-words font-mono text-xl font-bold text-slate-950 sm:text-2xl">
             {metric.value}
           </p>
@@ -1249,9 +1278,10 @@ function SettingsPanel({
   hasRecommendation: boolean;
 }) {
   const formatOptions = getFormatOptions(tool.mode);
-  const showPresets = !["pdf", "analyzer"].includes(tool.mode);
+  const showPresets = !["pdf", "analyzer", "remove-bg"].includes(tool.mode);
   const showQuality = tool.mode !== "analyzer";
-  const showOutput = formatOptions.length > 0 && tool.mode !== "pdf" && tool.mode !== "analyzer";
+  const showOutput =
+    formatOptions.length > 0 && tool.mode !== "pdf" && tool.mode !== "analyzer";
   const canResize = capabilities.canResize || tool.mode === "pdf";
 
   return (
@@ -1288,7 +1318,9 @@ function SettingsPanel({
                 <Button
                   key={preset.id}
                   type="button"
-                  variant={settings.preset === preset.id ? "default" : "secondary"}
+                  variant={
+                    settings.preset === preset.id ? "default" : "secondary"
+                  }
                   size="sm"
                   onClick={() => onPreset(preset.id)}
                   className="justify-start px-3 text-left"
@@ -1398,7 +1430,9 @@ function SettingsPanel({
           </>
         ) : null}
 
-        {hasRecommendation && tool.mode !== "pdf" && tool.mode !== "analyzer" ? (
+        {hasRecommendation &&
+        tool.mode !== "pdf" &&
+        tool.mode !== "analyzer" ? (
           <Button
             type="button"
             variant="accent"
@@ -1432,7 +1466,8 @@ function PdfSettings({
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
-              pdfPageSize: event.target.value as ProcessingSettings["pdfPageSize"],
+              pdfPageSize: event.target
+                .value as ProcessingSettings["pdfPageSize"],
             }))
           }
         >
@@ -1449,7 +1484,8 @@ function PdfSettings({
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
-              pdfOrientation: event.target.value as ProcessingSettings["pdfOrientation"],
+              pdfOrientation: event.target
+                .value as ProcessingSettings["pdfOrientation"],
             }))
           }
         >
@@ -1709,7 +1745,10 @@ function ActionPanel({
             disabled={!selectedReady}
             onClick={() =>
               selectedReady?.result &&
-              downloadBlob(selectedReady.result.blob, selectedReady.result.filename)
+              downloadBlob(
+                selectedReady.result.blob,
+                selectedReady.result.filename,
+              )
             }
           >
             <Download className="size-4" />
@@ -1764,18 +1803,21 @@ function InlineMessage({
   type: "error" | "warning" | "info";
   children: React.ReactNode;
 }) {
-  const Icon = type === "error" ? XCircle : type === "warning" ? AlertTriangle : Info;
+  const Icon =
+    type === "error" ? XCircle : type === "warning" ? AlertTriangle : Info;
   const styles = {
-    error:
-      "border-red-200 bg-red-50 text-red-800",
-    warning:
-      "border-amber-200 bg-amber-50 text-amber-800",
-    info:
-      "border-blue-200 bg-blue-50 text-blue-800",
+    error: "border-red-200 bg-red-50 text-red-800",
+    warning: "border-amber-200 bg-amber-50 text-amber-800",
+    info: "border-blue-200 bg-blue-50 text-blue-800",
   };
 
   return (
-    <div className={cn("flex gap-3 rounded-xl border p-3 text-sm leading-6", styles[type])}>
+    <div
+      className={cn(
+        "flex gap-3 rounded-xl border p-3 text-sm leading-6",
+        styles[type],
+      )}
+    >
       <Icon className="mt-0.5 size-4 shrink-0" />
       <span>{children}</span>
     </div>
@@ -1804,7 +1846,9 @@ function getDropzoneAccept(tool: ToolDefinition): Accept {
 }
 
 function validateFileForTool(file: File, tool: ToolDefinition) {
-  const valid = tool.supportedFormats.some((format) => matchesFormat(file, format));
+  const valid = tool.supportedFormats.some((format) =>
+    matchesFormat(file, format),
+  );
 
   if (valid) {
     return undefined;
@@ -1821,13 +1865,20 @@ function matchesFormat(file: File, format: string) {
   if (normalized === "jpg" || normalized === "jpeg") {
     return type === "image/jpeg" || /\.(jpe?g)$/i.test(name);
   }
-  if (normalized === "png") return type === "image/png" || name.endsWith(".png");
-  if (normalized === "webp") return type === "image/webp" || name.endsWith(".webp");
-  if (normalized === "avif") return type === "image/avif" || name.endsWith(".avif");
-  if (normalized === "gif") return type === "image/gif" || name.endsWith(".gif");
-  if (normalized === "svg") return type === "image/svg+xml" || name.endsWith(".svg");
-  if (normalized === "heic") return type === "image/heic" || name.endsWith(".heic");
-  if (normalized === "heif") return type === "image/heif" || name.endsWith(".heif");
+  if (normalized === "png")
+    return type === "image/png" || name.endsWith(".png");
+  if (normalized === "webp")
+    return type === "image/webp" || name.endsWith(".webp");
+  if (normalized === "avif")
+    return type === "image/avif" || name.endsWith(".avif");
+  if (normalized === "gif")
+    return type === "image/gif" || name.endsWith(".gif");
+  if (normalized === "svg")
+    return type === "image/svg+xml" || name.endsWith(".svg");
+  if (normalized === "heic")
+    return type === "image/heic" || name.endsWith(".heic");
+  if (normalized === "heif")
+    return type === "image/heif" || name.endsWith(".heif");
 
   return false;
 }
@@ -1843,6 +1894,12 @@ function canRenderPreview(file: File) {
 function getFormatOptions(mode: ToolMode): FormatOption[] {
   if (mode === "webp") return [{ value: "webp", label: "WebP" }];
   if (mode === "avif") return [{ value: "avif", label: "AVIF" }];
+  if (mode === "remove-bg") {
+    return [
+      { value: "png", label: "PNG (transparent)" },
+      { value: "webp", label: "WebP (transparent)" },
+    ];
+  }
   if (mode === "heic") {
     return [
       { value: "jpeg", label: "JPG" },
@@ -1903,7 +1960,10 @@ function formatRatioLabel(ratio: number) {
 }
 
 function getActionCopy(tool: ToolDefinition) {
-  const labels: Record<ToolMode, { primaryLabel: string; processingLabel: string; singleLabel: string }> = {
+  const labels: Record<
+    ToolMode,
+    { primaryLabel: string; processingLabel: string; singleLabel: string }
+  > = {
     compress: {
       primaryLabel: tool.primaryAction,
       processingLabel: "Compressing",
@@ -1928,6 +1988,11 @@ function getActionCopy(tool: ToolDefinition) {
       primaryLabel: "Crop image",
       processingLabel: "Cropping",
       singleLabel: "Image",
+    },
+    "remove-bg": {
+      primaryLabel: "Remove background",
+      processingLabel: "Removing background",
+      singleLabel: "Cutout",
     },
     metadata: {
       primaryLabel: "Scan and clean metadata",
@@ -1981,6 +2046,14 @@ function getPrivacyCopy(mode: ToolMode) {
       title: "Local inspection",
       description:
         "Analysis runs in the browser and creates a downloadable JSON report without uploading your images to an API route.",
+    };
+  }
+
+  if (mode === "remove-bg") {
+    return {
+      title: "Free AI background removal",
+      description:
+        "Background removal uses an open-source model loaded in your browser. Your image stays local while the model runs client-side inference.",
     };
   }
 

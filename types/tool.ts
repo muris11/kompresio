@@ -4,6 +4,7 @@ export type ToolMode =
   | "avif"
   | "resize"
   | "crop"
+  | "remove-bg"
   | "metadata"
   | "batch"
   | "analyzer"
@@ -21,7 +22,13 @@ export type ToolDefinition = {
   mode: ToolMode;
   primaryAction: string;
   primaryKeyword: string;
-  category: "Compression" | "Conversion" | "Resize" | "Privacy" | "Batch" | "Utility";
+  category:
+    | "Compression"
+    | "Conversion"
+    | "Resize"
+    | "Privacy"
+    | "Batch"
+    | "Utility";
   supportedFormats: string[];
   benefits: string[];
   steps: string[];

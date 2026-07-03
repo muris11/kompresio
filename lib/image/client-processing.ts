@@ -1,7 +1,7 @@
 "use client";
 
-import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import JSZip from "jszip";
 
 import {
   buildRecommendation,
@@ -81,7 +81,9 @@ export type ImageInspection = {
   recommendation: ReturnType<typeof buildRecommendation>;
 };
 
-export function getFormatFromFile(file: File): Exclude<OutputFormat, "original"> {
+export function getFormatFromFile(
+  file: File,
+): Exclude<OutputFormat, "original"> {
   if (file.type.includes("png")) return "png";
   if (file.type.includes("webp")) return "webp";
   if (file.type.includes("avif")) return "avif";
@@ -89,7 +91,10 @@ export function getFormatFromFile(file: File): Exclude<OutputFormat, "original">
 }
 
 export function resolveOutputFormat(file: File, settings: ProcessingSettings) {
-  const primaryOutput = resolvePrimaryOutput(settings.mode, settings.outputFormat);
+  const primaryOutput = resolvePrimaryOutput(
+    settings.mode,
+    settings.outputFormat,
+  );
   if (primaryOutput === "original") {
     return getFormatFromFile(file);
   }
@@ -105,7 +110,9 @@ export function extensionForFormat(format: Exclude<OutputFormat, "original">) {
   return format === "jpeg" ? "jpg" : format;
 }
 
-export async function readImageDimensions(file: File): Promise<ImageDimensions> {
+export async function readImageDimensions(
+  file: File,
+): Promise<ImageDimensions> {
   const source = await createImageBitmap(file);
   const dimensions = {
     width: source.width,
@@ -119,6 +126,10 @@ export async function processImage(
   file: File,
   settings: ProcessingSettings,
 ): Promise<ProcessedResult> {
+  if (settings.mode === "remove-bg") {
+    return removeBackgroundFromImage(file, settings);
+  }
+
   if (settings.mode === "heic" || isHeicFile(file)) {
     return convertHeicToImage(file, settings);
   }
@@ -129,8 +140,12 @@ export async function processImage(
   const quality = Math.max(0.01, Math.min(1, settings.quality / 100));
   const cropArea =
     settings.mode === "crop"
-      ? settings.cropArea ??
-        calculateCenteredCrop(bitmap.width, bitmap.height, settings.cropAspectRatio)
+      ? (settings.cropArea ??
+        calculateCenteredCrop(
+          bitmap.width,
+          bitmap.height,
+          settings.cropAspectRatio,
+        ))
       : undefined;
   const sourceSize = cropArea
     ? { width: cropArea.width, height: cropArea.height }
@@ -178,7 +193,8 @@ export async function processImage(
   const url = URL.createObjectURL(blob);
   const outputSize = blob.size;
   const savedBytes = Math.max(0, file.size - outputSize);
-  const savedPercent = file.size > 0 ? Math.round((savedBytes / file.size) * 100) : 0;
+  const savedPercent =
+    file.size > 0 ? Math.round((savedBytes / file.size) * 100) : 0;
 
   return {
     kind: "image",
@@ -189,6 +205,71 @@ export async function processImage(
     outputSize,
     savedBytes,
     savedPercent,
+    width: canvas.width,
+    height: canvas.height,
+    format: outputFormat.toUpperCase(),
+    processingTime: Math.round(performance.now() - startedAt),
+  };
+}
+
+async function removeBackgroundFromImage(
+  file: File,
+  settings: ProcessingSettings,
+): Promise<ProcessedResult> {
+  const startedAt = performance.now();
+  const outputFormat: Exclude<OutputFormat, "original"> =
+    settings.outputFormat === "webp" ? "webp" : "png";
+  const quality = Math.max(0.01, Math.min(1, settings.quality / 100));
+  const { removeBackground } = await import("@imgly/background-removal");
+
+  const blob = await removeBackground(file, {
+    model: "isnet_fp16",
+    output: {
+      format: mimeForFormat(outputFormat),
+      quality,
+    },
+  });
+
+  const bitmap = await createImageBitmap(blob);
+  const targetSize = getTargetDimensions(
+    { width: bitmap.width, height: bitmap.height },
+    settings,
+  );
+  const canvas = document.createElement("canvas");
+  canvas.width = targetSize.width;
+  canvas.height = targetSize.height;
+
+  const context = canvas.getContext("2d", { alpha: true });
+
+  if (!context) {
+    bitmap.close();
+    throw new Error("Canvas is not available in this browser.");
+  }
+
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = "high";
+  context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const outputBlob = await canvasToBlob(
+    canvas,
+    mimeForFormat(outputFormat),
+    quality,
+  );
+  const outputUrl = URL.createObjectURL(outputBlob);
+  const outputSize = outputBlob.size;
+  const savedBytes = Math.max(0, file.size - outputSize);
+
+  return {
+    kind: "image",
+    blob: outputBlob,
+    url: outputUrl,
+    filename: `${sanitizeFilename(file.name)}-no-bg-kompresio.${extensionForFormat(outputFormat)}`,
+    originalSize: file.size,
+    outputSize,
+    savedBytes,
+    savedPercent:
+      file.size > 0 ? Math.round((savedBytes / file.size) * 100) : 0,
     width: canvas.width,
     height: canvas.height,
     format: outputFormat.toUpperCase(),
@@ -245,7 +326,9 @@ function canvasToBlob(
           return;
         }
 
-        reject(new Error(`${mimeType} export is not supported in this browser.`));
+        reject(
+          new Error(`${mimeType} export is not supported in this browser.`),
+        );
       },
       mimeType,
       quality,
@@ -302,7 +385,8 @@ export async function convertHeicToImage(
     originalSize: file.size,
     outputSize,
     savedBytes,
-    savedPercent: file.size > 0 ? Math.round((savedBytes / file.size) * 100) : 0,
+    savedPercent:
+      file.size > 0 ? Math.round((savedBytes / file.size) * 100) : 0,
     width: canvas.width,
     height: canvas.height,
     format: outputFormat.toUpperCase(),
@@ -314,11 +398,15 @@ export async function inspectImage(
   file: File,
   dimensions?: ImageDimensions,
 ): Promise<ImageInspection> {
-  const resolvedDimensions = dimensions || (isHeicFile(file) ? undefined : await readImageDimensions(file));
+  const resolvedDimensions =
+    dimensions ||
+    (isHeicFile(file) ? undefined : await readImageDimensions(file));
   const width = resolvedDimensions?.width ?? 0;
   const height = resolvedDimensions?.height ?? 0;
   const metadataTags = await readMetadataTags(file);
-  const sensitiveMetadataCount = metadataTags.filter((tag) => tag.sensitive).length;
+  const sensitiveMetadataCount = metadataTags.filter(
+    (tag) => tag.sensitive,
+  ).length;
 
   return {
     filename: file.name,
@@ -327,9 +415,11 @@ export async function inspectImage(
     fileSizeReadable: formatBytes(file.size),
     width,
     height,
-    megapixels: width && height ? Number(((width * height) / 1_000_000).toFixed(2)) : 0,
+    megapixels:
+      width && height ? Number(((width * height) / 1_000_000).toFixed(2)) : 0,
     aspectRatio: width && height ? `${width}:${height}` : "Unknown",
-    estimatedMemory: width && height ? formatBytes(width * height * 4) : "Unknown",
+    estimatedMemory:
+      width && height ? formatBytes(width * height * 4) : "Unknown",
     metadataCount: metadataTags.length,
     sensitiveMetadataCount,
     metadataTags,
@@ -459,7 +549,10 @@ async function imageToJpegDataUrl(
   bitmap.close();
 
   return {
-    dataUrl: canvas.toDataURL("image/jpeg", Math.max(0.01, Math.min(1, settings.quality / 100))),
+    dataUrl: canvas.toDataURL(
+      "image/jpeg",
+      Math.max(0.01, Math.min(1, settings.quality / 100)),
+    ),
     width: canvas.width,
     height: canvas.height,
   };
@@ -498,7 +591,11 @@ function flattenMetadata(input: unknown, group?: string): MetadataTag[] {
       continue;
     }
 
-    if (value && typeof value === "object" && ("description" in value || "value" in value)) {
+    if (
+      value &&
+      typeof value === "object" &&
+      ("description" in value || "value" in value)
+    ) {
       const tag = value as { description?: unknown; value?: unknown };
       tags.push({
         name: key,
@@ -539,7 +636,10 @@ function isHeicFile(file: File) {
   );
 }
 
-export function buildQueueRecommendation(file: File, dimensions?: ImageDimensions) {
+export function buildQueueRecommendation(
+  file: File,
+  dimensions?: ImageDimensions,
+) {
   const width = dimensions?.width ?? 0;
   const height = dimensions?.height ?? 0;
 
@@ -581,7 +681,9 @@ export function summaryRowsToCsv(rows: Array<Record<string, string | number>>) {
 
   return [
     headers.map(escapeCell).join(","),
-    ...rows.map((row) => headers.map((header) => escapeCell(row[header])).join(",")),
+    ...rows.map((row) =>
+      headers.map((header) => escapeCell(row[header])).join(","),
+    ),
   ].join("\n");
 }
 
@@ -589,7 +691,9 @@ export async function downloadZip(
   items: Array<{ file: File; result: ProcessedResult }>,
 ) {
   const zip = new JSZip();
-  const summaryRows = items.map((item) => resultToSummaryRow(item.file, item.result));
+  const summaryRows = items.map((item) =>
+    resultToSummaryRow(item.file, item.result),
+  );
 
   for (const item of items) {
     const folder = item.result.format.toLowerCase();
