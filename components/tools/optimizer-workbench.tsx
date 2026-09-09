@@ -540,9 +540,20 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
     await downloadZip(readyItems);
   }
 
+  const currentStep = items.length === 0 ? 1 : completedItems.length === 0 ? 2 : 3;
+
   return (
-    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)_360px]">
+    <section
+      id="kompresio-workbench"
+      className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8"
+    >
+      <WorkbenchSteps
+        tool={tool}
+        currentStep={currentStep}
+        hasFiles={items.length > 0}
+        completedCount={completedItems.length}
+      />
+      <div className="mt-5 grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)_360px]">
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Dropzone
             tool={tool}
@@ -563,6 +574,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
           <PreviewPanel
             item={selectedItem}
             mode={tool.mode}
+            tool={tool}
             reduceMotion={Boolean(reduceMotion)}
           />
           {tool.mode === "crop" ? (
@@ -573,8 +585,8 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             />
           ) : null}
           <InspectionPanel item={selectedItem} mode={tool.mode} />
-          <ResultSummary item={selectedItem} mode={tool.mode} />
-          <PrivacyPanel mode={tool.mode} />
+          <ResultSummary item={selectedItem} mode={tool.mode} tool={tool} />
+          <PrivacyPanel mode={tool.mode} tool={tool} />
         </main>
 
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
@@ -605,6 +617,87 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
         </aside>
       </div>
     </section>
+  );
+}
+
+function WorkbenchSteps({
+  tool,
+  currentStep,
+  hasFiles,
+  completedCount,
+}: {
+  tool: ToolDefinition;
+  currentStep: number;
+  hasFiles: boolean;
+  completedCount: number;
+}) {
+  const steps = [
+    {
+      number: 1,
+      title: "Upload gambar",
+      description:
+        hasFiles === false
+          ? `Seret ${tool.supportedFormats.slice(0, 3).join(", ")} ke kolom kiri atau klik Browse`
+          : `${hasFiles ? "File masuk antrean" : ""} — lanjut ke langkah 2`,
+    },
+    {
+      number: 2,
+      title: "Atur & tekan proses",
+      description: `Default Balanced cukup. Lalu klik "${tool.primaryAction}"`,
+    },
+    {
+      number: 3,
+      title: "Download hasil",
+      description:
+        completedCount > 0
+          ? `${completedCount} hasil siap — klik Single atau ZIP`
+          : "Hasil + tombol download muncul di sini",
+    },
+  ];
+
+  return (
+    <ol className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.05)] sm:grid-cols-3">
+      {steps.map((step) => {
+        const active = currentStep === step.number;
+        const done =
+          (step.number === 1 && hasFiles) ||
+          (step.number === 2 && completedCount > 0);
+        return (
+          <li
+            key={step.number}
+            className={cn(
+              "flex gap-3 rounded-xl border p-3",
+              active
+                ? "border-blue-500 bg-blue-50/60"
+                : done
+                  ? "border-emerald-200 bg-emerald-50/60"
+                  : "border-slate-200 bg-slate-50",
+            )}
+          >
+            <span
+              className={cn(
+                "grid size-8 shrink-0 place-items-center rounded-full font-mono text-sm font-bold text-white",
+                active
+                  ? "bg-blue-600"
+                  : done
+                    ? "bg-emerald-600"
+                    : "bg-slate-400",
+              )}
+            >
+              {step.number}
+            </span>
+            <span>
+              <span className="block text-sm font-bold text-slate-950">
+                {step.title}
+              </span>
+              <span className="block text-xs leading-5 text-slate-600">
+                {step.description}
+              </span>
+            </span>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -661,8 +754,9 @@ function Dropzone({
   return (
     <Card
       {...getRootProps()}
+      id="kompresio-dropzone"
       className={cn(
-        "border-dashed p-5 transition",
+        "scroll-mt-24 border-dashed p-5 transition",
         isDragActive
           ? "border-blue-500 bg-blue-50"
           : "hover:border-blue-300 hover:bg-blue-50/40",
@@ -674,13 +768,17 @@ function Dropzone({
           <UploadCloud className="size-6" aria-hidden="true" />
         </span>
         <div>
-          <h2 className="text-base font-bold text-slate-950">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+            Langkah 1 — Upload
+          </p>
+          <h2 className="mt-1 text-base font-bold text-slate-950">
             {isDragActive
-              ? "Release to add images"
-              : "Drop images here or browse"}
+              ? "Lepaskan untuk tambah gambar"
+              : "Seret gambar ke sini atau browse"}
           </h2>
           <p className="mt-1 text-sm leading-6 text-slate-600">
-            Supports {tool.supportedFormats.join(", ")} for this tool.
+            Khusus {tool.name}: {tool.supportedFormats.join(", ")}. Maks 20 MB
+            per file, maks 50 file.
           </p>
         </div>
         <Button
@@ -720,7 +818,8 @@ function QueueList({
       </div>
       {items.length === 0 ? (
         <div className="p-5 text-sm leading-6 text-slate-600">
-          Upload images to start a batch queue.
+          Langkah 1: upload dulu — antrean kosong. Setelah upload, atur di
+          Langkah 2 lalu tekan tombol proses di Langkah 3.
         </div>
       ) : (
         <div className="max-h-[420px] overflow-y-auto p-2">
@@ -800,10 +899,12 @@ function QueueList({
 function PreviewPanel({
   item,
   mode,
+  tool,
   reduceMotion,
 }: {
   item?: QueueItem;
   mode: ToolMode;
+  tool: ToolDefinition;
   reduceMotion: boolean;
 }) {
   if (!item) {
@@ -813,12 +914,16 @@ function PreviewPanel({
           <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-slate-100 text-slate-500">
             <Gauge className="size-7" />
           </span>
-          <h2 className="mt-5 text-xl font-bold text-slate-950">
-            Ready to optimize
+          <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+            Langkah 1 — Belum ada file
+          </p>
+          <h2 className="mt-2 text-xl font-bold text-slate-950">
+            Upload untuk mulai {tool.name.toLowerCase()}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Upload images to preview, analyze, convert, clean metadata, crop, or
-            create a PDF directly in the browser.
+            Urutan: 1) Upload {tool.supportedFormats.slice(0, 3).join(", ")},
+            2) biarkan preset Balanced, 3) klik &quot;{tool.primaryAction}
+            &quot; lalu download. Semua diproses lokal di browser.
           </p>
         </div>
       </Card>
@@ -1249,14 +1354,17 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
   );
 }
 
-function ResultSummary({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
+function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode; tool: ToolDefinition }) {
   const result = item?.result;
+  const noFile = !item;
   const originalSize = result ? result.originalSize : item ? item.file.size : 0;
   const dimensions = result
     ? `${result.width}x${result.height}`
     : item?.dimensions
       ? `${item.dimensions.width}x${item.dimensions.height}`
-      : "-";
+      : noFile
+        ? `Muncul setelah klik "${tool.primaryAction}"`
+        : "-";
   const savedValue =
     result?.kind === "pdf"
       ? `${result.pageCount || 1} page${result.pageCount === 1 ? "" : "s"}`
@@ -1350,6 +1458,9 @@ function SettingsPanel({
           <Settings2 className="size-5" />
         </span>
         <div>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+            Langkah 2 — Atur
+          </p>
           <h2 className="text-base font-bold text-slate-950">
             {tool.mode === "pdf"
               ? "PDF settings"
@@ -1357,7 +1468,9 @@ function SettingsPanel({
                 ? "Analyzer settings"
                 : "Export settings"}
           </h2>
-          <p className="text-xs text-slate-500">{tool.name}</p>
+          <p className="text-xs text-slate-500">
+            {tool.name} — default Balanced cukup, ubah jika perlu
+          </p>
         </div>
       </div>
 
@@ -1781,13 +1894,24 @@ function ActionPanel({
 
   return (
     <Card className="p-5">
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+        Langkah 3 — Proses & download
+      </p>
       <div className="space-y-3">
         <Button
           type="button"
           className="w-full"
           size="lg"
-          onClick={onProcess}
-          disabled={items.length === 0 || isProcessing}
+          onClick={() => {
+            if (items.length === 0) {
+              document
+                .getElementById("kompresio-dropzone")
+                ?.scrollIntoView({ behavior: "smooth", block: "center" });
+              return;
+            }
+            void onProcess();
+          }}
+          disabled={isProcessing}
         >
           {isProcessing ? (
             <RefreshCcw className="size-4 animate-spin" />
@@ -1826,17 +1950,20 @@ function ActionPanel({
         </div>
       </div>
       <p className="mt-4 text-sm leading-6 text-slate-600">
-        {completedCount} result{completedCount === 1 ? "" : "s"} ready.{" "}
-        {capabilities.canZip
-          ? "ZIP export includes processed files, summary.json, and summary.csv."
-          : "This route creates one primary document output."}
+        {items.length === 0
+          ? `Langkah 1 dulu: upload gambar, lalu klik "${copy.primaryLabel}".`
+          : `${completedCount} result${completedCount === 1 ? "" : "s"} ready. `}{" "}
+        {items.length > 0 &&
+          (capabilities.canZip
+            ? "ZIP export includes processed files, summary.json, and summary.csv."
+            : "This route creates one primary document output.")}
       </p>
     </Card>
   );
 }
 
-function PrivacyPanel({ mode }: { mode: ToolDefinition["mode"] }) {
-  const copy = getPrivacyCopy(mode);
+function PrivacyPanel({ mode, tool }: { mode: ToolDefinition["mode"]; tool: ToolDefinition }) {
+  const copy = getPrivacyCopy(mode, tool);
 
   return (
     <Card className="p-5">
@@ -2083,7 +2210,7 @@ function getActionCopy(tool: ToolDefinition) {
   return labels[tool.mode];
 }
 
-function getPrivacyCopy(mode: ToolMode) {
+function getPrivacyCopy(mode: ToolMode, tool?: ToolDefinition) {
   if (mode === "metadata") {
     return {
       title: "Metadata cleaner",
@@ -2118,7 +2245,8 @@ function getPrivacyCopy(mode: ToolMode) {
 
   return {
     title: "Your images stay on your device",
-    description:
-      "Core optimization runs in the browser. Files are not sent to an API route for MVP compression, conversion, resize, crop, preview, or ZIP export.",
+    description: tool
+      ? `${tool.name} diproses lokal di browser: ${tool.supportedFormats.slice(0, 4).join(", ")} tidak dikirim ke server untuk kompresi, pratinjau, maupun ZIP.`
+      : "Core optimization runs in the browser. Files are not sent to an API route for MVP compression, conversion, resize, crop, preview, or ZIP export.",
   };
 }

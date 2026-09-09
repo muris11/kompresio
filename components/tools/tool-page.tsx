@@ -89,25 +89,21 @@ function ToolHero({ tool }: { tool: ToolDefinition }) {
 
           <Card className="w-full max-w-full overflow-hidden p-5">
             <h2 className="text-base font-bold text-slate-950">
-              Smart recommendation example
+              Cara pakai: 3 langkah
             </h2>
             <div className="mt-4 space-y-3 text-sm text-slate-600">
-              {[
-                "Format: WebP",
-                "Quality: 78",
-                "Resize width: 1600px",
-                "Remove metadata: Yes",
-                "Estimated saving: 72%",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-2">
-                  <CheckCircle2 className="size-4 text-emerald-500" />
-                  {item}
+              {tool.steps.slice(0, 3).map((step, index) => (
+                <div key={step} className="flex items-center gap-2">
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-blue-600 font-mono text-xs font-bold text-white">
+                    {index + 1}
+                  </span>
+                  <span className="leading-6">{step}</span>
                 </div>
               ))}
             </div>
             <Button asChild className="mt-5 w-full min-w-0 px-2 text-xs min-[360px]:text-sm">
-              <a href="#tool-content">
-                Read how it works
+              <a href="#kompresio-workbench">
+                Mulai langkah 1 di bawah
                 <ArrowRight className="size-4" />
               </a>
             </Button>
