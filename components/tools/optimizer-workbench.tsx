@@ -634,24 +634,24 @@ function WorkbenchSteps({
   const steps = [
     {
       number: 1,
-      title: "Upload gambar",
+      title: "Upload images",
       description:
         hasFiles === false
-          ? `Seret ${tool.supportedFormats.slice(0, 3).join(", ")} ke kolom kiri atau klik Browse`
-          : `${hasFiles ? "File masuk antrean" : ""} — lanjut ke langkah 2`,
+          ? `Drag ${tool.supportedFormats.slice(0, 3).join(", ")} to the left panel or click Browse`
+          : "Files queued — continue to step 2",
     },
     {
       number: 2,
-      title: "Atur & tekan proses",
-      description: `Default Balanced cukup. Lalu klik "${tool.primaryAction}"`,
+      title: "Adjust and process",
+      description: `Balanced default works for most files. Then click "${tool.primaryAction}"`,
     },
     {
       number: 3,
-      title: "Download hasil",
+      title: "Download results",
       description:
         completedCount > 0
-          ? `${completedCount} hasil siap — klik Single atau ZIP`
-          : "Hasil + tombol download muncul di sini",
+          ? `${completedCount} ready — click Single or ZIP`
+          : "Results and download buttons appear here",
     },
   ];
 
@@ -769,16 +769,16 @@ function Dropzone({
         </span>
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
-            Langkah 1 — Upload
+            Step 1 — Upload
           </p>
           <h2 className="mt-1 text-base font-bold text-slate-950">
             {isDragActive
-              ? "Lepaskan untuk tambah gambar"
-              : "Seret gambar ke sini atau browse"}
+              ? "Release to add images"
+              : "Drag images here or browse"}
           </h2>
           <p className="mt-1 text-sm leading-6 text-slate-600">
-            Khusus {tool.name}: {tool.supportedFormats.join(", ")}. Maks 20 MB
-            per file, maks 50 file.
+            For {tool.name}: {tool.supportedFormats.join(", ")}. Max 20 MB
+            per file, up to 50 files.
           </p>
         </div>
         <Button
@@ -818,8 +818,8 @@ function QueueList({
       </div>
       {items.length === 0 ? (
         <div className="p-5 text-sm leading-6 text-slate-600">
-          Langkah 1: upload dulu — antrean kosong. Setelah upload, atur di
-          Langkah 2 lalu tekan tombol proses di Langkah 3.
+          Step 1: upload first — the queue is empty. After upload, adjust in
+          step 2, then press the process button in step 3.
         </div>
       ) : (
         <div className="max-h-[420px] overflow-y-auto p-2">
@@ -915,15 +915,15 @@ function PreviewPanel({
             <Gauge className="size-7" />
           </span>
           <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
-            Langkah 1 — Belum ada file
+            Step 1 — No files yet
           </p>
           <h2 className="mt-2 text-xl font-bold text-slate-950">
-            Upload untuk mulai {tool.name.toLowerCase()}
+            Upload to start {tool.name.toLowerCase()}
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Urutan: 1) Upload {tool.supportedFormats.slice(0, 3).join(", ")},
-            2) biarkan preset Balanced, 3) klik &quot;{tool.primaryAction}
-            &quot; lalu download. Semua diproses lokal di browser.
+            Steps: 1) Upload {tool.supportedFormats.slice(0, 3).join(", ")},
+            2) keep the Balanced preset, 3) click &quot;{tool.primaryAction}
+            &quot; then download. Everything runs locally in your browser.
           </p>
         </div>
       </Card>
@@ -1363,7 +1363,7 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
     : item?.dimensions
       ? `${item.dimensions.width}x${item.dimensions.height}`
       : noFile
-        ? `Muncul setelah klik "${tool.primaryAction}"`
+        ? `Appears after clicking "${tool.primaryAction}"`
         : "-";
   const savedValue =
     result?.kind === "pdf"
@@ -1459,7 +1459,7 @@ function SettingsPanel({
         </span>
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
-            Langkah 2 — Atur
+            Step 2 — Settings
           </p>
           <h2 className="text-base font-bold text-slate-950">
             {tool.mode === "pdf"
@@ -1469,7 +1469,7 @@ function SettingsPanel({
                 : "Export settings"}
           </h2>
           <p className="text-xs text-slate-500">
-            {tool.name} — default Balanced cukup, ubah jika perlu
+            {tool.name} — Balanced default is enough, change only if needed
           </p>
         </div>
       </div>
@@ -1895,7 +1895,7 @@ function ActionPanel({
   return (
     <Card className="p-5">
       <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
-        Langkah 3 — Proses & download
+        Step 3 — Process and download
       </p>
       <div className="space-y-3">
         <Button
@@ -1951,7 +1951,7 @@ function ActionPanel({
       </div>
       <p className="mt-4 text-sm leading-6 text-slate-600">
         {items.length === 0
-          ? `Langkah 1 dulu: upload gambar, lalu klik "${copy.primaryLabel}".`
+          ? `Step 1 first: upload images, then click "${copy.primaryLabel}".`
           : `${completedCount} result${completedCount === 1 ? "" : "s"} ready. `}{" "}
         {items.length > 0 &&
           (capabilities.canZip
@@ -2246,7 +2246,7 @@ function getPrivacyCopy(mode: ToolMode, tool?: ToolDefinition) {
   return {
     title: "Your images stay on your device",
     description: tool
-      ? `${tool.name} diproses lokal di browser: ${tool.supportedFormats.slice(0, 4).join(", ")} tidak dikirim ke server untuk kompresi, pratinjau, maupun ZIP.`
+      ? `${tool.name} runs locally in your browser: ${tool.supportedFormats.slice(0, 4).join(", ")} never leave your device for compression, preview, or ZIP export.`
       : "Core optimization runs in the browser. Files are not sent to an API route for MVP compression, conversion, resize, crop, preview, or ZIP export.",
   };
 }
