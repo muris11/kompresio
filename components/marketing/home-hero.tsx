@@ -19,30 +19,29 @@ const trustBadges = ["Browser-based", "Batch ready", "WebP and AVIF", "No sign-u
 export function HomeHero() {
   return (
     <section className="relative overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(6,182,212,0.18),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-      <div className="mx-auto grid min-h-[calc(100svh-72px)] max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20">
+      <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20 lg:min-h-[calc(100svh-80px)]">
         <Reveal>
           <div className="min-w-0">
             <Badge variant="success">
               <Lock className="size-3.5" />
               Privacy-first image optimization
             </Badge>
-            <h1 className="mt-6 max-w-3xl break-words text-4xl font-extrabold leading-[1.08] tracking-normal text-slate-950 sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 max-w-3xl break-words text-4xl font-extrabold leading-[1.08] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
               Compress and convert images in seconds
             </h1>
             <p className="mt-6 max-w-2xl break-words text-base leading-8 text-slate-600 sm:text-lg">
               Optimize JPG, PNG, WebP, AVIF, and HEIC images directly in your
-              browser. Kompresio is fast, private, and built for websites,
-              documents, marketplaces, and social media.
+              browser. No sign-up. Files stay on your device.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button asChild size="lg" className="w-full sm:w-auto min-h-12">
                 <Link href="/compress-image">
-                  Start optimizing
+                  Start optimizing — free
                   <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="secondary">
-                <Link href="/tools">Explore all tools</Link>
+              <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto min-h-12">
+                <Link href="/tools">Explore all 14 tools</Link>
               </Button>
             </div>
             <div className="mt-8 flex flex-wrap gap-2">
@@ -67,7 +66,11 @@ export function HomeHero() {
 function HeroUploadPanel() {
   return (
     <Card className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl border-slate-200/80 bg-white/86 p-4 backdrop-blur sm:p-5">
-      <div className="rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-6">
+      <div className="flex items-center justify-between gap-2">
+        <Badge variant="muted">Example preview</Badge>
+        <span className="text-xs font-semibold text-slate-500">1 Upload → 2 Convert → 3 Download</span>
+      </div>
+      <div className="mt-3 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-6">
         <div className="grid place-items-center text-center">
           <span className="grid size-14 place-items-center rounded-2xl bg-white text-blue-600 shadow-[0_12px_30px_rgba(37,99,235,0.16)]">
             <UploadCloud className="size-7" />
@@ -109,13 +112,17 @@ function HeroUploadPanel() {
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
-        <Button variant="secondary" className="min-w-0 px-2 text-xs min-[360px]:text-sm">
-          <Download className="size-4" />
-          Single file
+        <Button asChild variant="secondary" className="min-w-0 px-2 text-xs min-[360px]:text-sm min-h-11">
+          <Link href="/compress-image">
+            <Download className="size-4" />
+            Try single file
+          </Link>
         </Button>
-        <Button variant="accent" className="min-w-0 px-2 text-xs min-[360px]:text-sm">
-          <FileArchive className="size-4" />
-          ZIP export
+        <Button asChild variant="accent" className="min-w-0 px-2 text-xs min-[360px]:text-sm min-h-11">
+          <Link href="/batch-converter">
+            <FileArchive className="size-4" />
+            Try batch ZIP
+          </Link>
         </Button>
       </div>
     </Card>

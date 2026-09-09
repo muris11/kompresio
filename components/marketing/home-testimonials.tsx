@@ -1,4 +1,4 @@
-import { Quote } from "lucide-react";
+import { Quote, Star } from "lucide-react";
 
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { Reveal } from "@/components/shared/reveal";
@@ -43,7 +43,14 @@ export function Testimonials() {
         {testimonials.map((t, i) => (
           <Reveal key={t.name} delay={i * 0.06}>
             <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6">
-              <Quote className="size-6 text-blue-200" aria-hidden="true" />
+              <div className="flex items-center justify-between">
+                <Quote className="size-6 text-blue-200" aria-hidden="true" />
+                <span className="flex gap-0.5" aria-label="5 out of 5 stars">
+                  {Array.from({ length: 5 }).map((_, starIndex) => (
+                    <Star key={starIndex} className="size-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </span>
+              </div>
               <blockquote className="mt-4 flex-1 text-sm leading-7 text-slate-600">
                 {t.quote}
               </blockquote>

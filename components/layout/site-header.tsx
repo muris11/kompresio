@@ -14,10 +14,10 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/86 backdrop-blur-xl">
-      <div className="flex h-16 items-center justify-between px-4 md:h-20 md:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 md:h-20 lg:px-8">
         <Logo />
 
-        <nav aria-label="Primary navigation" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Primary navigation" className="hidden items-center gap-1 md:flex">
           {primaryNav.map((item) => (
             <Link
               key={item.href}
@@ -29,15 +29,16 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden items-center gap-2 md:flex">
           <Button asChild size="md">
-            <Link href="/compress-image">Start optimizing</Link>
+            <Link href="/compress-image">Start optimizing — free</Link>
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
+        <div className="flex items-center gap-2 md:hidden">
           <Button
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={open}
             variant="secondary"
             size="icon"
             type="button"
@@ -50,7 +51,7 @@ export function SiteHeader() {
 
       <div
         className={cn(
-          "grid border-t border-slate-200 transition-[grid-template-rows] duration-200 lg:hidden",
+          "grid border-t border-slate-200 transition-[grid-template-rows] duration-200 md:hidden",
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
         )}
       >

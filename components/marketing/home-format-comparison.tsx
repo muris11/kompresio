@@ -90,6 +90,9 @@ export function FormatComparison() {
             support, and browser compatibility. Use this table to choose the
             best format before you export.
           </p>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500 sm:hidden">
+            Swipe sideways to see all columns
+          </p>
         </Reveal>
 
         <div className="mt-10 overflow-x-auto rounded-2xl border border-white/10">

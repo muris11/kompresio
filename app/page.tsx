@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { BlogHighlights } from "@/components/marketing/home-blog-highlights";
 import { FormatComparison } from "@/components/marketing/home-format-comparison";
@@ -29,8 +30,8 @@ export default function Home() {
     <>
       <JsonLd data={websiteSchema()} />
       <HomeHero />
-      <PopularTools />
       <StatsSection />
+      <PopularTools />
       <BeforeAfterDemo />
       <HowItWorks />
       <SupportedFormats />
@@ -40,6 +41,20 @@ export default function Home() {
       <Testimonials />
       <BlogHighlights />
       <HomepageCta />
+      <StickyMobileCta />
     </>
+  );
+}
+
+function StickyMobileCta() {
+  return (
+    <div className="sticky bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:hidden">
+      <Link
+        href="/compress-image"
+        className="flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white"
+      >
+        Start optimizing — free
+      </Link>
+    </div>
   );
 }

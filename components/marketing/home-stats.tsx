@@ -1,12 +1,12 @@
-import { FileArchive, Gauge, Images, ShieldCheck } from "lucide-react";
+import { FileArchive, Images, Lock, SlidersHorizontal } from "lucide-react";
 
 import { Reveal } from "@/components/shared/reveal";
 
 const stats = [
-  { icon: Images, value: "50,000+", label: "Images optimized (sample)" },
-  { icon: Gauge, value: "12 TB+", label: "Bandwidth saved (estimate)" },
-  { icon: FileArchive, value: "8,000+", label: "ZIP exports created (sample)" },
-  { icon: ShieldCheck, value: "100%", label: "Client-side processing" },
+  { icon: Images, value: "14+", label: "Free tools, no sign-up" },
+  { icon: SlidersHorizontal, value: "20 MB", label: "Max file size per image" },
+  { icon: FileArchive, value: "50 files", label: "Batch queue with ZIP export" },
+  { icon: Lock, value: "100%", label: "Client-side private processing" },
 ];
 
 export function StatsSection() {

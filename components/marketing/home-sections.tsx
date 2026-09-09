@@ -4,7 +4,6 @@ import {
   Code2,
   Download,
   Gauge,
-  Globe,
   ImageIcon,
   Lock,
   Search,
@@ -124,23 +123,23 @@ export function BeforeAfterDemo() {
 export function HowItWorks() {
   const steps = [
     {
-      title: "Upload",
-      description: "Add single images or a full batch through drag and drop.",
+      title: "1. Upload",
+      description: "Drag and drop single images or a full batch of up to 50 files.",
       icon: UploadCloud,
     },
     {
-      title: "Choose settings",
-      description: "Pick quality, output format, resize preset, and metadata options.",
+      title: "2. Choose settings",
+      description: "Balanced preset works for most. Adjust quality, format, and resize if needed.",
       icon: Gauge,
     },
     {
-      title: "Preview",
-      description: "Compare before and after with file size, format, dimensions, and time.",
+      title: "3. Preview",
+      description: "Compare before and after with size, format, dimensions, and time.",
       icon: Search,
     },
     {
-      title: "Download",
-      description: "Export one optimized image or every result in a structured ZIP.",
+      title: "4. Download",
+      description: "Export one file or everything as a ZIP with summary included.",
       icon: Download,
     },
   ];
@@ -159,9 +158,14 @@ export function HowItWorks() {
           return (
             <Reveal key={step.title} delay={index * 0.04}>
               <div className="h-full rounded-2xl border border-slate-200 bg-white p-5">
-                <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                  <Icon className="size-5" />
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="grid size-7 place-items-center rounded-full bg-slate-950 font-mono text-xs font-bold text-white">
+                    {index + 1}
+                  </span>
+                </div>
                 <h3 className="mt-5 text-lg font-bold text-slate-950">
                   {step.title}
                 </h3>
@@ -194,13 +198,13 @@ export function SupportedFormats() {
             batches, and prepare images for fast-loading Next.js websites.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
           {formats.map((format) => (
             <div
               key={format}
-              className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center"
+              className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center last:col-span-3 sm:last:col-span-1"
             >
-              <p className="font-mono text-2xl font-bold text-white">{format}</p>
+              <p className="font-mono text-xl font-bold text-white sm:text-2xl">{format}</p>
             </div>
           ))}
         </div>
@@ -213,22 +217,22 @@ export function WhyKompresio() {
   const items = [
     {
       title: "Private by default",
-      description: "Core image processing runs locally in the browser.",
+      description: "Images never leave your device. No upload, no account, no tracking of file content.",
       icon: ShieldCheck,
     },
     {
-      title: "Vercel ready",
-      description: "No heavy server upload path is needed for MVP image work.",
-      icon: Globe,
+      title: "No sign-up needed",
+      description: "Open a tool, drop files, download results. Works on mobile and desktop.",
+      icon: Zap,
     },
     {
-      title: "Developer friendly",
-      description: "WebP, AVIF, metadata, filenames, and batch export are designed for web teams.",
+      title: "Batch and ZIP ready",
+      description: "Process up to 50 images at once and export everything as one ZIP.",
       icon: Code2,
     },
     {
-      title: "SEO structured",
-      description: "Every tool gets a focused route, metadata, internal links, and FAQ content.",
+      title: "Web-ready output",
+      description: "WebP, AVIF, resize presets, and clean filenames for sites and marketplaces.",
       icon: Search,
     },
   ];
@@ -264,12 +268,12 @@ export function WhyKompresio() {
 
 export function UseCases() {
   const items = [
-    "Websites",
-    "Marketplace",
-    "Social media",
-    "Documents",
-    "Developers",
-    "Students",
+    { title: "Websites", description: "Hero, blog, and product images under target KB." },
+    { title: "Marketplace", description: "Clean 1000px product photos ready to upload." },
+    { title: "Social media", description: "Square, story, and thumbnail presets." },
+    { title: "Documents", description: "Compress scans and forms without blur." },
+    { title: "Developers", description: "WebP/AVIF batches with ZIP manifests." },
+    { title: "Students", description: "Free PDF and image prep, no account." },
   ];
 
   return (
@@ -279,15 +283,16 @@ export function UseCases() {
           align="center"
           eyebrow="Use cases"
           title="One app for everyday image prep"
-          description="Kompresio supports the common jobs people need before publishing, sending, or uploading images."
+          description="Pick your job — Kompresio sets the right format, size, and export for it."
         />
         <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item) => (
             <div
-              key={item}
-              className="rounded-2xl border border-slate-200 bg-white p-5 text-center text-lg font-bold text-slate-950"
+              key={item.title}
+              className="rounded-2xl border border-slate-200 bg-white p-5 text-left"
             >
-              {item}
+              <p className="text-lg font-bold text-slate-950">{item.title}</p>
+              <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
             </div>
           ))}
         </div>
@@ -304,22 +309,27 @@ export function HomepageCta() {
           <div>
             <Badge className="border-white/20 bg-white/10 text-white">
               <Lock className="size-3.5" />
-              Browser-based
+              Free — no sign-up
             </Badge>
-            <h2 className="mt-5 text-3xl font-extrabold sm:text-4xl">
-              Start optimizing images without sign-up
+            <h2 className="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">
+              Start optimizing images in 30 seconds
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-8 text-blue-50">
-              Open the compressor, add images, choose settings, and download
-              optimized results. Core files stay local for the MVP workflow.
+              1 Upload → 2 Keep Balanced → 3 Download. Files stay on your
+              device.
             </p>
           </div>
-          <Button asChild variant="secondary" size="lg">
-            <Link href="/compress-image">
-              Open compressor
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
+          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+            <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto min-h-12">
+              <Link href="/compress-image">
+                Open compressor
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" className="w-full sm:w-auto min-h-12 border-white/30 bg-white/10 text-white hover:bg-white/20">
+              <Link href="/tools">Browse all tools</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </section>
