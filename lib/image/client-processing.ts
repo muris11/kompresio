@@ -687,6 +687,20 @@ export function summaryRowsToCsv(rows: Array<Record<string, string | number>>) {
   ].join("\n");
 }
 
+export async function downloadIndividualFiles(
+  items: Array<{ file: File; result: ProcessedResult }>,
+) {
+  if (items.length === 1) {
+    downloadBlob(items[0].result.blob, items[0].result.filename);
+    return;
+  }
+
+  for (const item of items) {
+    downloadBlob(item.result.blob, item.result.filename);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+}
+
 export async function downloadZip(
   items: Array<{ file: File; result: ProcessedResult }>,
 ) {

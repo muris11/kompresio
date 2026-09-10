@@ -39,6 +39,7 @@ import {
   createAnalysisResult,
   createPdfFromImages,
   downloadBlob,
+  downloadIndividualFiles,
   downloadZip,
   inspectImage,
   processImage,
@@ -165,6 +166,16 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
 
   const completedItems = useMemo(
     () => items.filter((item) => item.result),
+    [items],
+  );
+
+  const readyDownloadItems = useMemo(
+    () =>
+      items
+        .filter((item): item is QueueItem & { result: ProcessedResult } =>
+          Boolean(item.result),
+        )
+        .map((item) => ({ file: item.file, result: item.result })),
     [items],
   );
 
@@ -540,6 +551,10 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
     await downloadZip(readyItems);
   }
 
+  async function handleDownloadIndividualFiles() {
+    await downloadIndividualFiles(readyDownloadItems);
+  }
+
   const currentStep = items.length === 0 ? 1 : completedItems.length === 0 ? 2 : 3;
 
   return (
@@ -610,9 +625,11 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             capabilities={capabilities}
             items={items}
             completedCount={completedItems.length}
+            readyItems={readyDownloadItems}
             isProcessing={isProcessing}
             onProcess={processAll}
-            onDownloadAll={downloadAllResults}
+            onDownloadZip={downloadAllResults}
+            onDownloadFiles={handleDownloadIndividualFiles}
           />
         </aside>
       </div>
@@ -1869,17 +1886,21 @@ function ActionPanel({
   capabilities,
   items,
   completedCount,
+  readyItems,
   isProcessing,
   onProcess,
-  onDownloadAll,
+  onDownloadZip,
+  onDownloadFiles,
 }: {
   tool: ToolDefinition;
   capabilities: ReturnType<typeof getToolCapabilities>;
   items: QueueItem[];
   completedCount: number;
+  readyItems: Array<{ file: File; result: ProcessedResult }>;
   isProcessing: boolean;
   onProcess: () => Promise<void>;
-  onDownloadAll: () => Promise<void>;
+  onDownloadZip: () => Promise<void>;
+  onDownloadFiles: () => Promise<void>;
 }) {
   const selectedReady = items.find((item) => item.result);
   const copy = getActionCopy(tool);
@@ -1920,11 +1941,11 @@ function ActionPanel({
           )}
           {isProcessing ? copy.processingLabel : copy.primaryLabel}
         </Button>
-        <div className="grid grid-cols-2 gap-3">
+        {readyItems.length === 1 && !capabilities.canZip ? (
           <Button
             type="button"
             variant="secondary"
-            className="min-w-0 px-2 text-xs min-[360px]:text-sm"
+            className="w-full"
             disabled={!selectedReady}
             onClick={() =>
               selectedReady?.result &&
@@ -1935,28 +1956,38 @@ function ActionPanel({
             }
           >
             <Download className="size-4" />
-            {copy.singleLabel}
+            Download {copy.singleLabel}
           </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            className="min-w-0 px-2 text-xs min-[360px]:text-sm"
-            disabled={!capabilities.canZip || completedCount === 0}
-            onClick={onDownloadAll}
-          >
-            <FileArchive className="size-4" />
-            {tool.mode === "analyzer" ? "ZIP reports" : "ZIP"}
-          </Button>
-        </div>
+        ) : readyItems.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full justify-start px-3 text-left"
+              onClick={onDownloadFiles}
+            >
+              <Download className="size-4" />
+              Download files ({readyItems.length})
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full justify-start px-3 text-left"
+              onClick={onDownloadZip}
+              disabled={!capabilities.canZip}
+            >
+              <FileArchive className="size-4" />
+              ZIP ({readyItems.length} files)
+            </Button>
+          </div>
+        ) : null}
       </div>
       <p className="mt-4 text-sm leading-6 text-slate-600">
         {items.length === 0
           ? `Step 1 first: upload images, then click "${copy.primaryLabel}".`
-          : `${completedCount} result${completedCount === 1 ? "" : "s"} ready. `}{" "}
-        {items.length > 0 &&
-          (capabilities.canZip
-            ? "ZIP export includes processed files, summary.json, and summary.csv."
-            : "This route creates one primary document output.")}
+          : completedCount > 0
+            ? `${completedCount} result${completedCount === 1 ? "" : "s"} ready — download single files or a ZIP with summary.`
+            : `When done, choose Single, Download files, or ZIP.`}
       </p>
     </Card>
   );
