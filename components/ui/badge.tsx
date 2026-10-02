@@ -10,7 +10,7 @@ type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
   Small editorial label. 4px radius, hairline border, no pill fill.
 */
 const variants = {
-  default: "border-signal/40 bg-signal/8 text-cerulean",
+  default: "border-signal-blue-blue/40 bg-signal-blue/8 text-cerulean",
   muted: "border-mist bg-linen text-ash",
   outline: "border-twilight/30 bg-transparent text-twilight",
   success: "border-success/35 bg-success/8 text-success",

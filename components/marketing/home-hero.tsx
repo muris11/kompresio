@@ -23,14 +23,14 @@ export function HomeHero() {
       <SkylineScene />
 
       <div className="relative mx-auto grid w-full max-w-[1200px] items-end gap-12 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
-        <div className="min-w-0 rounded-3xl border border-white/20 bg-white/10 p-8 shadow-sm backdrop-blur-xl sm:p-10 lg:p-12">
-          <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">Privacy-first image optimization</Badge>
+        <div className="min-w-0 rounded-3xl border border-mist bg-paper/80 p-8 shadow-subtle backdrop-blur-xl sm:p-10 lg:p-12">
+          <Badge variant="outline" className="border-mist text-ash hover:bg-mist/30">Privacy-first image optimization</Badge>
 
-          <h1 className="mt-6 max-w-xl break-words font-display text-[48px] leading-[1.1] tracking-[-0.02em] text-white">
+          <h1 className="mt-6 max-w-xl break-words font-display text-[48px] leading-[1.1] tracking-[-0.02em] text-graphite">
             Images, made small without leaving your device
           </h1>
 
-          <p className="mt-6 max-w-lg font-af text-[17px] leading-8 text-white/90">
+          <p className="mt-6 max-w-lg font-af text-[17px] leading-8 text-ash">
             Compress, convert, resize, and clean JPG, PNG, WebP, AVIF, and HEIC
             in the browser. Nothing is uploaded, nothing is stored.
           </p>
@@ -39,7 +39,7 @@ export function HomeHero() {
             <Button asChild size="lg" className="w-full sm:w-auto">
               <Link href="/compress-image">
                 Start optimizing
-                <span className="ml-2 flex size-5 items-center justify-center rounded-full border border-signal-blue">
+                <span className="ml-2 flex size-5 items-center justify-center rounded-full border border-signal-blue-blue">
                   <ArrowRight className="size-3" />
                 </span>
               </Link>
@@ -58,9 +58,9 @@ export function HomeHero() {
             {trust.map((item) => (
               <li
                 key={item}
-                className="inline-flex items-center gap-2 font-af text-[13px] text-white/80"
+                className="inline-flex items-center gap-2 font-af text-[13px] text-ash"
               >
-                <Check className="size-3.5 text-white/90" />
+                <Check className="size-3.5 text-signal-blue-blue" />
                 {item}
               </li>
             ))}
@@ -68,7 +68,7 @@ export function HomeHero() {
         </div>
 
         <div className="mx-auto w-full max-w-md">
-          <div className="rounded-surface border border-mist bg-paper/85 p-5 shadow-hairline backdrop-blur-xl">
+          <div className="rounded-2xl border border-mist bg-paper/85 p-6 shadow-subtle backdrop-blur-xl">
             <div className="flex items-center justify-between">
               <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-ash">
                 Example output

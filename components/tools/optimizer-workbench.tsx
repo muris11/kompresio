@@ -673,7 +673,7 @@ function WorkbenchSteps({
   ];
 
   return (
-    <ol className="grid gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-3">
+    <ol className="grid gap-px overflow-hidden rounded-xl border border-mist bg-mist sm:grid-cols-3">
       {steps.map((step) => {
         const active = currentStep === step.number;
         const done =
@@ -684,13 +684,13 @@ function WorkbenchSteps({
             key={step.number}
             className={cn(
               "flex gap-4 bg-paper p-5",
-              active && "bg-signal/5",
+              active && "bg-signal-blue/5",
             )}
           >
             <span
               className={cn(
                 "font-mono text-[13px]",
-                active ? "text-signal" : done ? "text-signal" : "text-fog",
+                active ? "text-signal-blue" : done ? "text-signal-blue" : "text-fog",
               )}
             >
               {done ? <CheckCircle2 className="size-4" /> : `0${step.number}`}
@@ -767,7 +767,7 @@ function Dropzone({
       className={cn(
         "scroll-mt-24 border-dashed p-5 transition-colors",
         isDragActive
-          ? "border-signal bg-signal/5"
+          ? "border-signal-blue bg-signal-blue/5"
           : "hover:border-twilight/25",
       )}
     >
@@ -841,9 +841,9 @@ function QueueList({
                 }
               }}
               className={cn(
-                "group mb-2 w-full rounded-btn border p-3 text-left transition-colors",
+                "group mb-2 w-full rounded-lg border p-3 text-left transition-colors",
                 selectedId === item.id
-                  ? "border-signal/40 bg-signal/5"
+                  ? "border-signal-blue-blue/40 bg-signal-blue/5"
                   : "border-transparent hover:border-mist hover:bg-linen",
               )}
             >
@@ -1027,7 +1027,7 @@ function PreviewImage({
     <motion.div
       initial={reduceMotion ? false : { opacity: 0 }}
       animate={reduceMotion ? undefined : { opacity: 1 }}
-      className="overflow-hidden rounded-btn border border-mist bg-[linear-gradient(45deg,#f2f4f0_25%,transparent_25%),linear-gradient(-45deg,#f2f4f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f2f4f0_75%),linear-gradient(-45deg,transparent_75%,#f2f4f0_75%)] bg-[length:22px_22px] bg-[position:0_0,0_11px,11px_-11px,-11px_0]"
+      className="overflow-hidden rounded-lg border border-mist bg-[linear-gradient(45deg,#f2f4f0_25%,transparent_25%),linear-gradient(-45deg,#f2f4f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f2f4f0_75%),linear-gradient(-45deg,transparent_75%,#f2f4f0_75%)] bg-[length:22px_22px] bg-[position:0_0,0_11px,11px_-11px,-11px_0]"
     >
       <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
         <p className="text-[13px] font-medium text-graphite">{title}</p>
@@ -1063,7 +1063,7 @@ function ResultFilePreview({
   title: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-btn border border-mist bg-linen">
+    <div className="overflow-hidden rounded-lg border border-mist bg-linen">
       <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
         <p className="text-[13px] font-medium text-graphite">{title}</p>
         <p className="font-mono text-[12px] text-ash">
@@ -1074,9 +1074,9 @@ function ResultFilePreview({
         {result ? (
           <div>
             {result.kind === "json" ? (
-              <ScanSearch className="mx-auto size-7 text-signal" />
+              <ScanSearch className="mx-auto size-7 text-signal-blue" />
             ) : (
-              <FileText className="mx-auto size-7 text-signal" />
+              <FileText className="mx-auto size-7 text-signal-blue" />
             )}
             <p className="mt-4 text-body-sm font-medium text-graphite">
               {result.filename}
@@ -1163,7 +1163,7 @@ function CropEditorSurface({
         <Badge variant="outline">{formatRatioLabel(aspectRatio)}</Badge>
       </div>
       <div className="p-5">
-        <div className="relative h-[300px] overflow-hidden rounded-btn border border-mist bg-dusk sm:h-[380px]">
+        <div className="relative h-[300px] overflow-hidden rounded-lg border border-mist bg-dusk sm:h-[380px]">
           <Cropper
             image={item.previewUrl}
             crop={crop}
@@ -1275,7 +1275,7 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
         </div>
 
         {analysis.recommendation.notes.length ? (
-          <div className="rounded-btn border border-signal/25 bg-signal/5 p-4">
+          <div className="rounded-lg border border-signal-blue-blue/25 bg-signal-blue/5 p-4">
             <p className="text-body-sm font-medium text-graphite">
               Smart recommendation
             </p>
@@ -1285,7 +1285,7 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
                   key={note}
                   className="flex gap-2 text-[13px] leading-6 text-charcoal"
                 >
-                  <CheckCircle2 className="mt-1 size-4 shrink-0 text-signal" />
+                  <CheckCircle2 className="mt-1 size-4 shrink-0 text-signal-blue" />
                   {note}
                 </li>
               ))}
@@ -1321,14 +1321,14 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
 
   if (tags.length === 0) {
     return (
-      <div className="rounded-btn border border-success/30 bg-success/6 p-4 text-[13px] leading-6 text-success">
+      <div className="rounded-lg border border-success/30 bg-success/6 p-4 text-[13px] leading-6 text-success">
         No readable EXIF metadata was found in this file.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-btn border border-mist">
+    <div className="overflow-x-auto rounded-lg border border-mist">
       <div className="grid min-w-[560px] grid-cols-[1fr_1fr_auto] gap-3 border-b border-mist bg-linen px-4 py-3 text-[12px] uppercase tracking-[0.08em] text-ash">
         <span>Tag</span>
         <span>Value</span>
@@ -1406,11 +1406,11 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-mist bg-mist sm:grid-cols-3">
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className={cn("bg-paper p-4", metric.strong && "bg-signal/5")}
+          className={cn("bg-paper p-4", metric.strong && "bg-signal-blue/5")}
         >
           <p className="text-[12px] uppercase tracking-[0.08em] text-ash">
             {metric.label}
@@ -1491,9 +1491,9 @@ function SettingsPanel({
                   type="button"
                   onClick={() => onPreset(preset.id)}
                   className={cn(
-                    "rounded-btn border px-3 py-2 text-left text-[13px] transition-colors",
+                    "rounded-lg border px-3 py-2 text-left text-[13px] transition-colors",
                     settings.preset === preset.id
-                      ? "border-signal bg-signal/5 text-cerulean"
+                      ? "border-signal-blue bg-signal-blue/5 text-cerulean"
                       : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
                   )}
                 >
@@ -1543,7 +1543,7 @@ function SettingsPanel({
               <select
                 id="format"
                 value={settings.outputFormat}
-                className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal focus:bg-paper"
+                className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal-blue focus:bg-paper"
                 onChange={(event) =>
                   setSettings((current) => ({
                     ...current,
@@ -1634,7 +1634,7 @@ function PdfSettings({
         <select
           id="pdf-page-size"
           value={settings.pdfPageSize}
-          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal focus:bg-paper"
+          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal-blue focus:bg-paper"
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
@@ -1652,7 +1652,7 @@ function PdfSettings({
         <select
           id="pdf-orientation"
           value={settings.pdfOrientation}
-          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal focus:bg-paper"
+          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal-blue focus:bg-paper"
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
@@ -1709,9 +1709,9 @@ function CropSettings({
               key={preset.id}
               type="button"
               className={cn(
-                "rounded-btn border px-3 py-2 text-[13px] transition-colors",
+                "rounded-lg border px-3 py-2 text-[13px] transition-colors",
                 active
-                  ? "border-signal bg-signal/5 text-cerulean"
+                  ? "border-signal-blue bg-signal-blue/5 text-cerulean"
                   : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
               )}
               onClick={() =>
@@ -1804,7 +1804,7 @@ function ResizeSettings({
               <button
                 key={preset.label}
                 type="button"
-                className="rounded-btn border border-mist px-3 py-2 text-left text-[12px] text-charcoal transition-colors hover:border-twilight/25 hover:bg-linen"
+                className="rounded-lg border border-mist px-3 py-2 text-left text-[12px] text-charcoal transition-colors hover:border-twilight/25 hover:bg-linen"
                 onClick={() =>
                   setSettings((current) => ({
                     ...current,
@@ -1837,7 +1837,7 @@ function CheckboxControl({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-btn border border-mist bg-paper p-3 transition-colors hover:border-twilight/25">
+    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-mist bg-paper p-3 transition-colors hover:border-twilight/25">
       <span
         className={cn(
           "mt-0.5 grid size-4 shrink-0 place-items-center rounded-[3px] border",
@@ -2009,13 +2009,13 @@ function InlineMessage({
   const styles = {
     error: "border-destructive/30 bg-destructive/6 text-destructive",
     warning: "border-warning/30 bg-warning/6 text-warning",
-    info: "border-signal/30 bg-signal/6 text-cerulean",
+    info: "border-signal-blue-blue/30 bg-signal-blue/6 text-cerulean",
   };
 
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-btn border p-3 text-[13px] leading-6",
+        "flex gap-3 rounded-lg border p-3 text-[13px] leading-6",
         styles[type],
       )}
     >

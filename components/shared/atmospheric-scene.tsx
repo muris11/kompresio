@@ -168,7 +168,7 @@ export function AtmosphericBand({
   return (
     <div
       className={cn(
-        "grain relative overflow-hidden rounded-surface border border-mist",
+        "grain relative overflow-hidden rounded-2xl border border-mist",
         className,
       )}
     >

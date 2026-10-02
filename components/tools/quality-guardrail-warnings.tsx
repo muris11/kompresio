@@ -28,9 +28,9 @@ const severityConfig = {
   },
   info: {
     icon: Info,
-    containerClass: "border-signal/30 bg-signal/6",
+    containerClass: "border-signal-blue-blue/30 bg-signal-blue/6",
     textClass: "text-cerulean",
-    iconClass: "text-signal",
+    iconClass: "text-signal-blue",
     label: "Info",
   },
 };
@@ -48,7 +48,7 @@ function GuardrailWarningItem({
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-btn border p-3 text-body-sm leading-6",
+        "flex gap-3 rounded-lg border p-3 text-body-sm leading-6",
         config.containerClass,
         config.textClass,
       )}

@@ -37,7 +37,7 @@ export function Testimonials() {
         title="Used by designers, developers, and sellers"
         description="Different jobs, the same short loop: add files, tune, and export."
       />
-      <div className="mt-14 grid gap-px overflow-hidden rounded-card border border-mist bg-mist md:grid-cols-2">
+      <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-mist bg-mist md:grid-cols-2">
         {testimonials.map((testimonial, index) => (
           <Reveal key={testimonial.name} delay={index * 0.05}>
             <figure className="flex h-full flex-col bg-paper p-8">

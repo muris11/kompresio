@@ -91,7 +91,7 @@ function ToolHero({ tool }: { tool: ToolDefinition }) {
             </div>
           </div>
 
-          <div className="rounded-card border border-mist bg-linen p-6">
+          <div className="rounded-xl border border-mist bg-linen p-6">
             <h2 className="font-display text-subheading text-graphite">
               How to use
             </h2>
@@ -160,7 +160,7 @@ function ToolSeoContent({ tool }: { tool: ToolDefinition }) {
                     key={benefit}
                     className="flex gap-3 text-body-sm leading-7 text-charcoal"
                   >
-                    <Check className="mt-1.5 size-4 shrink-0 text-signal" />
+                    <Check className="mt-1.5 size-4 shrink-0 text-signal-blue" />
                     {benefit}
                   </li>
                 ))}

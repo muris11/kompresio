@@ -16,7 +16,7 @@ function Mark() {
       className="flex items-center gap-2 pr-2"
     >
       <span className="grid size-6 place-items-center rounded-[4px] border border-twilight/40">
-        <span className="size-2 rounded-[1px] bg-signal" />
+        <span className="size-2 rounded-[1px] bg-signal-blue" />
       </span>
       <span className="font-display text-subheading leading-none text-graphite">
         Kompresio
@@ -52,7 +52,7 @@ export function SiteHeader() {
           <Button asChild size="sm" className="rounded-full pl-4 pr-1">
             <Link href="/compress-image">
               Start optimizing
-              <span className="ml-1 flex size-6 items-center justify-center rounded-full border border-signal-blue">
+              <span className="ml-1 flex size-6 items-center justify-center rounded-full border border-signal-blue-blue">
                 <ArrowRight className="size-3.5" />
               </span>
             </Link>
@@ -97,7 +97,7 @@ export function SiteHeader() {
             <Button asChild className="mt-1 justify-between pr-2" onClick={() => setOpen(false)}>
               <Link href="/compress-image">
                 Start optimizing
-                <span className="flex size-6 items-center justify-center rounded-full border border-signal-blue">
+                <span className="flex size-6 items-center justify-center rounded-full border border-signal-blue-blue">
                   <ArrowRight className="size-3.5" />
                 </span>
               </Link>

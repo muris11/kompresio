@@ -103,7 +103,7 @@ export function BeforeAfterDemo() {
                 </p>
               </div>
               <div>
-                <div className="grid aspect-[4/3] place-items-center rounded-lg border border-signal-blue/30 bg-signal-blue/6">
+                <div className="grid aspect-[4/3] place-items-center rounded-lg border border-signal-blue-blue/30 bg-signal-blue/6">
                   <span className="font-display text-4xl text-cerulean">
                     WebP
                   </span>
@@ -234,7 +234,7 @@ const formats = [
 
 function BoolMark({ value }: { value: boolean }) {
   return value ? (
-    <CheckCircle2 className="size-4 text-signal" aria-label="Yes" />
+    <CheckCircle2 className="size-4 text-signal-blue" aria-label="Yes" />
   ) : (
     <XCircle className="size-4 text-fog" aria-label="No" />
   );
@@ -433,7 +433,7 @@ export function HomepageCta() {
                 key={item}
                 className="inline-flex items-center gap-2 text-[13px] text-ash"
               >
-                <Check className="size-3.5 text-signal-blue" />
+                <Check className="size-3.5 text-signal-blue-blue" />
                 {item}
               </li>
             ),

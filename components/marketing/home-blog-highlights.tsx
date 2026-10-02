@@ -28,7 +28,7 @@ export function BlogHighlights() {
           </Button>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-card border border-mist bg-mist lg:grid-cols-3">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-mist bg-mist lg:grid-cols-3">
           {featuredPosts.map((post, index) => (
             <Reveal key={post.slug} delay={index * 0.04}>
               <Link

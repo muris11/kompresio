@@ -129,7 +129,7 @@ export default function BlogPage() {
             title="Complete Kompresio article library"
             description="Every article links back to the relevant working tool so the guide can turn into action immediately."
           />
-          <div className="mt-10 grid gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-xl border border-mist bg-mist sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <Link
                 key={post.slug}

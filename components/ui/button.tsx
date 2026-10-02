@@ -18,7 +18,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border border-signal-blue bg-transparent text-signal-blue hover:bg-signal-blue/8",
+          "border border-signal-blue-blue bg-transparent text-signal-blue-blue hover:bg-signal-blue/8",
         dark: "border border-twilight bg-dusk text-white hover:bg-dusk/90",
         secondary:
           "border border-twilight bg-transparent text-twilight hover:bg-twilight/6",

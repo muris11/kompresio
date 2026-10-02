@@ -170,7 +170,7 @@ export default function CompanyPage() {
           title="Built around speed, privacy, and practical output"
           description="The product is shaped for repeat work: upload quickly, choose a real setting, preview output, and download files that are ready for websites, documents, marketplaces, or sharing."
         />
-        <div className="mt-14 grid gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border border-mist bg-mist sm:grid-cols-2 lg:grid-cols-4">
           {principles.map((item) => {
             const Icon = item.icon;
             return (

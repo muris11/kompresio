@@ -84,7 +84,7 @@ export default function TermsPage() {
               description="These terms define practical expectations for using Kompresio's image utility workflows. They are written for the current browser-first MVP and leave room for future Pro or API features."
             />
             <Card className="p-6">
-              <ShieldCheck className="size-6 text-signal" />
+              <ShieldCheck className="size-6 text-signal-blue" />
               <p className="mt-5 text-[12px] uppercase tracking-[0.12em] text-ash">
                 Plain-language summary
               </p>
@@ -98,7 +98,7 @@ export default function TermsPage() {
       </section>
 
       <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-        <div className="grid gap-px overflow-hidden rounded-card border border-mist bg-mist lg:grid-cols-3">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-mist bg-mist lg:grid-cols-3">
           {terms.map((section) => {
             const Icon = section.icon;
             return (
