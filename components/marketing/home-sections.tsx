@@ -1,15 +1,15 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  Code2,
+  Check,
+  CheckCircle2,
   Download,
+  FileArchive,
   Gauge,
-  ImageIcon,
-  Lock,
-  Search,
   ShieldCheck,
-  UploadCloud,
-  Zap,
+  SlidersHorizontal,
+  Upload,
+  XCircle,
 } from "lucide-react";
 
 import { SectionHeading } from "@/components/marketing/section-heading";
@@ -18,34 +18,35 @@ import { Reveal } from "@/components/shared/reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { featuredTools } from "@/lib/constants/tools";
 
 export function PopularTools() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <SectionHeading
           eyebrow="Popular tools"
           title="One workflow for image optimization"
-          description="Use the most common tools immediately, then expand into batch, privacy, and developer workflows when needed."
+          description="Start with the common tools, then move into batch, privacy, and developer workflows when you need them."
         />
-        <Link href="/tools" className="hidden shrink-0 sm:flex">
-          <Button variant="secondary">
+        <Button asChild variant="ghost" className="hidden shrink-0 sm:inline-flex">
+          <Link href="/tools">
             View all tools
             <ArrowRight className="size-4" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
-      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {featuredTools.map((tool, index) => (
           <Reveal key={tool.slug} delay={index * 0.04}>
             <ToolCard tool={tool} />
           </Reveal>
         ))}
       </div>
-      <div className="mt-6 text-center sm:hidden">
-        <Button asChild variant="secondary">
+
+      <div className="mt-8 sm:hidden">
+        <Button asChild variant="secondary" className="w-full">
           <Link href="/tools">
             View all tools
             <ArrowRight className="size-4" />
@@ -57,62 +58,64 @@ export function PopularTools() {
 }
 
 export function BeforeAfterDemo() {
+  const metrics = [
+    ["Original", "2.4 MB"],
+    ["Optimized WebP", "312 KB"],
+    ["Saved", "87%"],
+    ["Processing", "420ms"],
+  ];
+
   return (
-    <section className="border-y border-slate-200 bg-slate-50">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.9fr_1fr] lg:px-8 lg:py-24">
+    <section className="border-y border-mist bg-linen">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[0.85fr_1fr] lg:px-8 lg:py-28">
         <Reveal>
           <div>
             <SectionHeading
               eyebrow="Preview first"
-              title="Know what changed before you download"
-              description="Kompresio keeps the tool UI first: upload, tune quality, compare visible output, then download one file or a ZIP archive."
+              title="See what changed before you download"
+              description="Upload, tune quality, compare the visible result, then export one file or a ZIP. The comparison happens in your browser."
             />
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {[
-                ["Original", "2.4 MB"],
-                ["Optimized WebP", "312 KB"],
-                ["Saved", "87%"],
-                ["Processing", "420ms"],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  className="rounded-2xl border border-slate-200 bg-white p-4"
-                >
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+            <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6">
+              {metrics.map(([label, value]) => (
+                <div key={label} className="border-t border-mist pt-4">
+                  <dt className="text-[13px] uppercase tracking-[0.1em] text-ash">
                     {label}
-                  </p>
-                  <p className="mt-2 font-mono text-2xl font-bold text-slate-950">
+                  </dt>
+                  <dd className="mt-1 font-mono text-2xl text-graphite">
                     {value}
-                  </p>
+                  </dd>
                 </div>
               ))}
-            </div>
+            </dl>
           </div>
         </Reveal>
 
-        <Reveal delay={0.1}>
-          <Card className="rounded-3xl p-5">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-slate-200 bg-slate-100 p-4">
-                <div className="grid aspect-[4/3] place-items-center rounded-xl bg-white">
-                  <ImageIcon className="size-16 text-slate-300" />
+        <Reveal delay={0.08}>
+          <Card className="p-6">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <div className="grid aspect-[4/3] place-items-center rounded-lg border border-mist bg-linen">
+                  <span className="font-display text-4xl text-fog">JPG</span>
                 </div>
-                <p className="mt-3 text-sm font-bold text-slate-950">
-                  Original JPG
+                <p className="mt-3 text-body-sm text-graphite">Original JPG</p>
+                <p className="font-mono text-[13px] text-ash">
+                  4000×2667 · 2.4 MB
                 </p>
-                <p className="font-mono text-xs text-slate-500">4000x2667 · 2.4 MB</p>
               </div>
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-                <div className="grid aspect-[4/3] place-items-center rounded-xl bg-white">
-                  <Zap className="size-16 text-emerald-500" />
+              <div>
+                <div className="grid aspect-[4/3] place-items-center rounded-lg border border-signal-blue/30 bg-signal-blue/6">
+                  <span className="font-display text-4xl text-cerulean">
+                    WebP
+                  </span>
                 </div>
-                <p className="mt-3 text-sm font-bold text-slate-950">
+                <p className="mt-3 text-body-sm text-graphite">
                   Optimized WebP
                 </p>
-                <p className="font-mono text-xs text-slate-500">1920x1280 · 312 KB</p>
+                <p className="font-mono text-[13px] text-ash">
+                  1920×1280 · 312 KB
+                </p>
               </div>
             </div>
-            <Progress value={87} className="mt-5" />
           </Card>
         </Reveal>
       </div>
@@ -120,181 +123,281 @@ export function BeforeAfterDemo() {
   );
 }
 
-export function HowItWorks() {
-  const steps = [
-    {
-      title: "1. Upload",
-      description: "Drag and drop single images or a full batch of up to 50 files.",
-      icon: UploadCloud,
-    },
-    {
-      title: "2. Choose settings",
-      description: "Balanced preset works for most. Adjust quality, format, and resize if needed.",
-      icon: Gauge,
-    },
-    {
-      title: "3. Preview",
-      description: "Compare before and after with size, format, dimensions, and time.",
-      icon: Search,
-    },
-    {
-      title: "4. Download",
-      description: "Export one file or everything as a ZIP with summary included.",
-      icon: Download,
-    },
-  ];
+const steps = [
+  {
+    title: "Upload",
+    description: "Drag in one image or a batch of up to 50 files.",
+    icon: Upload,
+  },
+  {
+    title: "Adjust",
+    description: "Keep the Balanced default, or set quality, format, and size.",
+    icon: SlidersHorizontal,
+  },
+  {
+    title: "Download",
+    description: "Export a single file or everything as a ZIP archive.",
+    icon: Download,
+  },
+];
 
+export function HowItWorks() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
       <SectionHeading
         align="center"
         eyebrow="Workflow"
-        title="A fast tool flow without server upload"
-        description="Kompresio is designed for repeat work: upload, tune, preview, and export in a few focused steps."
+        title="Three steps, no server upload"
+        description="Kompresio is built for repeat work: add files, tune, and export — nothing else in the way."
       />
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <ol className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-mist bg-mist sm:grid-cols-3">
         {steps.map((step, index) => {
           const Icon = step.icon;
           return (
-            <Reveal key={step.title} delay={index * 0.04}>
-              <div className="h-full rounded-2xl border border-slate-200 bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                    <Icon className="size-5" />
-                  </span>
-                  <span className="grid size-7 place-items-center rounded-full bg-slate-950 font-mono text-xs font-bold text-white">
-                    {index + 1}
-                  </span>
-                </div>
-                <h3 className="mt-5 text-lg font-bold text-slate-950">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {step.description}
-                </p>
+            <li key={step.title} className="bg-paper p-7">
+              <div className="flex items-center justify-between">
+                <Icon className="size-5 text-charcoal" aria-hidden="true" />
+                <span className="font-mono text-[13px] text-fog">
+                  0{index + 1}
+                </span>
               </div>
-            </Reveal>
+              <h3 className="mt-8 font-display text-subheading text-graphite">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-body-sm leading-7 text-ash">
+                {step.description}
+              </p>
+            </li>
           );
         })}
+      </ol>
+    </section>
+  );
+}
+
+const formats = [
+  {
+    name: "JPEG",
+    extension: ".jpg",
+    compression: "Lossy",
+    transparency: false,
+    animation: false,
+    support: "Universal",
+    bestFor: "Photos, web images",
+  },
+  {
+    name: "PNG",
+    extension: ".png",
+    compression: "Lossless",
+    transparency: true,
+    animation: false,
+    support: "Universal",
+    bestFor: "Screenshots, UI, logos",
+  },
+  {
+    name: "WebP",
+    extension: ".webp",
+    compression: "Lossy + lossless",
+    transparency: true,
+    animation: false,
+    support: "97%",
+    bestFor: "Websites, performance",
+  },
+  {
+    name: "AVIF",
+    extension: ".avif",
+    compression: "Lossy + lossless",
+    transparency: true,
+    animation: false,
+    support: "93%",
+    bestFor: "Modern web, Core Web Vitals",
+  },
+  {
+    name: "GIF",
+    extension: ".gif",
+    compression: "Lossless",
+    transparency: true,
+    animation: true,
+    support: "Universal",
+    bestFor: "Simple animations",
+  },
+  {
+    name: "SVG",
+    extension: ".svg",
+    compression: "Vector",
+    transparency: true,
+    animation: true,
+    support: "Universal",
+    bestFor: "Icons, illustrations",
+  },
+];
+
+function BoolMark({ value }: { value: boolean }) {
+  return value ? (
+    <CheckCircle2 className="size-4 text-signal" aria-label="Yes" />
+  ) : (
+    <XCircle className="size-4 text-fog" aria-label="No" />
+  );
+}
+
+export function FormatGuide() {
+  const supported = ["JPG", "PNG", "WebP", "AVIF", "HEIC", "GIF", "SVG"];
+
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <div className="overflow-hidden rounded-3xl border border-cerulean/20 bg-cerulean">
+        <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-[0.9fr_1fr] lg:p-16">
+          <div>
+            <p className="text-[13px] font-medium uppercase tracking-[0.16em] text-white/70">
+              Formats
+            </p>
+            <h2 className="mt-3 font-display text-heading-sm leading-[1.15] text-white sm:text-heading">
+              Built for modern image pipelines
+            </h2>
+            <p className="mt-4 max-w-md text-[17px] leading-8 text-white/80">
+              Convert to WebP, resize assets, clean metadata, and export
+              batches prepared for fast-loading sites.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-2">
+              {supported.map((format) => (
+                <span
+                  key={format}
+                  className="rounded-[4px] border border-white/25 px-2.5 py-1 font-mono text-[13px] text-white"
+                >
+                  {format}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[440px] text-left">
+              <thead>
+                <tr className="border-b border-white/20">
+                  {["Format", "Alpha", "Motion", "Support", "Best for"].map(
+                    (header) => (
+                      <th
+                        key={header}
+                        className="py-3 pr-4 text-[12px] font-medium uppercase tracking-[0.1em] text-white/60"
+                      >
+                        {header}
+                      </th>
+                    ),
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {formats.map((format) => (
+                  <tr
+                    key={format.name}
+                    className="border-b border-white/10 last:border-0"
+                  >
+                    <td className="py-3 pr-4">
+                      <span className="text-body-sm font-medium text-white">
+                        {format.name}
+                      </span>
+                      <span className="ml-2 font-mono text-[12px] text-white/50">
+                        {format.extension}
+                      </span>
+                    </td>
+                    <td className="py-3 pr-4">
+                      <BoolMark value={format.transparency} />
+                    </td>
+                    <td className="py-3 pr-4">
+                      <BoolMark value={format.animation} />
+                    </td>
+                    <td className="py-3 pr-4 font-mono text-[13px] text-white/80">
+                      {format.support}
+                    </td>
+                    <td className="py-3 pr-4 text-[13px] text-white/80">
+                      {format.bestFor}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-export function SupportedFormats() {
-  const formats = ["JPG", "PNG", "WebP", "AVIF", "HEIC", "GIF", "SVG"];
-  return (
-    <section className="bg-slate-950 text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[0.85fr_1fr] lg:px-8 lg:py-24">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">
-            Supported formats
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">
-            Built for modern image pipelines
-          </h2>
-          <p className="mt-4 text-base leading-8 text-slate-300">
-            Convert images to WebP, resize assets, clean metadata, export
-            batches, and prepare images for fast-loading Next.js websites.
-          </p>
-        </div>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {formats.map((format) => (
-            <div
-              key={format}
-              className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center last:col-span-3 sm:last:col-span-1"
-            >
-              <p className="font-mono text-xl font-bold text-white sm:text-2xl">{format}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+const reasons = [
+  {
+    title: "Private by default",
+    description:
+      "Images never leave your device. No upload, no account, no tracking of file content.",
+    icon: ShieldCheck,
+  },
+  {
+    title: "No sign-up needed",
+    description:
+      "Open a tool, add files, download results. Works on mobile and desktop.",
+    icon: Gauge,
+  },
+  {
+    title: "Batch and ZIP ready",
+    description:
+      "Process up to 50 images at once and export everything as a single ZIP.",
+    icon: FileArchive,
+  },
+];
+
+const useCases = [
+  "Websites",
+  "Marketplace listings",
+  "Social media",
+  "Documents and forms",
+  "Developer handoff",
+  "Student projects",
+];
 
 export function WhyKompresio() {
-  const items = [
-    {
-      title: "Private by default",
-      description: "Images never leave your device. No upload, no account, no tracking of file content.",
-      icon: ShieldCheck,
-    },
-    {
-      title: "No sign-up needed",
-      description: "Open a tool, drop files, download results. Works on mobile and desktop.",
-      icon: Zap,
-    },
-    {
-      title: "Batch and ZIP ready",
-      description: "Process up to 50 images at once and export everything as one ZIP.",
-      icon: Code2,
-    },
-    {
-      title: "Web-ready output",
-      description: "WebP, AVIF, resize presets, and clean filenames for sites and marketplaces.",
-      icon: Search,
-    },
-  ];
-
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
-      <SectionHeading
-        eyebrow="Why Kompresio"
-        title="A professional image utility, not only an upload box"
-        description="The product is structured for real users and organic discovery: tool-first UX, privacy confidence, and practical SEO content."
-      />
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Card key={item.title} className="p-5">
-              <span className="grid size-11 place-items-center rounded-xl bg-cyan-50 text-cyan-700">
-                <Icon className="size-5" />
-              </span>
-              <h3 className="mt-5 text-lg font-bold text-slate-950">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                {item.description}
-              </p>
-            </Card>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-export function UseCases() {
-  const items = [
-    { title: "Websites", description: "Hero, blog, and product images under target KB." },
-    { title: "Marketplace", description: "Clean 1000px product photos ready to upload." },
-    { title: "Social media", description: "Square, story, and thumbnail presets." },
-    { title: "Documents", description: "Compress scans and forms without blur." },
-    { title: "Developers", description: "WebP/AVIF batches with ZIP manifests." },
-    { title: "Students", description: "Free PDF and image prep, no account." },
-  ];
-
-  return (
-    <section className="border-y border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+    <section className="border-y border-mist bg-linen">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:px-8 lg:py-28">
         <SectionHeading
-          align="center"
-          eyebrow="Use cases"
-          title="One app for everyday image prep"
-          description="Pick your job — Kompresio sets the right format, size, and export for it."
+          eyebrow="Why Kompresio"
+          title="A working utility, not just an upload box"
+          description="Tool-first, private, and shaped for the everyday jobs people actually bring to an image tool."
         />
-        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border border-slate-200 bg-white p-5 text-left"
-            >
-              <p className="text-lg font-bold text-slate-950">{item.title}</p>
-              <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
+
+        <div>
+          <ul className="divide-y divide-mist border-y border-mist">
+            {reasons.map((reason) => {
+              const Icon = reason.icon;
+              return (
+                <li key={reason.title} className="flex gap-4 py-5">
+                  <Icon
+                    className="mt-0.5 size-5 shrink-0 text-charcoal"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <p className="font-display text-subheading text-graphite">
+                      {reason.title}
+                    </p>
+                    <p className="mt-1 text-body-sm leading-7 text-ash">
+                      {reason.description}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-8">
+            <p className="text-[13px] uppercase tracking-[0.1em] text-ash">
+              Used for
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {useCases.map((useCase) => (
+                <Badge key={useCase} variant="muted">
+                  {useCase}
+                </Badge>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>
@@ -303,34 +406,39 @@ export function UseCases() {
 
 export function HomepageCta() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
-      <div className="rounded-3xl bg-gradient-to-br from-blue-600 to-cyan-500 p-8 text-white shadow-[0_24px_70px_rgba(37,99,235,0.22)] lg:p-12">
-        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <Badge className="border-white/20 bg-white/10 text-white">
-              <Lock className="size-3.5" />
-              Free — no sign-up
-            </Badge>
-            <h2 className="mt-5 text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Start optimizing images in 30 seconds
-            </h2>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-blue-50">
-              1 Upload → 2 Keep Balanced → 3 Download. Files stay on your
-              device.
-            </p>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-            <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto min-h-12">
-              <Link href="/compress-image">
-                Open compressor
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" className="w-full sm:w-auto min-h-12 border-white/30 bg-white/10 text-white hover:bg-white/20">
-              <Link href="/tools">Browse all tools</Link>
-            </Button>
-          </div>
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <div className="rounded-3xl border border-mist bg-paper p-10 text-center shadow-subtle sm:p-16">
+        <h2 className="mx-auto max-w-2xl font-display text-heading-sm leading-[1.15] text-graphite sm:text-heading">
+          Start optimizing images in about thirty seconds
+        </h2>
+        <p className="mx-auto mt-4 max-w-lg text-[17px] leading-8 text-ash">
+          No account, no upload, no waiting. Add a file and see the result in
+          the same tab.
+        </p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button asChild size="lg">
+            <Link href="/compress-image">
+              Open the compressor
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="secondary">
+            <Link href="/tools">Browse all tools</Link>
+          </Button>
         </div>
+        <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
+          {["Free to use", "No sign-up", "Files stay on your device"].map(
+            (item) => (
+              <li
+                key={item}
+                className="inline-flex items-center gap-2 text-[13px] text-ash"
+              >
+                <Check className="size-3.5 text-signal-blue" />
+                {item}
+              </li>
+            ),
+          )}
+        </ul>
       </div>
     </section>
   );

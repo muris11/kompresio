@@ -4,26 +4,35 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
+/*
+  Editorial button system.
+  - outlined signal blue = primary marketing action (border only, no fill)
+  - dark = the single filled button, reserved for high-emphasis workbench actions
+  - secondary = neutral outlined (twilight)
+  - ghost = inline text link
+  No decorative shadows; identity comes from the border.
+*/
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 rounded-lg font-af text-[15px] font-medium leading-none transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
         default:
-          "bg-blue-600 text-white shadow-[0_12px_30px_rgba(37,99,235,0.24)] hover:bg-blue-700",
+          "border border-signal-blue bg-transparent text-signal-blue hover:bg-signal-blue/8",
+        dark: "border border-twilight bg-dusk text-white hover:bg-dusk/90",
         secondary:
-          "border border-slate-200 bg-white text-slate-950 hover:border-blue-200 hover:bg-blue-50",
+          "border border-twilight bg-transparent text-twilight hover:bg-twilight/6",
         ghost:
-          "text-slate-700 hover:bg-slate-100 hover:text-slate-950",
+          "border border-transparent text-charcoal hover:bg-linen hover:text-graphite",
         destructive:
-          "bg-red-600 text-white hover:bg-red-700",
+          "border border-destructive bg-transparent text-destructive hover:bg-destructive/8",
         accent:
-          "bg-cyan-500 text-slate-950 shadow-[0_12px_30px_rgba(6,182,212,0.2)] hover:bg-cyan-400",
+          "border border-cerulean bg-transparent text-cerulean hover:bg-cerulean/8",
       },
       size: {
-        sm: "h-9 px-3",
-        md: "h-11 px-5",
-        lg: "h-12 px-6",
+        sm: "px-3 py-[5px]",
+        md: "px-3 py-[5px]",
+        lg: "px-4 py-2",
         icon: "size-10",
       },
     },

@@ -25,14 +25,14 @@ export default function ToolsPage() {
           { name: "Tools", path: "/tools" },
         ])}
       />
-      <section className="border-b border-slate-200 bg-slate-50">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <section className="border-b border-mist bg-paper">
+        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <SectionHeading
             eyebrow="Tools"
             title="All Kompresio image tools"
             description="Compress, convert, resize, clean metadata, analyze, and batch export images with browser-first workflows."
           />
-          <div className="mt-7 flex flex-wrap gap-2">
+          <div className="mt-8 flex flex-wrap gap-2">
             {categories.map((category) => (
               <Badge key={category} variant="muted">
                 {category}
@@ -42,7 +42,7 @@ export default function ToolsPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool) => (
             <ToolCard key={tool.slug} tool={tool} />

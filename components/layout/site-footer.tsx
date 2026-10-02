@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { Logo } from "@/components/layout/logo";
 import { Separator } from "@/components/ui/separator";
 import { siteConfig } from "@/lib/constants/site";
 
@@ -48,21 +47,24 @@ const footerColumns = [
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-slate-50">
-      <div className="px-4 py-12 md:px-6">
-        <div className="grid gap-10 lg:grid-cols-[1.2fr_2fr]">
+    <footer className="mt-24 border-t border-mist bg-paper">
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8">
+        <p className="max-w-3xl font-display text-heading-sm leading-[1.2] text-graphite sm:text-heading">
+          Images get smaller. Nothing leaves your device.
+        </p>
+
+        <div className="mt-12 grid gap-10 lg:grid-cols-[1.2fr_2fr]">
           <div className="max-w-sm space-y-4">
-            <Logo />
-            <p className="text-sm leading-6 text-slate-600">
-              Fast and private image optimization for websites, documents,
-              marketplaces, and modern content workflows.
+            <p className="text-body-sm leading-6 text-ash">
+              Kompresio is a browser-first image toolkit for compression,
+              conversion, resize, metadata cleaning, and document workflows.
             </p>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {footerColumns.map((column) => (
               <div key={column.title}>
-                <h2 className="text-sm font-bold text-slate-950">
+                <h2 className="text-[13px] font-medium uppercase tracking-[0.08em] text-ash">
                   {column.title}
                 </h2>
                 <ul className="mt-4 space-y-3">
@@ -70,7 +72,7 @@ export function SiteFooter() {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="text-sm text-slate-600 transition hover:text-blue-600"
+                        className="text-body-sm text-charcoal transition-colors hover:text-cerulean"
                       >
                         {link.label}
                       </Link>
@@ -83,7 +85,7 @@ export function SiteFooter() {
         </div>
 
         <Separator className="my-8" />
-        <div className="flex flex-col justify-between gap-3 text-sm text-slate-500 sm:flex-row sm:items-center">
+        <div className="flex flex-col justify-between gap-3 text-caption text-ash sm:flex-row sm:items-center">
           <p>© 2026 Kompresio. Fast and private image optimization.</p>
           <p>
             Developed by{" "}
@@ -91,7 +93,7 @@ export function SiteFooter() {
               href={siteConfig.developer.url}
               target="_blank"
               rel="noreferrer"
-              className="font-semibold text-slate-700 transition hover:text-blue-600"
+              className="font-medium text-charcoal transition-colors hover:text-cerulean"
             >
               {siteConfig.developer.label}
             </a>

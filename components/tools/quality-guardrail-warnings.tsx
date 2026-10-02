@@ -14,28 +14,23 @@ import type {
 const severityConfig = {
   error: {
     icon: XCircle,
-    containerClass: "border-red-200 bg-red-50",
-    textClass: "text-red-800",
-    iconClass: "text-red-500",
-    badgeClass:
-      "bg-red-100 text-red-700 border-red-200",
+    containerClass: "border-destructive/30 bg-destructive/6",
+    textClass: "text-destructive",
+    iconClass: "text-destructive",
     label: "Error",
   },
   warning: {
     icon: AlertTriangle,
-    containerClass: "border-amber-200 bg-amber-50",
-    textClass: "text-amber-800",
-    iconClass: "text-amber-600",
-    badgeClass:
-      "bg-amber-100 text-amber-700 border-amber-200",
+    containerClass: "border-warning/30 bg-warning/6",
+    textClass: "text-warning",
+    iconClass: "text-warning",
     label: "Warning",
   },
   info: {
     icon: Info,
-    containerClass: "border-blue-200 bg-blue-50",
-    textClass: "text-blue-800",
-    iconClass: "text-blue-600",
-    badgeClass: "bg-blue-100 text-blue-700 border-blue-200",
+    containerClass: "border-signal/30 bg-signal/6",
+    textClass: "text-cerulean",
+    iconClass: "text-signal",
     label: "Info",
   },
 };
@@ -53,7 +48,7 @@ function GuardrailWarningItem({
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-xl border p-3 text-sm leading-6",
+        "flex gap-3 rounded-btn border p-3 text-body-sm leading-6",
         config.containerClass,
         config.textClass,
       )}
@@ -61,30 +56,23 @@ function GuardrailWarningItem({
       <Icon className={cn("mt-0.5 size-4 shrink-0", config.iconClass)} />
       <div className="min-w-0 flex-1 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <span className="font-semibold">{warning.message}</span>
-          <span
-            className={cn(
-              "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase",
-              config.badgeClass,
-            )}
-          >
+          <span className="font-medium">{warning.message}</span>
+          <span className="shrink-0 rounded-[4px] border border-current/30 px-1.5 py-0.5 text-[11px] uppercase tracking-[0.08em]">
             {config.label}
           </span>
         </div>
         {warning.details ? (
-          <p className="text-xs opacity-80">{warning.details}</p>
+          <p className="text-[13px] opacity-80">{warning.details}</p>
         ) : null}
         {warning.fix ? (
           <Button
             type="button"
-            variant={
-              warning.severity === "error" ? "destructive" : "secondary"
-            }
+            variant={warning.severity === "error" ? "destructive" : "secondary"}
             size="sm"
-            className="mt-1 h-8 text-xs"
+            className="mt-1"
             onClick={() => onApplyFix(warning.fix!)}
           >
-            <CheckCircle2 className="mr-1 size-3.5" />
+            <CheckCircle2 className="size-3.5" />
             {warning.fix.label}
           </Button>
         ) : null}
@@ -108,22 +96,20 @@ export function GuardrailWarnings({
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-slate-200 p-5">
-        <span
+      <div className="flex items-center gap-3 border-b border-mist p-5">
+        <AlertTriangle
           className={cn(
-            "grid size-10 place-items-center rounded-xl",
-            hasErrors
-              ? "bg-red-50 text-red-600"
-              : "bg-amber-50 text-amber-600",
+            "size-5",
+            hasErrors ? "text-destructive" : "text-warning",
           )}
-        >
-          <AlertTriangle className="size-5" />
-        </span>
+        />
         <div>
-          <h2 className="text-base font-bold text-slate-950">
-            {hasErrors ? "Configuration issues found" : "Quality recommendations"}
+          <h2 className="font-display text-subheading text-graphite">
+            {hasErrors
+              ? "Configuration issues found"
+              : "Quality recommendations"}
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-[13px] text-ash">
             {warnings.length} issue{warnings.length === 1 ? "" : "s"} to review
           </p>
         </div>

@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BlogHighlights } from "@/components/marketing/home-blog-highlights";
-import { FormatComparison } from "@/components/marketing/home-format-comparison";
 import { HomeHero } from "@/components/marketing/home-hero";
 import {
   BeforeAfterDemo,
+  FormatGuide,
   HomepageCta,
   HowItWorks,
   PopularTools,
-  SupportedFormats,
-  UseCases,
   WhyKompresio,
 } from "@/components/marketing/home-sections";
 import { StatsSection } from "@/components/marketing/home-stats";
@@ -34,10 +32,8 @@ export default function Home() {
       <PopularTools />
       <BeforeAfterDemo />
       <HowItWorks />
-      <SupportedFormats />
-      <FormatComparison />
+      <FormatGuide />
       <WhyKompresio />
-      <UseCases />
       <Testimonials />
       <BlogHighlights />
       <HomepageCta />
@@ -48,12 +44,12 @@ export default function Home() {
 
 function StickyMobileCta() {
   return (
-    <div className="sticky bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3 backdrop-blur sm:hidden">
+    <div className="sticky bottom-0 z-40 border-t border-mist bg-parchment/95 p-3 backdrop-blur sm:hidden">
       <Link
         href="/compress-image"
-        className="flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white"
+        className="flex min-h-12 w-full items-center justify-center rounded-lg border border-signal-blue bg-transparent text-[15px] font-medium text-signal-blue transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96]"
       >
-        Start optimizing — free
+        Start optimizing
       </Link>
     </div>
   );

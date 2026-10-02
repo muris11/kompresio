@@ -1,36 +1,26 @@
-import { FileArchive, Images, Lock, SlidersHorizontal } from "lucide-react";
-
 import { Reveal } from "@/components/shared/reveal";
 
 const stats = [
-  { icon: Images, value: "14+", label: "Free tools, no sign-up" },
-  { icon: SlidersHorizontal, value: "20 MB", label: "Max file size per image" },
-  { icon: FileArchive, value: "50 files", label: "Batch queue with ZIP export" },
-  { icon: Lock, value: "100%", label: "Client-side private processing" },
+  { value: "14+", label: "Free tools, no sign-up" },
+  { value: "20 MB", label: "Max file size per image" },
+  { value: "50", label: "Files per batch queue" },
+  { value: "100%", label: "Processed in your browser" },
 ];
 
 export function StatsSection() {
   return (
-    <section className="border-y border-slate-200 bg-slate-50">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <Reveal key={s.label} delay={i * 0.06}>
-                <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-                  <span className="mx-auto grid size-12 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                    <Icon className="size-6" />
-                  </span>
-                  <p className="mt-4 font-mono text-3xl font-extrabold text-slate-950">
-                    {s.value}
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500">{s.label}</p>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+    <section className="border-b border-mist bg-paper">
+      <div className="mx-auto grid w-full max-w-[1200px] grid-cols-2 gap-px bg-mist px-0 lg:grid-cols-4">
+        {stats.map((stat, index) => (
+          <Reveal key={stat.label} delay={index * 0.05}>
+            <div className="bg-paper px-6 py-10">
+              <p className="font-mono text-3xl text-graphite">{stat.value}</p>
+              <p className="mt-2 text-[13px] leading-6 text-ash">
+                {stat.label}
+              </p>
+            </div>
+          </Reveal>
+        ))}
       </div>
     </section>
   );

@@ -9,7 +9,6 @@ import {
   Lock,
   Rocket,
   ShieldCheck,
-  UsersRound,
 } from "lucide-react";
 
 import { SectionHeading } from "@/components/marketing/section-heading";
@@ -102,21 +101,18 @@ export default function CompanyPage() {
         ]}
       />
 
-      <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.2),transparent_34%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <Badge variant="success">
-            <BadgeCheck className="size-3.5" />
-            Company
-          </Badge>
-          <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_380px] lg:items-end">
+      <section className="border-b border-mist bg-paper">
+        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <Badge variant="muted">Company</Badge>
+          <div className="mt-6 grid gap-12 lg:grid-cols-[1fr_360px] lg:items-end">
             <div className="min-w-0">
-              <h1 className="max-w-4xl break-words text-4xl font-extrabold leading-tight text-slate-950 sm:text-6xl">
-                Kompresio is a fast, private image toolkit for real upload workflows.
+              <h1 className="max-w-3xl break-words font-display text-heading-sm leading-[1.1] text-graphite sm:text-heading-lg">
+                A fast, private image toolkit for real upload workflows.
               </h1>
-              <p className="mt-6 max-w-3xl text-base leading-8 text-slate-600 sm:text-lg">
-                Kompresio helps people compress, convert, resize, crop, clean metadata,
-                analyze, batch export, and create PDFs from images without turning a
-                simple task into a complicated design app.
+              <p className="mt-6 max-w-2xl text-[17px] leading-8 text-charcoal">
+                Kompresio helps people compress, convert, resize, crop, clean
+                metadata, analyze, batch export, and create PDFs from images —
+                without turning a simple task into a complicated design app.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg">
@@ -132,97 +128,89 @@ export default function CompanyPage() {
             </div>
 
             <Card className="p-6">
-              <div className="flex items-center gap-4">
-                <span className="grid size-12 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                  <UsersRound className="size-6" />
-                </span>
-                <div>
-                  <p className="text-sm font-bold text-slate-950">Built by</p>
-                  <a
-                    href={siteConfig.developer.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-lg font-extrabold text-blue-600"
-                  >
-                    {siteConfig.developer.label}
-                  </a>
-                </div>
-              </div>
-              <p className="mt-5 text-sm leading-7 text-slate-600">
-                Product ownership, maintenance, and attribution stay with rifqysaputra.dev.
+              <p className="text-[12px] uppercase tracking-[0.12em] text-ash">
+                Built by
+              </p>
+              <a
+                href={siteConfig.developer.url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 block font-display text-subheading text-graphite transition-colors hover:text-cerulean"
+              >
+                {siteConfig.developer.label}
+              </a>
+              <p className="mt-4 text-[13px] leading-6 text-ash">
+                Product ownership, maintenance, and attribution stay with
+                rifqysaputra.dev.
               </p>
             </Card>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid grid-cols-2 gap-px border-t border-mist pt-px lg:grid-cols-4">
             {stats.map((item) => (
-              <Card key={item.label} className="p-5">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+              <div key={item.label} className="border-t border-mist pt-5 pr-6">
+                <p className="text-[12px] uppercase tracking-[0.1em] text-ash">
                   {item.label}
                 </p>
-                <p className="mt-3 font-mono text-3xl font-bold text-slate-950">
+                <p className="mt-2 font-mono text-2xl text-graphite">
                   {item.value}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
+                <p className="mt-2 text-[13px] leading-6 text-ash">
                   {item.description}
                 </p>
-              </Card>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <SectionHeading
           eyebrow="Operating principles"
           title="Built around speed, privacy, and practical output"
           description="The product is shaped for repeat work: upload quickly, choose a real setting, preview output, and download files that are ready for websites, documents, marketplaces, or sharing."
         />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-2 lg:grid-cols-4">
           {principles.map((item) => {
             const Icon = item.icon;
             return (
-              <Card key={item.title} className="p-5">
-                <span className="grid size-11 place-items-center rounded-xl bg-cyan-50 text-cyan-700">
-                  <Icon className="size-5" />
-                </span>
-                <h2 className="mt-5 text-lg font-bold text-slate-950">
+              <div key={item.title} className="bg-paper p-7">
+                <Icon className="size-5 text-charcoal" />
+                <h2 className="mt-8 font-display text-subheading leading-[1.25] text-graphite">
                   {item.title}
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
+                <p className="mt-3 text-body-sm leading-7 text-ash">
                   {item.description}
                 </p>
-              </Card>
+              </div>
             );
           })}
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-slate-50">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+      <section className="border-y border-mist bg-linen">
+        <div className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
           <SectionHeading
             eyebrow="Company resources"
             title="Clear product, legal, and pricing pages"
             description="These pages document how Kompresio should be used, what data boundaries matter, and what the free MVP includes."
           />
-          <div className="mt-10 grid gap-4 lg:grid-cols-3">
+          <div className="mt-14 grid gap-4 lg:grid-cols-3">
             {resources.map((resource) => {
               const Icon = resource.icon;
               return (
                 <Link key={resource.href} href={resource.href} className="group block">
-                  <Card className="h-full p-6 transition hover:-translate-y-1 hover:border-blue-200">
-                    <span className="grid size-12 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                      <Icon className="size-6" />
-                    </span>
-                    <h2 className="mt-5 text-xl font-bold text-slate-950">
+                  <Card className="h-full p-7 transition-colors hover:border-twilight/25">
+                    <Icon className="size-5 text-charcoal" />
+                    <h2 className="mt-8 font-display text-subheading text-graphite">
                       {resource.title}
                     </h2>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">
+                    <p className="mt-3 text-body-sm leading-7 text-ash">
                       {resource.description}
                     </p>
-                    <p className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-blue-600">
+                    <p className="mt-6 inline-flex items-center gap-2 text-[13px] text-charcoal">
                       Open page
-                      <ArrowRight className="size-4 transition group-hover:translate-x-1" />
+                      <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                     </p>
                   </Card>
                 </Link>

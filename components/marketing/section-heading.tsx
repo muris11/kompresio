@@ -10,17 +10,21 @@ export function SectionHeading({
   align?: "left" | "center";
 }) {
   return (
-    <div className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
+    <div
+      className={
+        align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"
+      }
+    >
       {eyebrow ? (
-        <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-600">
+        <p className="text-[13px] font-medium uppercase tracking-[0.16em] text-ash">
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="mt-3 break-words text-2xl font-extrabold tracking-normal text-slate-950 sm:text-4xl">
+      <h2 className="mt-3 break-words font-display text-heading-sm leading-[1.15] text-graphite sm:text-heading">
         {title}
       </h2>
       {description ? (
-        <p className="mt-4 break-words text-base leading-8 text-slate-600 sm:text-lg">
+        <p className="mt-4 break-words text-[17px] leading-8 text-ash">
           {description}
         </p>
       ) : null}

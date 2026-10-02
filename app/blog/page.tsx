@@ -1,22 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  ArrowRight,
-  BookOpenText,
-  CalendarDays,
-  CheckCircle2,
-  Clock,
-  FileText,
-  FolderOpen,
-  Search,
-  TrendingUp,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, BookOpenText, FileText, ShieldCheck, TrendingUp } from "lucide-react";
 
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { blogPosts } from "@/lib/constants/blog";
 import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
@@ -71,35 +59,30 @@ export default function BlogPage() {
           { name: "Blog", path: "/blog" },
         ])}
       />
-      <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_34%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <Badge variant="success">
-            <BookOpenText className="size-3.5" />
+
+      <section className="border-b border-mist bg-paper">
+        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+          <Badge variant="muted">
+            <BookOpenText className="size-3" />
             Blog
           </Badge>
-          <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_380px] lg:items-end">
+          <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_360px] lg:items-end">
             <SectionHeading
               title="Image optimization guides for real workflows"
               description="Learn compression, conversion, resize, metadata privacy, HEIC handling, batch export, image-to-PDF, SEO, and developer handoff patterns."
             />
-            <Card className="p-5">
-              <div className="flex min-h-12 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 text-slate-500">
-                <Search className="size-5" />
-                <span className="text-sm">Search-ready knowledge hub</span>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Badge key={category} variant="muted">
-                    {category}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Badge key={category} variant="muted">
+                  {category}
+                </Badge>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <FeaturedPost post={featured} large />
           <div className="grid gap-5">
@@ -108,38 +91,30 @@ export default function BlogPage() {
           </div>
         </div>
 
-        <section className="mt-14">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <section className="mt-20">
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <SectionHeading
               eyebrow="Learning paths"
               title="Pick the guide that matches your job"
               description="Start with the outcome you need: faster pages, safer sharing, or upload-ready documents."
             />
-            <Button asChild variant="secondary">
-              <Link href="/tools">
-                Open tools
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
           </div>
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+          <div className="mt-10 grid gap-4 lg:grid-cols-3">
             {learningPaths.map((path) => {
               const Icon = path.icon;
               return (
                 <Link key={path.href} href={path.href} className="group block">
-                  <Card className="h-full p-6 transition hover:-translate-y-1 hover:border-blue-200">
-                    <span className="grid size-11 place-items-center rounded-xl bg-cyan-50 text-cyan-700">
-                      <Icon className="size-5" />
-                    </span>
-                    <h2 className="mt-5 text-xl font-bold text-slate-950">
+                  <Card className="h-full p-7 transition-colors hover:border-twilight/25">
+                    <Icon className="size-5 text-charcoal" />
+                    <h2 className="mt-7 font-display text-subheading text-graphite">
                       {path.title}
                     </h2>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">
+                    <p className="mt-3 text-body-sm leading-7 text-ash">
                       {path.description}
                     </p>
-                    <p className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-blue-600">
+                    <p className="mt-6 inline-flex items-center gap-2 text-[13px] text-charcoal">
                       Read path
-                      <ArrowRight className="size-4 transition group-hover:translate-x-1" />
+                      <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                     </p>
                   </Card>
                 </Link>
@@ -148,38 +123,35 @@ export default function BlogPage() {
           </div>
         </section>
 
-        <section className="mt-14">
+        <section className="mt-20">
           <SectionHeading
             eyebrow="All guides"
             title="Complete Kompresio article library"
             description="Every article links back to the relevant working tool so the guide can turn into action immediately."
           />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
-              <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-                <Card className="h-full p-5 transition hover:-translate-y-1 hover:border-blue-200">
-                  <div className="flex items-center justify-between gap-3">
-                    <Badge variant="muted">{post.category}</Badge>
-                    <FolderOpen className="size-4 text-slate-400" />
-                  </div>
-                  <h2 className="mt-5 break-words text-xl font-bold text-slate-950">
-                    {post.title}
-                  </h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
-                    {post.description}
-                  </p>
-                  <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs font-semibold text-slate-500">
-                    <span className="inline-flex items-center gap-1">
-                      <Clock className="size-3.5" />
-                      {post.readTime}
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <CalendarDays className="size-3.5" />
-                      {post.publishedAt}
-                    </span>
-                    <ArrowRight className="size-4 transition group-hover:translate-x-1 group-hover:text-blue-600" />
-                  </div>
-                </Card>
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group flex flex-col bg-paper p-7 transition-colors hover:bg-parchment"
+              >
+                <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-fog">
+                  {post.category}
+                </p>
+                <h2 className="mt-5 break-words font-display text-subheading leading-[1.25] text-graphite">
+                  {post.title}
+                </h2>
+                <p className="mt-3 flex-1 text-body-sm leading-7 text-ash line-clamp-2">
+                  {post.description}
+                </p>
+                <div className="mt-6 flex items-center justify-between border-t border-mist pt-4 text-[13px] text-ash">
+                  <span>{post.readTime}</span>
+                  <span className="inline-flex items-center gap-1 text-charcoal">
+                    Read
+                    <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
@@ -199,41 +171,33 @@ function FeaturedPost({
   return (
     <Link href={`/blog/${post.slug}`} className="group block h-full">
       <Card
-        className={large
-          ? "flex h-full flex-col overflow-hidden p-0 transition hover:-translate-y-1 hover:border-blue-200"
-          : "h-full p-6 transition hover:-translate-y-1 hover:border-blue-200"}
+        className={
+          large
+            ? "flex h-full flex-col p-8 transition-colors hover:border-twilight/25 sm:p-10"
+            : "h-full p-7 transition-colors hover:border-twilight/25"
+        }
       >
-        {large ? (
-          <div className="bg-gradient-to-br from-blue-600 to-cyan-500 p-8 text-white sm:p-10">
-            <Badge className="border-white/20 bg-white/10 text-white">{post.category}</Badge>
-            <p className="mt-12 font-mono text-5xl font-bold">87%</p>
-            <p className="mt-3 max-w-sm text-blue-50">
-              Example saving from resizing and converting a heavy JPG into a web-ready file.
-            </p>
-          </div>
-        ) : null}
-        <div className={large ? "flex flex-1 flex-col p-7 sm:p-10" : ""}>
-          {!large ? <Badge>{post.category}</Badge> : null}
-          <h2 className={large ? "text-3xl font-extrabold text-slate-950" : "mt-5 text-xl font-bold text-slate-950"}>
-            {post.title}
-          </h2>
-          <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
-            {post.description}
-          </p>
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-500">
-            <span className="inline-flex items-center gap-1">
-              <Clock className="size-3.5" />
-              {post.readTime}
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <CheckCircle2 className="size-3.5" />
-              Practical guide
-            </span>
-          </div>
-          <p className="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-bold text-blue-600">
+        <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-fog">
+          {post.category}
+        </p>
+        <h2
+          className={
+            large
+              ? "mt-6 font-display text-heading-sm leading-[1.15] text-graphite"
+              : "mt-5 font-display text-subheading leading-[1.25] text-graphite"
+          }
+        >
+          {post.title}
+        </h2>
+        <p className="mt-4 flex-1 text-body-sm leading-7 text-ash">
+          {post.description}
+        </p>
+        <div className="mt-6 flex items-center justify-between border-t border-mist pt-4 text-[13px] text-ash">
+          <span>{post.readTime}</span>
+          <span className="inline-flex items-center gap-2 text-charcoal">
             Read guide
-            <ArrowRight className="size-4 transition group-hover:translate-x-1" />
-          </p>
+            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+          </span>
         </div>
       </Card>
     </Link>

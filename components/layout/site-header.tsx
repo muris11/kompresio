@@ -1,74 +1,106 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useState } from "react";
 
-import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
 import { primaryNav } from "@/lib/constants/site";
 import { cn } from "@/lib/utils";
+
+function Mark() {
+  return (
+    <Link
+      href="/"
+      aria-label="Kompresio home"
+      className="flex items-center gap-2 pr-2"
+    >
+      <span className="grid size-6 place-items-center rounded-[4px] border border-twilight/40">
+        <span className="size-2 rounded-[1px] bg-signal" />
+      </span>
+      <span className="font-display text-subheading leading-none text-graphite">
+        Kompresio
+      </span>
+    </Link>
+  );
+}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/86 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 md:h-20 lg:px-8">
-        <Logo />
+    <header className="fixed top-6 left-1/2 z-50 w-full max-w-fit -translate-x-1/2 px-4">
+      <div className="mx-auto flex items-center justify-between gap-6 rounded-full border border-twilight bg-white/[0.06] p-2 pl-4 pr-2 shadow-sm backdrop-blur-md">
+        <Mark />
 
-        <nav aria-label="Primary navigation" className="hidden items-center gap-1 md:flex">
-          {primaryNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="hidden items-center gap-2 md:flex">
-          <Button asChild size="md">
-            <Link href="/compress-image">Start optimizing — free</Link>
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-2 md:hidden">
-          <Button
-            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={open}
-            variant="secondary"
-            size="icon"
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-          >
-            {open ? <X className="size-5" /> : <Menu className="size-5" />}
-          </Button>
-        </div>
-      </div>
-
-      <div
-        className={cn(
-          "grid border-t border-slate-200 transition-[grid-template-rows] duration-200 md:hidden",
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
-        )}
-      >
-        <div className="overflow-hidden">
-          <nav className="flex flex-col gap-1 px-4 py-4" aria-label="Mobile navigation">
+        <nav
+          aria-label="Primary navigation"
+          className="hidden items-center gap-4 md:flex"
+        >
             {primaryNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-xl px-3 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                className="font-af text-[15px] font-medium text-charcoal transition-colors hover:text-ink-black"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+        <div className="hidden md:block">
+          <Button asChild size="sm" className="rounded-full pl-4 pr-1">
+            <Link href="/compress-image">
+              Start optimizing
+              <span className="ml-1 flex size-6 items-center justify-center rounded-full border border-signal-blue">
+                <ArrowRight className="size-3.5" />
+              </span>
+            </Link>
+          </Button>
+        </div>
+
+        <div className="md:hidden">
+            <Button
+              aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={open}
+              variant="ghost"
+              size="icon"
+              type="button"
+              onClick={() => setOpen((value) => !value)}
+            >
+              {open ? <X className="size-5" /> : <Menu className="size-5" />}
+            </Button>
+          </div>
+        </div>
+
+      <div
+        className={cn(
+          "fixed top-[88px] left-1/2 z-40 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 grid overflow-hidden transition-[grid-template-rows] duration-200 md:hidden",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
+      >
+        <div className="overflow-hidden">
+          <nav
+            aria-label="Mobile navigation"
+            className="flex flex-col gap-1 rounded-2xl border border-mist bg-paper/95 p-3 shadow-subtle backdrop-blur-xl"
+          >
+            {primaryNav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-3 py-3 font-af text-[15px] font-medium text-charcoal hover:bg-linen"
                 onClick={() => setOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
-            <Button asChild className="mt-2" onClick={() => setOpen(false)}>
-              <Link href="/compress-image">Start optimizing</Link>
+            <Button asChild className="mt-1 justify-between pr-2" onClick={() => setOpen(false)}>
+              <Link href="/compress-image">
+                Start optimizing
+                <span className="flex size-6 items-center justify-center rounded-full border border-signal-blue">
+                  <ArrowRight className="size-3.5" />
+                </span>
+              </Link>
             </Button>
           </nav>
         </div>

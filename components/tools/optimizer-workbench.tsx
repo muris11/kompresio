@@ -560,7 +560,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
   return (
     <section
       id="kompresio-workbench"
-      className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 sm:px-6 lg:px-8"
+      className="mx-auto w-full max-w-[1200px] scroll-mt-24 px-4 py-10 sm:px-6 lg:px-8"
     >
       <WorkbenchSteps
         tool={tool}
@@ -568,7 +568,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
         hasFiles={items.length > 0}
         completedCount={completedItems.length}
       />
-      <div className="mt-5 grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)_360px]">
+      <div className="mt-6 grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)_360px]">
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Dropzone
             tool={tool}
@@ -654,26 +654,26 @@ function WorkbenchSteps({
       title: "Upload images",
       description:
         hasFiles === false
-          ? `Drag ${tool.supportedFormats.slice(0, 3).join(", ")} to the left panel or click Browse`
-          : "Files queued — continue to step 2",
+          ? `Drag ${tool.supportedFormats.slice(0, 3).join(", ")} into the left panel, or browse.`
+          : "Files queued — continue to step 2.",
     },
     {
       number: 2,
       title: "Adjust and process",
-      description: `Balanced default works for most files. Then click "${tool.primaryAction}"`,
+      description: `The Balanced default suits most files. Then click “${tool.primaryAction}”.`,
     },
     {
       number: 3,
       title: "Download results",
       description:
         completedCount > 0
-          ? `${completedCount} ready — click Single or ZIP`
-          : "Results and download buttons appear here",
+          ? `${completedCount} ready — download single files or a ZIP.`
+          : "Results and download buttons appear here.",
     },
   ];
 
   return (
-    <ol className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.05)] sm:grid-cols-3">
+    <ol className="grid gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-3">
       {steps.map((step) => {
         const active = currentStep === step.number;
         const done =
@@ -683,31 +683,23 @@ function WorkbenchSteps({
           <li
             key={step.number}
             className={cn(
-              "flex gap-3 rounded-xl border p-3",
-              active
-                ? "border-blue-500 bg-blue-50/60"
-                : done
-                  ? "border-emerald-200 bg-emerald-50/60"
-                  : "border-slate-200 bg-slate-50",
+              "flex gap-4 bg-paper p-5",
+              active && "bg-signal/5",
             )}
           >
             <span
               className={cn(
-                "grid size-8 shrink-0 place-items-center rounded-full font-mono text-sm font-bold text-white",
-                active
-                  ? "bg-blue-600"
-                  : done
-                    ? "bg-emerald-600"
-                    : "bg-slate-400",
+                "font-mono text-[13px]",
+                active ? "text-signal" : done ? "text-signal" : "text-fog",
               )}
             >
-              {step.number}
+              {done ? <CheckCircle2 className="size-4" /> : `0${step.number}`}
             </span>
             <span>
-              <span className="block text-sm font-bold text-slate-950">
+              <span className="block text-body-sm font-medium text-graphite">
                 {step.title}
               </span>
-              <span className="block text-xs leading-5 text-slate-600">
+              <span className="mt-1 block text-[13px] leading-6 text-ash">
                 {step.description}
               </span>
             </span>
@@ -773,29 +765,25 @@ function Dropzone({
       {...getRootProps()}
       id="kompresio-dropzone"
       className={cn(
-        "scroll-mt-24 border-dashed p-5 transition",
+        "scroll-mt-24 border-dashed p-5 transition-colors",
         isDragActive
-          ? "border-blue-500 bg-blue-50"
-          : "hover:border-blue-300 hover:bg-blue-50/40",
+          ? "border-signal bg-signal/5"
+          : "hover:border-twilight/25",
       )}
     >
       <input {...getInputProps()} />
       <div className="flex flex-col items-start gap-4">
-        <span className="grid size-12 place-items-center rounded-xl bg-blue-50 text-blue-600">
-          <UploadCloud className="size-6" aria-hidden="true" />
-        </span>
+        <UploadCloud className="size-6 text-charcoal" aria-hidden="true" />
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+          <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-ash">
             Step 1 — Upload
           </p>
-          <h2 className="mt-1 text-base font-bold text-slate-950">
-            {isDragActive
-              ? "Release to add images"
-              : "Drag images here or browse"}
+          <h2 className="mt-1.5 font-display text-subheading text-graphite">
+            {isDragActive ? "Release to add images" : "Drag images here"}
           </h2>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
-            For {tool.name}: {tool.supportedFormats.join(", ")}. Max 20 MB
-            per file, up to 50 files.
+          <p className="mt-1.5 text-[13px] leading-6 text-ash">
+            For {tool.name}: {tool.supportedFormats.join(", ")}. Max 20 MB per
+            file, up to 50 files.
           </p>
         </div>
         <Button
@@ -808,7 +796,7 @@ function Dropzone({
           Browse images
         </Button>
         <Badge variant="success">
-          <Lock className="size-3.5" />
+          <Lock className="size-3" />
           Local processing
         </Badge>
       </div>
@@ -829,12 +817,12 @@ function QueueList({
 }) {
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between border-b border-slate-200 p-4">
-        <h2 className="text-sm font-bold text-slate-950">File queue</h2>
+      <div className="flex items-center justify-between border-b border-mist p-4">
+        <h2 className="text-body-sm font-medium text-graphite">File queue</h2>
         <Badge variant="muted">{items.length}/50</Badge>
       </div>
       {items.length === 0 ? (
-        <div className="p-5 text-sm leading-6 text-slate-600">
+        <div className="p-5 text-[13px] leading-6 text-ash">
           Step 1: upload first — the queue is empty. After upload, adjust in
           step 2, then press the process button in step 3.
         </div>
@@ -853,14 +841,14 @@ function QueueList({
                 }
               }}
               className={cn(
-                "group mb-2 w-full rounded-xl border p-3 text-left transition",
+                "group mb-2 w-full rounded-btn border p-3 text-left transition-colors",
                 selectedId === item.id
-                  ? "border-blue-300 bg-blue-50"
-                  : "border-transparent hover:border-slate-200 hover:bg-slate-50",
+                  ? "border-signal/40 bg-signal/5"
+                  : "border-transparent hover:border-mist hover:bg-linen",
               )}
             >
               <div className="flex gap-3">
-                <div className="relative grid size-12 place-items-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                <div className="relative grid size-12 place-items-center overflow-hidden rounded-[4px] border border-mist bg-linen">
                   {canRenderPreview(item.file) ? (
                     <Image
                       src={item.previewUrl}
@@ -871,17 +859,17 @@ function QueueList({
                       className="object-cover"
                     />
                   ) : (
-                    <ImageIcon className="size-5 text-slate-400" />
+                    <ImageIcon className="size-5 text-fog" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-slate-950">
+                  <p className="truncate text-[13px] font-medium text-graphite">
                     {item.file.name}
                   </p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-mono text-[12px] text-ash">
                     {formatBytes(item.file.size)}
                     {item.dimensions
-                      ? ` · ${item.dimensions.width}x${item.dimensions.height}`
+                      ? ` · ${item.dimensions.width}×${item.dimensions.height}`
                       : ""}
                   </p>
                   <div className="mt-2 flex items-center gap-2">
@@ -891,7 +879,7 @@ function QueueList({
                     <button
                       type="button"
                       aria-label={`Remove ${item.file.name}`}
-                      className="ml-auto rounded-lg p-1 text-slate-400 opacity-0 transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+                      className="ml-auto rounded-[4px] p-1 text-fog opacity-0 transition-colors hover:bg-destructive/8 hover:text-destructive group-hover:opacity-100"
                       onClick={(event) => {
                         event.stopPropagation();
                         onRemove(item.id);
@@ -928,19 +916,17 @@ function PreviewPanel({
     return (
       <Card className="grid min-h-[420px] place-items-center p-8 text-center">
         <div className="max-w-sm">
-          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-slate-100 text-slate-500">
-            <Gauge className="size-7" />
-          </span>
-          <p className="mt-5 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+          <Gauge className="mx-auto size-7 text-fog" />
+          <p className="mt-5 text-[13px] font-medium uppercase tracking-[0.12em] text-ash">
             Step 1 — No files yet
           </p>
-          <h2 className="mt-2 text-xl font-bold text-slate-950">
+          <h2 className="mt-2 font-display text-heading-sm text-graphite">
             Upload to start {tool.name.toLowerCase()}
           </h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Steps: 1) Upload {tool.supportedFormats.slice(0, 3).join(", ")},
-            2) keep the Balanced preset, 3) click &quot;{tool.primaryAction}
-            &quot; then download. Everything runs locally in your browser.
+          <p className="mt-3 text-body-sm leading-7 text-ash">
+            Steps: 1) upload {tool.supportedFormats.slice(0, 3).join(", ")},
+            2) keep the Balanced preset, 3) click “{tool.primaryAction}” then
+            download. Everything runs locally in your browser.
           </p>
         </div>
       </Card>
@@ -958,14 +944,14 @@ function PreviewPanel({
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex flex-col justify-between gap-3 border-b border-slate-200 p-5 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-3 border-b border-mist p-5 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-lg font-bold text-slate-950">
+          <h2 className="font-display text-subheading text-graphite">
             {mode === "analyzer"
               ? "Inspection preview"
               : "Before and after preview"}
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-[13px] text-ash">
             {mode === "pdf"
               ? "Create a single downloadable PDF from the queue."
               : mode === "analyzer"
@@ -977,12 +963,12 @@ function PreviewPanel({
         </div>
         {item.warning ? (
           <Badge variant="warning">
-            <AlertTriangle className="size-3.5" />
+            <AlertTriangle className="size-3" />
             Warning
           </Badge>
         ) : (
           <Badge variant="success">
-            <ShieldCheck className="size-3.5" />
+            <ShieldCheck className="size-3" />
             Private
           </Badge>
         )}
@@ -1012,7 +998,7 @@ function PreviewPanel({
       </div>
 
       {item.error || item.warning ? (
-        <div className="border-t border-slate-200 p-5">
+        <div className="border-t border-mist p-5">
           <InlineMessage type={item.error ? "error" : "warning"}>
             {item.error || item.warning}
           </InlineMessage>
@@ -1039,13 +1025,13 @@ function PreviewImage({
 }) {
   return (
     <motion.div
-      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-      animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-[linear-gradient(45deg,#f8fafc_25%,transparent_25%),linear-gradient(-45deg,#f8fafc_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f8fafc_75%),linear-gradient(-45deg,transparent_75%,#f8fafc_75%)] bg-[length:22px_22px] bg-[position:0_0,0_11px,11px_-11px,-11px_0]"
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={reduceMotion ? undefined : { opacity: 1 }}
+      className="overflow-hidden rounded-btn border border-mist bg-[linear-gradient(45deg,#f2f4f0_25%,transparent_25%),linear-gradient(-45deg,#f2f4f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f2f4f0_75%),linear-gradient(-45deg,transparent_75%,#f2f4f0_75%)] bg-[length:22px_22px] bg-[position:0_0,0_11px,11px_-11px,-11px_0]"
     >
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3">
-        <p className="text-sm font-bold text-slate-950">{title}</p>
-        <p className="font-mono text-xs text-slate-500">{detail}</p>
+      <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
+        <p className="text-[13px] font-medium text-graphite">{title}</p>
+        <p className="font-mono text-[12px] text-ash">{detail}</p>
       </div>
       <div className="grid aspect-[4/3] place-items-center p-3">
         {src && canRender ? (
@@ -1055,12 +1041,12 @@ function PreviewImage({
             width={1200}
             height={900}
             unoptimized
-            className="h-full w-full rounded-xl object-contain"
+            className="h-full w-full rounded-[4px] object-contain"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         ) : (
-          <div className="text-center text-sm text-slate-500">
-            <ImageIcon className="mx-auto mb-2 size-8" />
+          <div className="text-center text-[13px] text-ash">
+            <ImageIcon className="mx-auto mb-2 size-8 text-fog" />
             {src ? "Preview not available for this format" : "No output yet"}
           </div>
         )}
@@ -1077,35 +1063,33 @@ function ResultFilePreview({
   title: string;
 }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3">
-        <p className="text-sm font-bold text-slate-950">{title}</p>
-        <p className="font-mono text-xs text-slate-500">
+    <div className="overflow-hidden rounded-btn border border-mist bg-linen">
+      <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
+        <p className="text-[13px] font-medium text-graphite">{title}</p>
+        <p className="font-mono text-[12px] text-ash">
           {result ? formatBytes(result.outputSize) : "Process to generate"}
         </p>
       </div>
       <div className="grid aspect-[4/3] place-items-center p-6 text-center">
         {result ? (
           <div>
-            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-blue-50 text-blue-600">
-              {result.kind === "json" ? (
-                <ScanSearch className="size-7" />
-              ) : (
-                <FileText className="size-7" />
-              )}
-            </span>
-            <p className="mt-4 text-base font-bold text-slate-950">
+            {result.kind === "json" ? (
+              <ScanSearch className="mx-auto size-7 text-signal" />
+            ) : (
+              <FileText className="mx-auto size-7 text-signal" />
+            )}
+            <p className="mt-4 text-body-sm font-medium text-graphite">
               {result.filename}
             </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
+            <p className="mt-2 text-[13px] leading-6 text-ash">
               {result.kind === "pdf"
                 ? `${result.pageCount || 1} page PDF ready to download.`
                 : "JSON inspection report ready to download."}
             </p>
           </div>
         ) : (
-          <div className="text-sm text-slate-500">
-            <FileText className="mx-auto mb-2 size-8" />
+          <div className="text-[13px] text-ash">
+            <FileText className="mx-auto mb-2 size-8 text-fog" />
             No generated file yet
           </div>
         )}
@@ -1167,20 +1151,19 @@ function CropEditorSurface({
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between border-b border-slate-200 p-5">
+      <div className="flex items-center justify-between border-b border-mist p-5">
         <div>
-          <h2 className="text-base font-bold text-slate-950">Crop editor</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="font-display text-subheading text-graphite">
+            Crop editor
+          </h2>
+          <p className="text-[13px] text-ash">
             Drag the image and adjust zoom before exporting.
           </p>
         </div>
-        <Badge variant="default">
-          <CropIcon className="size-3.5" />
-          {formatRatioLabel(aspectRatio)}
-        </Badge>
+        <Badge variant="outline">{formatRatioLabel(aspectRatio)}</Badge>
       </div>
       <div className="p-5">
-        <div className="relative h-[300px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 sm:h-[380px]">
+        <div className="relative h-[300px] overflow-hidden rounded-btn border border-mist bg-dusk sm:h-[380px]">
           <Cropper
             image={item.previewUrl}
             crop={crop}
@@ -1195,7 +1178,7 @@ function CropEditorSurface({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="crop-zoom">Zoom</Label>
-              <span className="font-mono text-sm font-bold text-slate-950">
+              <span className="font-mono text-[13px] text-graphite">
                 {zoom.toFixed(2)}x
               </span>
             </div>
@@ -1206,7 +1189,7 @@ function CropEditorSurface({
               max="3"
               step="0.01"
               value={zoom}
-              className="w-full accent-blue-600"
+              className="w-full accent-cerulean"
               onChange={(event) => setZoom(Number(event.target.value))}
             />
           </div>
@@ -1253,12 +1236,12 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center justify-between border-b border-slate-200 p-5">
+      <div className="flex items-center justify-between border-b border-mist p-5">
         <div>
-          <h2 className="text-base font-bold text-slate-950">
+          <h2 className="font-display text-subheading text-graphite">
             Image inspection
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className="text-[13px] text-ash">
             Metadata, dimensions, memory estimate, and optimization advice.
           </p>
         </div>
@@ -1271,13 +1254,13 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
         </Badge>
       </div>
       <div className="space-y-5 p-5">
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <InspectionMetric label="Size" value={analysis.fileSizeReadable} />
           <InspectionMetric
             label="Dimensions"
             value={
               analysis.width && analysis.height
-                ? `${analysis.width}x${analysis.height}`
+                ? `${analysis.width}×${analysis.height}`
                 : "Unknown"
             }
           />
@@ -1292,17 +1275,17 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
         </div>
 
         {analysis.recommendation.notes.length ? (
-          <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-            <p className="text-sm font-bold text-slate-950">
+          <div className="rounded-btn border border-signal/25 bg-signal/5 p-4">
+            <p className="text-body-sm font-medium text-graphite">
               Smart recommendation
             </p>
             <ul className="mt-3 space-y-2">
               {analysis.recommendation.notes.map((note) => (
                 <li
                   key={note}
-                  className="flex gap-2 text-sm leading-6 text-slate-700"
+                  className="flex gap-2 text-[13px] leading-6 text-charcoal"
                 >
-                  <CheckCircle2 className="mt-1 size-4 shrink-0 text-blue-600" />
+                  <CheckCircle2 className="mt-1 size-4 shrink-0 text-signal" />
                   {note}
                 </li>
               ))}
@@ -1324,9 +1307,11 @@ function InspectionMetric({
   value: string | number;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4">
-      <p className="text-xs font-semibold uppercase text-slate-500">{label}</p>
-      <p className="mt-2 font-mono text-lg font-bold text-slate-950">{value}</p>
+    <div className="border-t border-mist pt-3">
+      <p className="text-[12px] uppercase tracking-[0.08em] text-ash">
+        {label}
+      </p>
+      <p className="mt-1.5 font-mono text-lg text-graphite">{value}</p>
     </div>
   );
 }
@@ -1336,29 +1321,29 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
 
   if (tags.length === 0) {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-800">
+      <div className="rounded-btn border border-success/30 bg-success/6 p-4 text-[13px] leading-6 text-success">
         No readable EXIF metadata was found in this file.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-200">
-      <div className="grid min-w-[560px] grid-cols-[1fr_1fr_auto] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold uppercase text-slate-500">
+    <div className="overflow-x-auto rounded-btn border border-mist">
+      <div className="grid min-w-[560px] grid-cols-[1fr_1fr_auto] gap-3 border-b border-mist bg-linen px-4 py-3 text-[12px] uppercase tracking-[0.08em] text-ash">
         <span>Tag</span>
         <span>Value</span>
         <span>Risk</span>
       </div>
-      <div className="divide-y divide-slate-100">
+      <div className="divide-y divide-mist">
         {tags.map((tag) => (
           <div
             key={`${tag.group || "metadata"}-${tag.name}-${tag.value}`}
-            className="grid min-w-[560px] grid-cols-[1fr_1fr_auto] gap-3 px-4 py-3 text-sm"
+            className="grid min-w-[560px] grid-cols-[1fr_1fr_auto] gap-3 px-4 py-3 text-[13px]"
           >
-            <span className="min-w-0 truncate font-semibold text-slate-800">
+            <span className="min-w-0 truncate text-charcoal">
               {tag.group ? `${tag.group}.${tag.name}` : tag.name}
             </span>
-            <span className="min-w-0 truncate text-slate-600">
+            <span className="min-w-0 truncate text-ash">
               {tag.value || "-"}
             </span>
             <Badge variant={tag.sensitive ? "warning" : "muted"}>
@@ -1376,11 +1361,11 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
   const noFile = !item;
   const originalSize = result ? result.originalSize : item ? item.file.size : 0;
   const dimensions = result
-    ? `${result.width}x${result.height}`
+    ? `${result.width}×${result.height}`
     : item?.dimensions
-      ? `${item.dimensions.width}x${item.dimensions.height}`
+      ? `${item.dimensions.width}×${item.dimensions.height}`
       : noFile
-        ? `Appears after clicking "${tool.primaryAction}"`
+        ? `Appears after clicking “${tool.primaryAction}”`
         : "-";
   const savedValue =
     result?.kind === "pdf"
@@ -1421,19 +1406,16 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-card border border-mist bg-mist sm:grid-cols-3">
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className={cn(
-            "rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_8px_24px_rgba(15,23,42,0.05)]",
-            metric.strong && "border-emerald-200 bg-emerald-50",
-          )}
+          className={cn("bg-paper p-4", metric.strong && "bg-signal/5")}
         >
-          <p className="text-xs font-semibold uppercase text-slate-500">
+          <p className="text-[12px] uppercase tracking-[0.08em] text-ash">
             {metric.label}
           </p>
-          <p className="mt-2 break-words font-mono text-xl font-bold text-slate-950 sm:text-2xl">
+          <p className="mt-1.5 break-words font-mono text-lg text-graphite">
             {metric.value}
           </p>
         </div>
@@ -1470,28 +1452,28 @@ function SettingsPanel({
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center gap-3 border-b border-slate-200 p-5">
-        <span className="grid size-10 place-items-center rounded-xl bg-blue-50 text-blue-600">
-          <Settings2 className="size-5" />
-        </span>
+      <div className="flex items-center gap-3 border-b border-mist p-5">
+        <Settings2 className="size-5 text-charcoal" />
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+          <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
             Step 2 — Settings
           </p>
-          <h2 className="text-base font-bold text-slate-950">
+          <h2 className="font-display text-subheading text-graphite">
             {tool.mode === "pdf"
               ? "PDF settings"
               : tool.mode === "analyzer"
                 ? "Analyzer settings"
                 : "Export settings"}
           </h2>
-          <p className="text-xs text-slate-500">
-            {tool.name} — Balanced default is enough, change only if needed
-          </p>
         </div>
       </div>
 
       <div className="space-y-5 p-5">
+        <p className="text-[13px] leading-6 text-ash">
+          {tool.name} — the Balanced default is enough. Change only what you
+          need.
+        </p>
+
         {tool.mode === "analyzer" ? (
           <InlineMessage type="info">
             Analyzer creates a JSON report and readable summary. It does not
@@ -1504,18 +1486,19 @@ function SettingsPanel({
             <Label>Preset</Label>
             <div className="grid grid-cols-2 gap-2">
               {presets.map((preset) => (
-                <Button
+                <button
                   key={preset.id}
                   type="button"
-                  variant={
-                    settings.preset === preset.id ? "default" : "secondary"
-                  }
-                  size="sm"
                   onClick={() => onPreset(preset.id)}
-                  className="justify-start px-3 text-left"
+                  className={cn(
+                    "rounded-btn border px-3 py-2 text-left text-[13px] transition-colors",
+                    settings.preset === preset.id
+                      ? "border-signal bg-signal/5 text-cerulean"
+                      : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
+                  )}
                 >
                   {preset.label}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
@@ -1527,7 +1510,7 @@ function SettingsPanel({
               <Label htmlFor="quality">
                 {tool.mode === "pdf" ? "Image quality in PDF" : "Quality"}
               </Label>
-              <span className="font-mono text-sm font-bold text-slate-950">
+              <span className="font-mono text-[13px] text-graphite">
                 {settings.quality}
               </span>
             </div>
@@ -1537,7 +1520,7 @@ function SettingsPanel({
               min="1"
               max="100"
               value={settings.quality}
-              className="w-full accent-blue-600"
+              className="w-full accent-cerulean"
               onChange={(event) =>
                 setSettings((current) => ({
                   ...current,
@@ -1553,14 +1536,14 @@ function SettingsPanel({
           <div className="space-y-2">
             <Label htmlFor="format">Output format</Label>
             {formatOptions.length === 1 ? (
-              <div className="flex h-11 items-center rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-700">
+              <div className="flex h-10 items-center rounded-none border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal">
                 {formatOptions[0].label}
               </div>
             ) : (
               <select
                 id="format"
                 value={settings.outputFormat}
-                className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+                className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal focus:bg-paper"
                 onChange={(event) =>
                   setSettings((current) => ({
                     ...current,
@@ -1651,7 +1634,7 @@ function PdfSettings({
         <select
           id="pdf-page-size"
           value={settings.pdfPageSize}
-          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal focus:bg-paper"
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
@@ -1669,7 +1652,7 @@ function PdfSettings({
         <select
           id="pdf-orientation"
           value={settings.pdfOrientation}
-          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-950 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10"
+          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal focus:bg-paper"
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
@@ -1726,10 +1709,10 @@ function CropSettings({
               key={preset.id}
               type="button"
               className={cn(
-                "rounded-xl border px-3 py-2 text-sm font-semibold transition",
+                "rounded-btn border px-3 py-2 text-[13px] transition-colors",
                 active
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-blue-50",
+                  ? "border-signal bg-signal/5 text-cerulean"
+                  : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
               )}
               onClick={() =>
                 setSettings((current) => ({
@@ -1821,7 +1804,7 @@ function ResizeSettings({
               <button
                 key={preset.label}
                 type="button"
-                className="rounded-xl border border-slate-200 px-3 py-2 text-left text-xs font-semibold text-slate-700 transition hover:border-blue-300 hover:bg-blue-50"
+                className="rounded-btn border border-mist px-3 py-2 text-left text-[12px] text-charcoal transition-colors hover:border-twilight/25 hover:bg-linen"
                 onClick={() =>
                   setSettings((current) => ({
                     ...current,
@@ -1854,16 +1837,14 @@ function CheckboxControl({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 bg-white p-3 transition hover:border-blue-200 hover:bg-blue-50/50">
+    <label className="flex cursor-pointer items-start gap-3 rounded-btn border border-mist bg-paper p-3 transition-colors hover:border-twilight/25">
       <span
         className={cn(
-          "mt-0.5 grid size-5 shrink-0 place-items-center rounded border",
-          checked
-            ? "border-blue-600 bg-blue-600 text-white"
-            : "border-slate-300 bg-white",
+          "mt-0.5 grid size-4 shrink-0 place-items-center rounded-[3px] border",
+          checked ? "border-cerulean bg-cerulean text-white" : "border-fog",
         )}
       >
-        {checked ? <CheckCircle2 className="size-3.5" /> : null}
+        {checked ? <CheckCircle2 className="size-3" /> : null}
       </span>
       <input
         type="checkbox"
@@ -1872,8 +1853,10 @@ function CheckboxControl({
         onChange={(event) => onChange(event.target.checked)}
       />
       <span>
-        <span className="block text-sm font-bold text-slate-950">{label}</span>
-        <span className="block text-xs leading-5 text-slate-500">
+        <span className="block text-[13px] font-medium text-graphite">
+          {label}
+        </span>
+        <span className="block text-[12px] leading-5 text-ash">
           {description}
         </span>
       </span>
@@ -1915,12 +1898,13 @@ function ActionPanel({
 
   return (
     <Card className="p-5">
-      <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-blue-600">
+      <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
         Step 3 — Process and download
       </p>
       <div className="space-y-3">
         <Button
           type="button"
+          variant="dark"
           className="w-full"
           size="lg"
           onClick={() => {
@@ -1963,28 +1947,28 @@ function ActionPanel({
             <Button
               type="button"
               variant="secondary"
-              className="w-full justify-start px-3 text-left"
+              className="w-full"
               onClick={onDownloadFiles}
             >
               <Download className="size-4" />
-              Download files ({readyItems.length})
+              Files ({readyItems.length})
             </Button>
             <Button
               type="button"
               variant="secondary"
-              className="w-full justify-start px-3 text-left"
+              className="w-full"
               onClick={onDownloadZip}
               disabled={!capabilities.canZip}
             >
               <FileArchive className="size-4" />
-              ZIP ({readyItems.length} files)
+              ZIP ({readyItems.length})
             </Button>
           </div>
         ) : null}
       </div>
-      <p className="mt-4 text-sm leading-6 text-slate-600">
+      <p className="mt-4 text-[13px] leading-6 text-ash">
         {items.length === 0
-          ? `Step 1 first: upload images, then click "${copy.primaryLabel}".`
+          ? `Step 1 first: upload images, then click “${copy.primaryLabel}”.`
           : completedCount > 0
             ? `${completedCount} result${completedCount === 1 ? "" : "s"} ready — download single files or a ZIP with summary.`
             : `When done, choose Single, Download files, or ZIP.`}
@@ -1999,12 +1983,12 @@ function PrivacyPanel({ mode, tool }: { mode: ToolDefinition["mode"]; tool: Tool
   return (
     <Card className="p-5">
       <div className="flex gap-4">
-        <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-700">
-          <ShieldCheck className="size-5" />
-        </span>
+        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" />
         <div>
-          <h2 className="text-base font-bold text-slate-950">{copy.title}</h2>
-          <p className="mt-1 text-sm leading-6 text-slate-600">
+          <h2 className="font-display text-subheading text-graphite">
+            {copy.title}
+          </h2>
+          <p className="mt-1 text-[13px] leading-6 text-ash">
             {copy.description}
           </p>
         </div>
@@ -2023,15 +2007,15 @@ function InlineMessage({
   const Icon =
     type === "error" ? XCircle : type === "warning" ? AlertTriangle : Info;
   const styles = {
-    error: "border-red-200 bg-red-50 text-red-800",
-    warning: "border-amber-200 bg-amber-50 text-amber-800",
-    info: "border-blue-200 bg-blue-50 text-blue-800",
+    error: "border-destructive/30 bg-destructive/6 text-destructive",
+    warning: "border-warning/30 bg-warning/6 text-warning",
+    info: "border-signal/30 bg-signal/6 text-cerulean",
   };
 
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-xl border p-3 text-sm leading-6",
+        "flex gap-3 rounded-btn border p-3 text-[13px] leading-6",
         styles[type],
       )}
     >

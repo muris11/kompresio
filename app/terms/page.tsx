@@ -71,46 +71,46 @@ export default function TermsPage() {
           { name: "Terms", path: "/terms" },
         ])}
       />
-      <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.16),transparent_34%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+
+      <section className="border-b border-mist bg-paper">
+        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <Badge variant="muted">
-            <FileText className="size-3.5" />
+            <FileText className="size-3" />
             Legal
           </Badge>
-          <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px] lg:items-end">
+          <div className="mt-6 grid gap-12 lg:grid-cols-[1fr_340px] lg:items-end">
             <SectionHeading
               title="Terms of Service"
               description="These terms define practical expectations for using Kompresio's image utility workflows. They are written for the current browser-first MVP and leave room for future Pro or API features."
             />
             <Card className="p-6">
-              <ShieldCheck className="size-8 text-blue-600" />
-              <p className="mt-4 text-sm font-bold uppercase tracking-[0.16em] text-slate-500">
+              <ShieldCheck className="size-6 text-signal" />
+              <p className="mt-5 text-[12px] uppercase tracking-[0.12em] text-ash">
                 Plain-language summary
               </p>
-              <p className="mt-2 text-2xl font-extrabold text-slate-950">
-                Use files you are allowed to process and check outputs before sharing.
+              <p className="mt-2 font-display text-subheading leading-[1.3] text-graphite">
+                Use files you are allowed to process, and check outputs before
+                sharing.
               </p>
             </Card>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
-        <div className="grid gap-4 lg:grid-cols-3">
+      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="grid gap-px overflow-hidden rounded-card border border-mist bg-mist lg:grid-cols-3">
           {terms.map((section) => {
             const Icon = section.icon;
             return (
-              <Card key={section.title} className="p-6">
-                <span className="grid size-11 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                  <Icon className="size-5" />
-                </span>
-                <h2 className="mt-5 text-xl font-bold text-slate-950">
+              <div key={section.title} className="bg-paper p-7">
+                <Icon className="size-5 text-charcoal" />
+                <h2 className="mt-8 font-display text-subheading leading-[1.25] text-graphite">
                   {section.title}
                 </h2>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-body-sm leading-7 text-ash">
                   {section.body}
                 </p>
-              </Card>
+              </div>
             );
           })}
         </div>

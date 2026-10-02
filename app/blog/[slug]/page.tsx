@@ -6,7 +6,6 @@ import { ArrowRight, CalendarDays, Clock, Home } from "lucide-react";
 import { ToolCard } from "@/components/marketing/tool-card";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { blogPosts, getBlogPost } from "@/lib/constants/blog";
 import { tools } from "@/lib/constants/tools";
 import { articleSchema, breadcrumbSchema, createPageMetadata, faqSchema } from "@/lib/seo/metadata";
@@ -77,93 +76,93 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
           ),
         ]}
       />
-      <article className="border-b border-slate-200 bg-slate-50">
-        <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <nav className="mb-8 flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="inline-flex items-center gap-1 hover:text-blue-600">
-              <Home className="size-4" />
+
+      <article className="border-b border-mist bg-paper">
+        <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <nav className="mb-8 flex items-center gap-2 text-[13px] text-ash">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 transition-colors hover:text-cerulean"
+            >
+              <Home className="size-3.5" />
               Home
             </Link>
-            <span>/</span>
-            <Link href="/blog" className="hover:text-blue-600">
+            <span className="text-fog">/</span>
+            <Link href="/blog" className="transition-colors hover:text-cerulean">
               Blog
             </Link>
           </nav>
-          <Badge>{post.category}</Badge>
-          <h1 className="mt-6 break-words text-3xl font-extrabold leading-tight text-slate-950 sm:text-5xl">
+          <Badge variant="muted">{post.category}</Badge>
+          <h1 className="mt-6 break-words font-display text-heading-sm leading-[1.12] text-graphite sm:text-heading-lg">
             {post.title}
           </h1>
-          <p className="mt-5 text-lg leading-8 text-slate-600">
+          <p className="mt-5 text-[17px] leading-8 text-charcoal">
             {post.description}
           </p>
-          <div className="mt-7 flex flex-wrap gap-4 text-sm text-slate-500">
+          <div className="mt-7 flex flex-wrap gap-5 text-[13px] text-ash">
             <span className="inline-flex items-center gap-2">
-              <CalendarDays className="size-4" />
+              <CalendarDays className="size-3.5" />
               {post.publishedAt}
             </span>
             <span className="inline-flex items-center gap-2">
-              <Clock className="size-4" />
+              <Clock className="size-3.5" />
               {post.readTime}
             </span>
           </div>
         </div>
       </article>
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[260px_1fr] lg:px-8 lg:py-24">
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <Card className="p-5">
-            <h2 className="text-sm font-bold text-slate-950">
-              Table of contents
-            </h2>
-            <ol className="mt-4 space-y-3">
-              {post.sections.map((section) => (
-                <li key={section.heading}>
-                  <a
-                    href={`#${section.heading.toLowerCase().replaceAll(" ", "-")}`}
-                    className="text-sm text-slate-600 hover:text-blue-600"
-                  >
-                    {section.heading}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </Card>
+      <div className="mx-auto grid w-full max-w-[1200px] gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8 lg:py-24">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
+            Contents
+          </p>
+          <ol className="mt-4 space-y-3 border-l border-mist pl-4">
+            {post.sections.map((section) => (
+              <li key={section.heading}>
+                <a
+                  href={`#${section.heading.toLowerCase().replaceAll(" ", "-")}`}
+                  className="text-[13px] leading-6 text-ash transition-colors hover:text-cerulean"
+                >
+                  {section.heading}
+                </a>
+              </li>
+            ))}
+          </ol>
         </aside>
 
         <div className="min-w-0">
-          <Card className="p-6 sm:p-8">
-            <div className="space-y-10">
-              {post.sections.map((section) => (
-                <section
-                  key={section.heading}
-                  id={section.heading.toLowerCase().replaceAll(" ", "-")}
-                  className="scroll-mt-24"
-                >
-                  <h2 className="text-2xl font-bold text-slate-950">
-                    {section.heading}
-                  </h2>
-                  <p className="mt-4 text-base leading-8 text-slate-600">
-                    {section.body}
-                  </p>
-                </section>
-              ))}
-            </div>
-          </Card>
+          <div className="max-w-2xl space-y-10">
+            {post.sections.map((section) => (
+              <section
+                key={section.heading}
+                id={section.heading.toLowerCase().replaceAll(" ", "-")}
+                className="scroll-mt-28"
+              >
+                <h2 className="font-display text-subheading text-graphite sm:text-heading-sm">
+                  {section.heading}
+                </h2>
+                <p className="mt-4 text-[17px] leading-8 text-charcoal">
+                  {section.body}
+                </p>
+              </section>
+            ))}
+          </div>
 
-          <section className="mt-10">
+          <section className="mt-16 border-t border-mist pt-10">
             <div className="flex items-center justify-between gap-4">
-              <h2 className="text-2xl font-bold text-slate-950">
+              <h2 className="font-display text-subheading text-graphite">
                 Related tools
               </h2>
               <Link
                 href="/tools"
-                className="inline-flex items-center gap-2 text-sm font-bold text-blue-600"
+                className="inline-flex items-center gap-2 text-[13px] text-charcoal transition-colors hover:text-cerulean"
               >
                 All tools
-                <ArrowRight className="size-4" />
+                <ArrowRight className="size-3.5" />
               </Link>
             </div>
-            <div className="mt-5 grid gap-4 md:grid-cols-3">
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
               {relatedTools.map((tool) => (
                 <ToolCard key={tool.slug} tool={tool} />
               ))}

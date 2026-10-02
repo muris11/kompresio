@@ -1,15 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import {
-  ArrowRight,
-  BadgeCheck,
-  CheckCircle2,
-  Code2,
-  Crown,
-  FileArchive,
-  Gauge,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, Check, Code2, Crown, Gauge } from "lucide-react";
 
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -116,52 +107,60 @@ export default function PricingPage() {
       />
       <JsonLd data={faqSchema(faqs)} />
 
-      <section className="overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.18),transparent_34%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-          <Badge variant="success">
-            <BadgeCheck className="size-3.5" />
-            Pricing
-          </Badge>
+      <section className="border-b border-mist bg-paper">
+        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
           <SectionHeading
             align="center"
+            eyebrow="Pricing"
             title="Start free with private browser processing"
             description="Kompresio's current MVP tools are free, local-first, and do not require login. Future paid plans can support heavier production, team, and API workflows."
           />
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="grid gap-5 lg:grid-cols-3">
           {plans.map((plan) => {
             const Icon = plan.icon;
             return (
               <Card
                 key={plan.name}
-                className={plan.featured ? "border-blue-300 p-6 shadow-[0_24px_70px_rgba(37,99,235,0.14)]" : "p-6"}
+                className={
+                  plan.featured ? "border-signal/40 p-7" : "p-7"
+                }
               >
                 <div className="flex items-center justify-between gap-4">
-                  <span className="grid size-12 place-items-center rounded-xl bg-blue-50 text-blue-600">
-                    <Icon className="size-6" />
-                  </span>
-                  <Badge variant={plan.featured ? "default" : "muted"}>{plan.badge}</Badge>
+                  <Icon className="size-5 text-charcoal" />
+                  <Badge variant={plan.featured ? "default" : "muted"}>
+                    {plan.badge}
+                  </Badge>
                 </div>
-                <h2 className="mt-6 text-2xl font-bold text-slate-950">{plan.name}</h2>
+                <h2 className="mt-7 font-display text-heading-sm text-graphite">
+                  {plan.name}
+                </h2>
                 <div className="mt-3 flex items-end gap-2">
-                  <p className="font-mono text-4xl font-bold text-slate-950">{plan.price}</p>
-                  <p className="pb-1 text-sm font-semibold text-slate-500">{plan.period}</p>
+                  <p className="font-mono text-3xl text-graphite">
+                    {plan.price}
+                  </p>
+                  <p className="pb-1 text-[13px] text-ash">{plan.period}</p>
                 </div>
-                <p className="mt-4 text-sm leading-7 text-slate-600">{plan.description}</p>
-                <ul className="mt-6 space-y-3">
+                <p className="mt-4 text-body-sm leading-7 text-ash">
+                  {plan.description}
+                </p>
+                <ul className="mt-7 space-y-3 border-t border-mist pt-6">
                   {plan.features.map((feature) => (
-                    <li key={feature} className="flex gap-3 text-sm leading-6 text-slate-700">
-                      <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+                    <li
+                      key={feature}
+                      className="flex gap-3 text-[13px] leading-6 text-charcoal"
+                    >
+                      <Check className="mt-1 size-3.5 shrink-0 text-signal" />
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <Button
                   asChild
-                  className="mt-7 w-full"
+                  className="mt-8 w-full"
                   variant={plan.featured ? "default" : "secondary"}
                 >
                   <Link href={plan.href}>
@@ -169,37 +168,6 @@ export default function PricingPage() {
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="border-y border-slate-200 bg-slate-50">
-        <div className="mx-auto grid max-w-7xl gap-4 px-4 py-14 sm:px-6 lg:grid-cols-3 lg:px-8 lg:py-20">
-          {[
-            {
-              title: "No sign-up for MVP tools",
-              description: "Open a route, add images, process locally, and download results.",
-              icon: BadgeCheck,
-            },
-            {
-              title: "Batch and ZIP included",
-              description: "Free workflows include queue processing and structured ZIP manifests.",
-              icon: FileArchive,
-            },
-            {
-              title: "Privacy stays central",
-              description: "Advanced plans should keep explicit consent and retention controls.",
-              icon: ShieldCheck,
-            },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <Card key={item.title} className="p-6">
-                <Icon className="size-7 text-blue-600" />
-                <h2 className="mt-5 text-xl font-bold text-slate-950">{item.title}</h2>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
               </Card>
             );
           })}

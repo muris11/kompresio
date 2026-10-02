@@ -2,6 +2,9 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+/*
+  Paper-form input: flat edges, linen fill, defined by a single bottom rule.
+*/
 export const Input = React.forwardRef<
   HTMLInputElement,
   React.InputHTMLAttributes<HTMLInputElement>
@@ -10,7 +13,7 @@ export const Input = React.forwardRef<
     <input
       type={type}
       className={cn(
-        "h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10",
+        "h-10 w-full rounded-none border-0 border-b border-charcoal bg-linen px-3 text-[15px] text-charcoal outline-none transition-[color,background-color,border-color] duration-150 ease-out placeholder:text-fog focus:bg-paper",
         className,
       )}
       ref={ref}

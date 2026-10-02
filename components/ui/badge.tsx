@@ -3,27 +3,26 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: "default" | "muted" | "success" | "warning" | "destructive";
+  variant?: "default" | "muted" | "success" | "warning" | "destructive" | "outline";
 };
 
+/*
+  Small editorial label. 4px radius, hairline border, no pill fill.
+*/
 const variants = {
-  default:
-    "border-blue-200 bg-blue-50 text-blue-700",
-  muted:
-    "border-slate-200 bg-slate-50 text-slate-600",
-  success:
-    "border-emerald-200 bg-emerald-50 text-emerald-700",
-  warning:
-    "border-amber-200 bg-amber-50 text-amber-700",
-  destructive:
-    "border-red-200 bg-red-50 text-red-700",
+  default: "border-signal/40 bg-signal/8 text-cerulean",
+  muted: "border-mist bg-linen text-ash",
+  outline: "border-twilight/30 bg-transparent text-twilight",
+  success: "border-success/35 bg-success/8 text-success",
+  warning: "border-warning/35 bg-warning/8 text-warning",
+  destructive: "border-destructive/35 bg-destructive/8 text-destructive",
 };
 
 export function Badge({ className, variant = "default", ...props }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold",
+        "inline-flex items-center gap-1 rounded-[4px] border px-2 py-0.5 text-[12px] font-medium leading-5",
         variants[variant],
         className,
       )}

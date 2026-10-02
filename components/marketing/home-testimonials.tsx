@@ -1,5 +1,3 @@
-import { Quote, Star } from "lucide-react";
-
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { Reveal } from "@/components/shared/reveal";
 
@@ -32,33 +30,25 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-24">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
       <SectionHeading
         align="center"
-        eyebrow="Testimonials"
+        eyebrow="In practice"
         title="Used by designers, developers, and sellers"
-        description="People use Kompresio for different jobs. Here is how it fits into real workflows."
+        description="Different jobs, the same short loop: add files, tune, and export."
       />
-      <div className="mt-10 grid gap-5 md:grid-cols-2">
-        {testimonials.map((t, i) => (
-          <Reveal key={t.name} delay={i * 0.06}>
-            <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6">
-              <div className="flex items-center justify-between">
-                <Quote className="size-6 text-blue-200" aria-hidden="true" />
-                <span className="flex gap-0.5" aria-label="5 out of 5 stars">
-                  {Array.from({ length: 5 }).map((_, starIndex) => (
-                    <Star key={starIndex} className="size-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </span>
-              </div>
-              <blockquote className="mt-4 flex-1 text-sm leading-7 text-slate-600">
-                {t.quote}
+      <div className="mt-14 grid gap-px overflow-hidden rounded-card border border-mist bg-mist md:grid-cols-2">
+        {testimonials.map((testimonial, index) => (
+          <Reveal key={testimonial.name} delay={index * 0.05}>
+            <figure className="flex h-full flex-col bg-paper p-8">
+              <blockquote className="flex-1 text-[17px] leading-8 text-charcoal">
+                “{testimonial.quote}”
               </blockquote>
-              <div className="mt-6 border-t border-slate-100 pt-4">
-                <p className="text-sm font-bold text-slate-950">{t.name}</p>
-                <p className="text-xs text-slate-500">{t.role}</p>
-              </div>
-            </div>
+              <figcaption className="mt-8 border-t border-mist pt-4">
+                <p className="text-body-sm text-graphite">{testimonial.name}</p>
+                <p className="text-[13px] text-ash">{testimonial.role}</p>
+              </figcaption>
+            </figure>
           </Reveal>
         ))}
       </div>

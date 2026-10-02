@@ -13,14 +13,14 @@ export function Accordion({
   className?: string;
 }) {
   return (
-    <div className={cn("divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white", className)}>
+    <div className={cn("divide-y divide-mist border-y border-mist", className)}>
       {items.map((item) => (
-        <details key={item.question} className="group p-5">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-semibold text-slate-950">
+        <details key={item.question} className="group">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-display text-subheading text-graphite">
             {item.question}
-            <ChevronDown className="size-4 shrink-0 text-slate-500 transition group-open:rotate-180" />
+            <ChevronDown className="size-4 shrink-0 text-ash transition group-open:rotate-180" />
           </summary>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
+          <p className="pb-5 pr-8 text-body-sm leading-7 text-ash">
             {item.answer}
           </p>
         </details>

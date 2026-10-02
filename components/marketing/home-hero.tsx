@@ -1,130 +1,116 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  CheckCircle2,
-  Download,
-  FileArchive,
-  Lock,
-  UploadCloud,
-} from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
-import { Reveal } from "@/components/shared/reveal";
+import { SkylineScene } from "@/components/shared/atmospheric-scene";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 
-const trustBadges = ["Browser-based", "Batch ready", "WebP and AVIF", "No sign-up required"];
+const trust = [
+  "Runs in your browser",
+  "Batch up to 50 files",
+  "No sign-up",
+];
+
+const sample = [
+  { name: "marketplace-product.jpg", from: "2.4 MB", to: "312 KB", saved: 87 },
+  { name: "blog-cover.png", from: "1.8 MB", to: "420 KB", saved: 77 },
+  { name: "hero-image.webp", from: "980 KB", to: "284 KB", saved: 71 },
+];
 
 export function HomeHero() {
   return (
-    <section className="relative overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_left,rgba(37,99,235,0.22),transparent_34%),radial-gradient(circle_at_top_right,rgba(6,182,212,0.18),transparent_30%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20 lg:min-h-[calc(100svh-80px)]">
-        <Reveal>
-          <div className="min-w-0">
-            <Badge variant="success">
-              <Lock className="size-3.5" />
-              Privacy-first image optimization
-            </Badge>
-            <h1 className="mt-6 max-w-3xl break-words text-4xl font-extrabold leading-[1.08] tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-              Compress and convert images in seconds
-            </h1>
-            <p className="mt-6 max-w-2xl break-words text-base leading-8 text-slate-600 sm:text-lg">
-              Optimize JPG, PNG, WebP, AVIF, and HEIC images directly in your
-              browser. No sign-up. Files stay on your device.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button asChild size="lg" className="w-full sm:w-auto min-h-12">
-                <Link href="/compress-image">
-                  Start optimizing — free
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="secondary" className="w-full sm:w-auto min-h-12">
-                <Link href="/tools">Explore all 14 tools</Link>
-              </Button>
+    <section className="relative flex min-h-[100vh] flex-col justify-end overflow-hidden border-b border-mist pb-12 pt-32">
+      <SkylineScene />
+
+      <div className="relative mx-auto grid w-full max-w-[1200px] items-end gap-12 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+        <div className="min-w-0 rounded-3xl border border-white/20 bg-white/10 p-8 shadow-sm backdrop-blur-xl sm:p-10 lg:p-12">
+          <Badge variant="outline" className="border-white/30 text-white hover:bg-white/10">Privacy-first image optimization</Badge>
+
+          <h1 className="mt-6 max-w-xl break-words font-display text-[48px] leading-[1.1] tracking-[-0.02em] text-white">
+            Images, made small without leaving your device
+          </h1>
+
+          <p className="mt-6 max-w-lg font-af text-[17px] leading-8 text-white/90">
+            Compress, convert, resize, and clean JPG, PNG, WebP, AVIF, and HEIC
+            in the browser. Nothing is uploaded, nothing is stored.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link href="/compress-image">
+                Start optimizing
+                <span className="ml-2 flex size-5 items-center justify-center rounded-full border border-signal-blue">
+                  <ArrowRight className="size-3" />
+                </span>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="secondary"
+              className="w-full sm:w-auto"
+            >
+              <Link href="/tools">Browse all tools</Link>
+            </Button>
+          </div>
+
+          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+            {trust.map((item) => (
+              <li
+                key={item}
+                className="inline-flex items-center gap-2 font-af text-[13px] text-white/80"
+              >
+                <Check className="size-3.5 text-white/90" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mx-auto w-full max-w-md">
+          <div className="rounded-surface border border-mist bg-paper/85 p-5 shadow-hairline backdrop-blur-xl">
+            <div className="flex items-center justify-between">
+              <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-ash">
+                Example output
+              </p>
+              <span className="font-mono text-[12px] text-fog">
+                1 → 2 → 3
+              </span>
             </div>
-            <div className="mt-8 flex flex-wrap gap-2">
-              {trustBadges.map((badge) => (
-                <Badge key={badge} variant="muted">
-                  <CheckCircle2 className="size-3.5" />
-                  {badge}
-                </Badge>
+
+            <div className="mt-4 divide-y divide-mist border-y border-mist">
+              {sample.map((file) => (
+                <div key={file.name} className="py-3.5">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="min-w-0 truncate text-body-sm text-charcoal">
+                      {file.name}
+                    </p>
+                    <p className="shrink-0 font-mono text-[13px] text-graphite">
+                      {file.from} → {file.to}
+                    </p>
+                  </div>
+                  <div className="mt-2 flex items-center gap-3">
+                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-mist">
+                      <div
+                        className="h-full rounded-full bg-cerulean"
+                        style={{ width: `${file.saved}%` }}
+                      />
+                    </div>
+                    <span className="w-10 shrink-0 text-right font-mono text-[12px] text-ash">
+                      {file.saved}%
+                    </span>
+                  </div>
+                </div>
               ))}
             </div>
+
+            <p className="mt-4 text-[13px] leading-6 text-ash">
+              Illustrative figures. Your results depend on the source image and
+              the settings you choose.
+            </p>
           </div>
-        </Reveal>
-
-        <Reveal delay={0.12}>
-          <HeroUploadPanel />
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-function HeroUploadPanel() {
-  return (
-    <Card className="relative mx-auto w-full max-w-xl overflow-hidden rounded-3xl border-slate-200/80 bg-white/86 p-4 backdrop-blur sm:p-5">
-      <div className="flex items-center justify-between gap-2">
-        <Badge variant="muted">Example preview</Badge>
-        <span className="text-xs font-semibold text-slate-500">1 Upload → 2 Convert → 3 Download</span>
-      </div>
-      <div className="mt-3 rounded-2xl border border-dashed border-blue-200 bg-blue-50/60 p-6">
-        <div className="grid place-items-center text-center">
-          <span className="grid size-14 place-items-center rounded-2xl bg-white text-blue-600 shadow-[0_12px_30px_rgba(37,99,235,0.16)]">
-            <UploadCloud className="size-7" />
-          </span>
-          <h2 className="mt-4 text-lg font-bold text-slate-950">
-            Drop images here or browse
-          </h2>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600">
-            Supports JPG, PNG, WebP, AVIF, HEIC, GIF, and SVG. Your images stay
-            on your device for basic tools.
-          </p>
         </div>
       </div>
-
-      <div className="mt-5 space-y-3">
-        {[
-          { name: "marketplace-product.jpg", from: "2.4 MB", to: "312 KB", saved: 87 },
-          { name: "blog-cover.png", from: "1.8 MB", to: "420 KB", saved: 77 },
-          { name: "hero-image.webp", from: "980 KB", to: "284 KB", saved: 71 },
-        ].map((file) => (
-          <div
-            key={file.name}
-            className="rounded-2xl border border-slate-200 bg-white p-4"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-slate-950">
-                  {file.name}
-                </p>
-                <p className="font-mono text-xs text-slate-500">
-                  {file.from} → {file.to}
-                </p>
-              </div>
-              <Badge variant="success">Saved {file.saved}%</Badge>
-            </div>
-            <Progress value={file.saved} className="mt-3" />
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2">
-        <Button asChild variant="secondary" className="min-w-0 px-2 text-xs min-[360px]:text-sm min-h-11">
-          <Link href="/compress-image">
-            <Download className="size-4" />
-            Try single file
-          </Link>
-        </Button>
-        <Button asChild variant="accent" className="min-w-0 px-2 text-xs min-[360px]:text-sm min-h-11">
-          <Link href="/batch-converter">
-            <FileArchive className="size-4" />
-            Try batch ZIP
-          </Link>
-        </Button>
-      </div>
-    </Card>
+    </section>
   );
 }

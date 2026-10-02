@@ -15,10 +15,10 @@ export function Progress({
       aria-valuemin={0}
       aria-valuenow={normalized}
       role="progressbar"
-      className={cn("h-2 overflow-hidden rounded-full bg-slate-100", className)}
+      className={cn("h-1.5 overflow-hidden rounded-full bg-mist", className)}
     >
       <div
-        className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 transition-all duration-300"
+        className="h-full rounded-full bg-cerulean transition-all duration-300"
         style={{ width: `${normalized}%` }}
       />
     </div>

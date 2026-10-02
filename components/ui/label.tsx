@@ -8,7 +8,10 @@ export function Label({
 }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
     <label
-      className={cn("text-sm font-semibold text-slate-800", className)}
+      className={cn(
+        "text-[13px] font-medium uppercase tracking-[0.08em] text-ash",
+        className,
+      )}
       {...props}
     />
   );
