@@ -47,7 +47,7 @@ export function ToolPage({ tool }: { tool: ToolDefinition }) {
 function ToolHero({ tool }: { tool: ToolDefinition }) {
   return (
     <section className="border-b border-mist bg-paper">
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-32">
+      <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-32">
         <nav className="mb-10 flex flex-wrap items-center gap-2 text-[13px] text-ash">
           <Link
             href="/"

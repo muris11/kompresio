@@ -14,13 +14,18 @@ import { SectionHeading } from "@/components/marketing/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Terms of Service",
+  title: "Terms of Service - Usage Guidelines & Policies",
   description:
     "Terms of Service for using Kompresio image compression, conversion, resize, metadata cleanup, analysis, batch export, and image-to-PDF tools.",
   path: "/terms",
+  keywords: [
+    "kompresio terms of service",
+    "image tools terms of use",
+    "kompresio user agreement",
+  ],
 });
 
 const terms = [
@@ -66,14 +71,20 @@ export default function TermsPage() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Terms", path: "/terms" },
-        ])}
+        data={yoastGraphSchema({
+          path: "/terms",
+          title: "Terms of Service - Usage Guidelines & Policies",
+          description:
+            "Terms of Service for using Kompresio image compression, conversion, resize, metadata cleanup, analysis, batch export, and image-to-PDF tools.",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "Terms of Service", path: "/terms" },
+          ],
+        })}
       />
 
       <section className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-24">
           <Badge variant="muted">
             <FileText className="size-3" />
             Legal

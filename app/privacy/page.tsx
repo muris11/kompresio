@@ -13,13 +13,19 @@ import { SectionHeading } from "@/components/marketing/section-heading";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Privacy Policy",
+  title: "Privacy Policy - Private Browser-First Processing",
   description:
     "Kompresio privacy policy for local browser image processing, metadata handling, analytics boundaries, file retention, and optional future cloud workflows.",
   path: "/privacy",
+  keywords: [
+    "kompresio privacy policy",
+    "browser image processing privacy",
+    "private image compression",
+    "safe exif removal",
+  ],
 });
 
 const sections = [
@@ -72,14 +78,20 @@ export default function PrivacyPage() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Privacy", path: "/privacy" },
-        ])}
+        data={yoastGraphSchema({
+          path: "/privacy",
+          title: "Privacy Policy - Private Browser-First Processing",
+          description:
+            "Kompresio privacy policy for local browser image processing, metadata handling, analytics boundaries, file retention, and optional future cloud workflows.",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "Privacy Policy", path: "/privacy" },
+          ],
+        })}
       />
 
       <section className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-24">
           <Badge variant="muted">
             <ShieldCheck className="size-3" />
             Privacy-first

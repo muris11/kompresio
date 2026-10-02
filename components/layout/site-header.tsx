@@ -34,8 +34,8 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed top-6 left-1/2 z-50 w-full max-w-fit -translate-x-1/2 px-4">
-      <div className="mx-auto flex items-center justify-between gap-6 rounded-full border border-mist/80 bg-white/70 p-2 pl-5 pr-2 shadow-subtle backdrop-blur-md">
+    <header className="fixed top-3 left-1/2 z-50 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-md md:max-w-fit md:top-6 -translate-x-1/2">
+      <div className="flex w-full items-center justify-between gap-4 md:gap-6 rounded-full border border-mist/80 bg-white/80 p-2 pl-4 pr-2 shadow-subtle backdrop-blur-md">
         <Mark />
 
         <nav
@@ -88,7 +88,7 @@ export function SiteHeader() {
 
       <div
         className={cn(
-          "fixed top-[88px] left-1/2 z-40 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 grid overflow-hidden transition-[grid-template-rows] duration-200 md:hidden",
+          "fixed top-[68px] left-1/2 z-40 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-md -translate-x-1/2 grid overflow-hidden transition-[grid-template-rows] duration-200 md:hidden",
           open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
         )}
       >

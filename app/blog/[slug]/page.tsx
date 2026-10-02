@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { blogPosts, getBlogPost } from "@/lib/constants/blog";
 import { tools } from "@/lib/constants/tools";
-import { articleSchema, breadcrumbSchema, createPageMetadata, faqSchema } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 import type { ToolDefinition } from "@/types/tool";
 
 type BlogDetailProps = {
@@ -34,10 +34,20 @@ export async function generateMetadata({
   }
 
   return createPageMetadata({
-    title: `${post.title} | Kompresio Blog`,
+    title: post.title,
     description: post.description,
     path: `/blog/${post.slug}`,
     image: `/blog/${post.slug}/opengraph-image`,
+    type: "article",
+    publishedTime: post.publishedAt,
+    section: post.category,
+    keywords: [
+      "Kompresio",
+      post.category,
+      "image optimization",
+      "web performance",
+      post.title.toLowerCase(),
+    ],
   });
 }
 
@@ -56,29 +66,31 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
   return (
     <>
       <JsonLd
-        data={[
-          breadcrumbSchema([
+        data={yoastGraphSchema({
+          path: `/blog/${post.slug}`,
+          title: post.title,
+          description: post.description,
+          breadcrumbs: [
             { name: "Home", path: "/" },
             { name: "Blog", path: "/blog" },
             { name: post.title, path: `/blog/${post.slug}` },
-          ]),
-          articleSchema({
+          ],
+          article: {
             headline: post.title,
             description: post.description,
             image: `/blog/${post.slug}/opengraph-image`,
             datePublished: post.publishedAt,
-          }),
-          faqSchema(
-            post.sections.map((s) => ({
-              question: s.heading,
-              answer: s.body,
-            })),
-          ),
-        ]}
+            category: post.category,
+          },
+          faqs: post.sections.map((s) => ({
+            question: s.heading,
+            answer: s.body,
+          })),
+        })}
       />
 
       <article className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto w-full max-w-3xl px-4 pt-28 pb-14 sm:py-16 lg:py-20">
           <nav className="mb-8 flex items-center gap-2 text-[13px] text-ash">
             <Link
               href="/"

@@ -4,13 +4,15 @@ import { siteConfig } from "@/lib/constants/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Kompresio",
+    name: "Kompresio - Online Image Optimizer & Converter",
     short_name: "Kompresio",
     description: siteConfig.description,
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#2563eb",
+    background_color: "#fefffc",
+    theme_color: "#171717",
+    lang: "en",
+    categories: ["utilities", "productivity", "photo"],
     icons: [
       {
         src: "/icon.png",

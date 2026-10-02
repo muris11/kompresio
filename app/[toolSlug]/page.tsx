@@ -5,10 +5,8 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { ToolPage } from "@/components/tools/tool-page";
 import { getTool, tools } from "@/lib/constants/tools";
 import {
-  breadcrumbSchema,
   createToolMetadata,
-  faqSchema,
-  softwareApplicationSchema,
+  yoastGraphSchema,
 } from "@/lib/seo/metadata";
 
 type ToolRouteProps = {
@@ -47,15 +45,18 @@ export default async function DynamicToolPage({ params }: ToolRouteProps) {
   return (
     <>
       <JsonLd
-        data={[
-          softwareApplicationSchema(tool),
-          breadcrumbSchema([
+        data={yoastGraphSchema({
+          path: `/${tool.slug}`,
+          title: tool.title,
+          description: tool.description,
+          tool,
+          breadcrumbs: [
             { name: "Home", path: "/" },
             { name: "Tools", path: "/tools" },
             { name: tool.name, path: `/${tool.slug}` },
-          ]),
-          faqSchema(tool.faqs),
-        ]}
+          ],
+          faqs: tool.faqs,
+        })}
       />
       <ToolPage tool={tool} />
     </>

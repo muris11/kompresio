@@ -6,6 +6,16 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: ["/api", "/internal", "/dashboard"],
+      },
+      {
+        userAgent: "Bingbot",
+        allow: "/",
+        disallow: ["/api", "/internal", "/dashboard"],
+      },
+      {
         userAgent: "OAI-SearchBot",
         allow: "/",
         disallow: ["/api", "/internal"],
@@ -21,6 +31,11 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api", "/internal"],
       },
       {
+        userAgent: "Applebot",
+        allow: "/",
+        disallow: ["/api", "/internal"],
+      },
+      {
         userAgent: "Google-Extended",
         allow: "/",
         disallow: ["/api", "/internal"],
@@ -31,16 +46,12 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api", "/internal"],
       },
       {
-        userAgent: "GoogleOther",
-        allow: "/",
-        disallow: ["/api", "/internal"],
-      },
-      {
         userAgent: "*",
         allow: "/",
         disallow: ["/dashboard", "/api", "/internal"],
       },
     ],
     sitemap: `${siteConfig.url}/sitemap.xml`,
+    host: siteConfig.url,
   };
 }

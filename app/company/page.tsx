@@ -17,13 +17,20 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { siteConfig } from "@/lib/constants/site";
-import { breadcrumbSchema, createPageMetadata, organizationSchema } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Company",
+  title: "About Us - Private Image Optimization Toolkit",
   description:
     "Learn about Kompresio, a browser-first image optimization toolkit built for private compression, conversion, resize, metadata cleaning, analysis, and document workflows.",
   path: "/company",
+  keywords: [
+    "about kompresio",
+    "kompresio company",
+    "private image compression toolkit",
+    "browser based image editor",
+    "client side image optimizer",
+  ],
 });
 
 const stats = [
@@ -85,24 +92,20 @@ export default function CompanyPage() {
   return (
     <>
       <JsonLd
-        data={[
-          {
-            "@context": "https://schema.org",
-            "@type": "AboutPage",
-            name: "About Kompresio",
-            description:
-              "Kompresio is a browser-first image optimization toolkit for compression, conversion, resize, metadata cleaning, analysis, and document workflows.",
-            mainEntity: organizationSchema(),
-          },
-          breadcrumbSchema([
+        data={yoastGraphSchema({
+          path: "/company",
+          title: "About Us - Private Image Optimization Toolkit",
+          description:
+            "Learn about Kompresio, a browser-first image optimization toolkit built for private compression, conversion, resize, metadata cleaning, analysis, and document workflows.",
+          breadcrumbs: [
             { name: "Home", path: "/" },
             { name: "Company", path: "/company" },
-          ]),
-        ]}
+          ],
+        })}
       />
 
       <section className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-24">
           <Badge variant="muted">Company</Badge>
           <div className="mt-6 grid gap-12 lg:grid-cols-[1fr_360px] lg:items-end">
             <div className="min-w-0">

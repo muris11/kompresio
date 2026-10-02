@@ -22,7 +22,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "compress-image",
     name: "Compress Image",
-    title: "Compress Image Online — Fast and Private",
+    title: "Compress Image Online - Fast and Private",
     description:
       "Compress JPG, PNG, and WebP images online with Kompresio. Fast, private, browser-based image compression with batch ZIP download support.",
     h1: "Compress Image Online",
@@ -60,7 +60,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "compress-jpg",
     name: "Compress JPG",
-    title: "Compress JPG Online — Fast and Private",
+    title: "Compress JPG Online - Fast and Private",
     description:
       "Reduce JPG photo size directly in your browser with Kompresio. Choose quality, resize large images, clean metadata, and export optimized results.",
     h1: "Compress JPG Online",
@@ -93,7 +93,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "compress-png",
     name: "Compress PNG",
-    title: "Compress PNG Online — Fast and Private",
+    title: "Compress PNG Online - Fast and Private",
     description:
       "Compress PNG images and convert transparent PNGs to high-quality WebP directly in your browser with Kompresio.",
     h1: "Compress PNG Online",
@@ -126,7 +126,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "convert-to-webp",
     name: "Convert to WebP",
-    title: "Convert Images to WebP Online — Fast and Private",
+    title: "Convert Images to WebP Online - Fast and Private",
     description:
       "Convert JPG, PNG, and other images to WebP in your browser. Kompresio helps create lightweight WebP files for faster websites.",
     h1: "Convert Images to WebP",
@@ -164,7 +164,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "jpg-to-webp",
     name: "JPG to WebP",
-    title: "JPG to WebP Converter — Fast and Private",
+    title: "JPG to WebP Converter - Fast and Private",
     description:
       "Convert JPG photos to WebP online with Kompresio. Reduce photo file size for websites while keeping visual quality.",
     h1: "JPG to WebP Converter",
@@ -197,7 +197,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "png-to-webp",
     name: "PNG to WebP",
-    title: "PNG to WebP Converter — Fast and Private",
+    title: "PNG to WebP Converter - Fast and Private",
     description:
       "Convert PNG images to WebP online. Preserve transparency and reduce image weight for modern websites.",
     h1: "PNG to WebP Converter",
@@ -234,7 +234,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "convert-to-avif",
     name: "Convert to AVIF",
-    title: "AVIF Converter Online — Fast and Private",
+    title: "AVIF Converter Online - Fast and Private",
     description:
       "Convert images to AVIF in supported browsers. Kompresio prepares modern image assets for performance-focused websites.",
     h1: "Convert Images to AVIF",
@@ -267,7 +267,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "resize-image",
     name: "Resize Image",
-    title: "Resize Image Online — Fast and Private",
+    title: "Resize Image Online - Fast and Private",
     description:
       "Resize JPG, PNG, WebP, and AVIF images by width, height, percentage, or preset directly in your browser.",
     h1: "Resize Image Online",
@@ -305,7 +305,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "crop-image",
     name: "Crop Image",
-    title: "Crop Image Online — Fast and Private",
+    title: "Crop Image Online - Fast and Private",
     description:
       "Prepare images for common aspect ratios. Kompresio includes a crop-ready workflow for social, marketplace, and document images.",
     h1: "Crop Image Online",
@@ -338,7 +338,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "heic-to-jpg",
     name: "HEIC to JPG",
-    title: "HEIC to JPG Converter — Fast and Private",
+    title: "HEIC to JPG Converter - Fast and Private",
     description:
       "Convert iPhone HEIC photos into JPG or WebP. Kompresio keeps the conversion workflow browser-first where supported.",
     h1: "HEIC to JPG Converter",
@@ -371,7 +371,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "metadata-cleaner",
     name: "Metadata Cleaner",
-    title: "Remove Image Metadata Online — Fast and Private",
+    title: "Remove Image Metadata Online - Fast and Private",
     description:
       "Remove image metadata and export clean files. Kompresio helps strip camera, software, and location-related details from photos.",
     h1: "Remove Image Metadata",
@@ -408,7 +408,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "remove-background",
     name: "Remove Background",
-    title: "Remove Image Background Online — Free and Private",
+    title: "Remove Image Background Online - Free and Private",
     description:
       "Remove image backgrounds for product photos, profile images, and marketing assets with free browser-side AI processing in Kompresio.",
     h1: "Remove Background Online",
@@ -441,7 +441,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "batch-converter",
     name: "Batch Converter",
-    title: "Batch Image Converter — Fast and Private",
+    title: "Batch Image Converter - Fast and Private",
     description:
       "Batch process multiple images with Kompresio. Convert, compress, resize, clean metadata, and export results as a ZIP archive.",
     h1: "Batch Image Converter",
@@ -474,7 +474,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "image-analyzer",
     name: "Image Analyzer",
-    title: "Image Analyzer Online — Size, Format, and Optimization Tips",
+    title: "Image Analyzer Online - Size, Format, and Optimization Tips",
     description:
       "Analyze image size, dimensions, format, and optimization opportunities before compressing or converting with Kompresio.",
     h1: "Image Analyzer Online",
@@ -507,7 +507,7 @@ export const tools: ToolDefinition[] = [
   {
     slug: "image-to-pdf",
     name: "Image to PDF",
-    title: "Image to PDF Converter — Fast and Private",
+    title: "Image to PDF Converter - Fast and Private",
     description:
       "Convert JPG, PNG, and WebP images into a private multi-page PDF directly in your browser with page size, orientation, margin, and quality controls.",
     h1: "Image to PDF Converter",

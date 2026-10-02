@@ -5,13 +5,23 @@ import { ToolCard } from "@/components/marketing/tool-card";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { tools } from "@/lib/constants/tools";
-import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Image Tools Directory",
+  title: "Image Tools Directory - Online Image Optimizer & Converter",
   description:
     "Explore Kompresio image tools for compression, WebP conversion, AVIF conversion, resize, metadata cleaning, batch processing, and image analysis.",
   path: "/tools",
+  keywords: [
+    "image tools directory",
+    "online image compressor",
+    "webp converter",
+    "avif converter",
+    "resize image online",
+    "clean image metadata",
+    "batch image converter",
+    "free image optimization tools",
+  ],
 });
 
 const categories = ["Compression", "Conversion", "Resize", "Privacy", "Batch", "Utility"];
@@ -20,13 +30,19 @@ export default function ToolsPage() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Tools", path: "/tools" },
-        ])}
+        data={yoastGraphSchema({
+          path: "/tools",
+          title: "Image Tools Directory - Online Image Optimizer & Converter",
+          description:
+            "Explore Kompresio image tools for compression, WebP conversion, AVIF conversion, resize, metadata cleaning, batch processing, and image analysis.",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "Tools", path: "/tools" },
+          ],
+        })}
       />
       <section className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-24">
           <SectionHeading
             eyebrow="Tools"
             title="All Kompresio image tools"

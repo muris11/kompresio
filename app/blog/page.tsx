@@ -7,13 +7,22 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { blogPosts } from "@/lib/constants/blog";
-import { breadcrumbSchema, createPageMetadata } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Kompresio Blog",
+  title: "Blog - Practical Image Optimization Guides",
   description:
     "Practical image optimization guides for compression, WebP, AVIF, resize, metadata privacy, batch workflows, image-to-PDF, SEO, and developer workflows.",
   path: "/blog",
+  keywords: [
+    "image optimization blog",
+    "image compression guide",
+    "webp conversion tutorial",
+    "avif vs webp",
+    "core web vitals images",
+    "resize photos guide",
+    "remove exif metadata",
+  ],
 });
 
 const categories = [
@@ -54,14 +63,20 @@ export default function BlogPage() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Blog", path: "/blog" },
-        ])}
+        data={yoastGraphSchema({
+          path: "/blog",
+          title: "Blog - Practical Image Optimization Guides",
+          description:
+            "Practical image optimization guides for compression, WebP, AVIF, resize, metadata privacy, batch workflows, image-to-PDF, SEO, and developer workflows.",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "Blog", path: "/blog" },
+          ],
+        })}
       />
 
       <section className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-24">
           <Badge variant="muted">
             <BookOpenText className="size-3" />
             Blog

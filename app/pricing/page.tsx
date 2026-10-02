@@ -7,13 +7,20 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { breadcrumbSchema, createPageMetadata, faqSchema } from "@/lib/seo/metadata";
+import { createPageMetadata, yoastGraphSchema } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Pricing",
+  title: "Pricing - Free Browser Image Tools & Future Plans",
   description:
     "Kompresio pricing overview for free browser-based image tools and future Pro, team, API, and cloud processing workflows.",
   path: "/pricing",
+  keywords: [
+    "kompresio pricing",
+    "free image compressor",
+    "free webp converter",
+    "free online image optimizer",
+    "browser image processing free",
+  ],
 });
 
 const plans = [
@@ -100,15 +107,21 @@ export default function PricingPage() {
   return (
     <>
       <JsonLd
-        data={breadcrumbSchema([
-          { name: "Home", path: "/" },
-          { name: "Pricing", path: "/pricing" },
-        ])}
+        data={yoastGraphSchema({
+          path: "/pricing",
+          title: "Pricing - Free Browser Image Tools & Future Plans",
+          description:
+            "Kompresio pricing overview for free browser-based image tools and future Pro, team, API, and cloud processing workflows.",
+          breadcrumbs: [
+            { name: "Home", path: "/" },
+            { name: "Pricing", path: "/pricing" },
+          ],
+          faqs,
+        })}
       />
-      <JsonLd data={faqSchema(faqs)} />
 
       <section className="border-b border-mist bg-paper">
-        <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto w-full max-w-[1200px] px-4 pt-28 pb-16 sm:py-20 lg:py-24">
           <SectionHeading
             align="center"
             eyebrow="Pricing"

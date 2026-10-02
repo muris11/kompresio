@@ -24,15 +24,17 @@ export function HomeHero() {
 
       <div className="relative mx-auto grid w-full max-w-[1200px] items-end gap-12 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
         <div className="min-w-0 rounded-3xl border border-mist bg-paper/80 p-8 shadow-subtle backdrop-blur-xl sm:p-10 lg:p-12">
-          <Badge variant="outline" className="border-mist text-ash hover:bg-mist/30">Privacy-first image optimization</Badge>
+          <Badge variant="outline" className="border-mist text-ash hover:bg-mist/30">
+            <span className="font-semibold text-charcoal">Kompresio</span> · Free Private Image Optimization
+          </Badge>
 
-          <h1 className="mt-6 max-w-xl break-words font-display text-[48px] leading-[1.1] tracking-[-0.02em] text-graphite">
-            Images, made small without leaving your device
+          <h1 className="mt-6 max-w-xl break-words font-display text-[44px] sm:text-[48px] leading-[1.1] tracking-[-0.02em] text-graphite">
+            Kompresio: Image Compression & Optimization in Your Browser
           </h1>
 
           <p className="mt-6 max-w-lg font-af text-[17px] leading-8 text-ash">
-            Compress, convert, resize, and clean JPG, PNG, WebP, AVIF, and HEIC
-            in the browser. Nothing is uploaded, nothing is stored.
+            Kompresio lets you compress, convert, resize, and clean JPG, PNG, WebP, AVIF, and HEIC
+            directly on your device. 100% free, private, and lightning-fast — your photos never leave your browser.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">

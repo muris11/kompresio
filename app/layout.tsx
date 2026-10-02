@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, IBM_Plex_Mono, Inter } from "next/font/google";
 
+import { SiteBottomNav } from "@/components/layout/site-bottom-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -31,18 +32,39 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default: "Kompresio - Compress, Convert, and Optimize Images Online",
-    template: "%s | Kompresio",
+    template: "%s - Kompresio",
   },
   description: siteConfig.description,
   applicationName: siteConfig.appName,
+  category: "technology",
+  classification: "Image Optimization & Web Performance Tools",
   keywords: [
+    "Kompresio",
+    "Kompresio app",
+    "Kompresio online",
+    "Kompresio image compressor",
+    "Kompresio webp converter",
+    "Kompresio image tools",
+    "kompresio.center.biz.id",
+    "kompres foto kompresio",
+    "kompres gambar online",
+    "kompres foto online gratis",
+    "kompres foto tanpa pecah",
+    "kecilkan ukuran foto",
+    "ubah format webp",
     "image compressor",
     "compress image online",
+    "free image optimizer",
     "WebP converter",
     "AVIF converter",
     "resize image online",
-    "metadata cleaner",
+    "remove photo metadata",
+    "clean EXIF online",
     "batch image converter",
+    "image to pdf converter",
+    "remove background online",
+    "private image compression",
+    "browser based image tools",
   ],
   authors: [
     { name: "Kompresio" },
@@ -50,9 +72,26 @@ export const metadata: Metadata = {
   ],
   creator: siteConfig.developer.name,
   publisher: "Kompresio",
+  verification: {
+    google: [
+      "3HizIgkv3ixXoTBD3JukOfZZkzQFtC-pGBARnYNpGmo",
+      "bf61d5da6cf3d8be",
+    ],
+    other: {
+      "msvalidate.01": "BF12D55B2E8AE29E87DE1A2C39B9A6D2",
+      "indexnow-key": "c037920ab6a84d4fa7129f7cf7c65306",
+    },
+  },
+  alternates: {
+    canonical: siteConfig.url,
+    languages: {
+      "en-US": siteConfig.url,
+      "id-ID": siteConfig.url,
+      "x-default": siteConfig.url,
+    },
+  },
   other: {
     "developed-by": siteConfig.developer.label,
-    "google-site-verification": "3HizIgkv3ixXoTBD3JukOfZZkzQFtC-pGBARnYNpGmo",
   },
   referrer: "strict-origin-when-cross-origin",
   icons: {
@@ -84,6 +123,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: "Kompresio image optimization toolkit",
+        type: "image/png",
       },
     ],
   },
@@ -93,6 +133,8 @@ export const metadata: Metadata = {
     description:
       "Compress and convert images directly in your browser with Kompresio.",
     images: ["/twitter-image"],
+    creator: "@rifqysaputra",
+    site: "@kompresio",
   },
 };
 
@@ -109,8 +151,9 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col overflow-x-hidden bg-parchment text-charcoal">
         <JsonLd data={organizationSchema()} />
         <SiteHeader />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-24 md:pb-0">{children}</main>
         <SiteFooter />
+        <SiteBottomNav />
       </body>
     </html>
   );
