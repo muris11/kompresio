@@ -19,9 +19,9 @@ function Mark() {
       <Image 
         src="/logo.png" 
         alt="Kompresio" 
-        width={140} 
-        height={28} 
-        className="h-[26px] w-auto"
+        width={180} 
+        height={40} 
+        className="h-8 w-auto"
         priority
       />
     </Link>
@@ -33,7 +33,7 @@ export function SiteHeader() {
 
   return (
     <header className="fixed top-6 left-1/2 z-50 w-full max-w-fit -translate-x-1/2 px-4">
-      <div className="mx-auto flex items-center justify-between gap-6 rounded-full border border-twilight bg-white/[0.06] p-2 pl-4 pr-2 shadow-sm backdrop-blur-md">
+      <div className="mx-auto flex items-center justify-between gap-6 rounded-full border border-mist/80 bg-white/70 p-2 pl-5 pr-2 shadow-subtle backdrop-blur-md">
         <Mark />
 
         <nav
