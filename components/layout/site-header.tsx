@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { primaryNav } from "@/lib/constants/site";
 import { cn } from "@/lib/utils";
 
+function Mark() {
+  return (
     <Link
       href="/"
       aria-label="Kompresio home"
@@ -25,6 +27,8 @@ import { cn } from "@/lib/utils";
         Kompresio
       </span>
     </Link>
+  );
+}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
