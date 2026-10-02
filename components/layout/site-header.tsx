@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,9 @@ function Mark() {
       <Image 
         src="/logo.png" 
         alt="Kompresio" 
-        width={180} 
-        height={40} 
-        className="h-8 w-auto"
+        width={240} 
+        height={54} 
+        className="h-11 w-auto"
         priority
       />
     </Link>
@@ -30,6 +31,7 @@ function Mark() {
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="fixed top-6 left-1/2 z-50 w-full max-w-fit -translate-x-1/2 px-4">
@@ -38,17 +40,25 @@ export function SiteHeader() {
 
         <nav
           aria-label="Primary navigation"
-          className="hidden items-center gap-4 md:flex"
+          className="hidden items-center gap-1 md:flex"
         >
-            {primaryNav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="font-af text-[15px] font-medium text-charcoal transition-[opacity,color] duration-150 ease-out hover:text-ink-black hover:opacity-70"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {primaryNav.map((item) => {
+              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "rounded-full px-3 py-1.5 font-af text-[15px] font-medium transition-[opacity,color,background-color] duration-150 ease-out hover:text-ink-black",
+                    isActive
+                      ? "bg-mist/30 text-ink-black"
+                      : "text-charcoal hover:bg-mist/20 hover:opacity-70"
+                  )}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </nav>
 
         <div className="hidden md:block">
@@ -87,16 +97,24 @@ export function SiteHeader() {
             aria-label="Mobile navigation"
             className="flex flex-col gap-1 rounded-2xl border border-mist bg-paper/95 p-3 shadow-subtle backdrop-blur-xl"
           >
-            {primaryNav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="rounded-lg px-3 py-3 font-af text-[15px] font-medium text-charcoal hover:bg-linen"
-                onClick={() => setOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {primaryNav.map((item) => {
+              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "rounded-lg px-3 py-3 font-af text-[15px] font-medium transition-colors",
+                    isActive
+                      ? "bg-linen text-ink-black"
+                      : "text-charcoal hover:bg-linen hover:text-ink-black"
+                  )}
+                  onClick={() => setOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             <Button asChild variant="default" className="mt-1 justify-between pr-2" onClick={() => setOpen(false)}>
               <Link href="/compress-image">
                 Start optimizing
