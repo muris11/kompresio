@@ -18,7 +18,7 @@ export function ToolPage({ tool }: { tool: ToolDefinition }) {
       <ToolHero tool={tool} />
       <OptimizerWorkbench tool={tool} />
       <ToolSeoContent tool={tool} />
-      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-40">
         <SectionHeading
           eyebrow="Related tools"
           title="Continue the image workflow"
@@ -31,7 +31,7 @@ export function ToolPage({ tool }: { tool: ToolDefinition }) {
         </div>
       </section>
       <section className="border-t border-mist bg-linen">
-        <div className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="mx-auto w-full max-w-3xl px-4 py-20 sm:px-6 lg:px-8 lg:py-40">
           <SectionHeading
             eyebrow="FAQ"
             title={`Questions about ${tool.name}`}
@@ -47,7 +47,7 @@ export function ToolPage({ tool }: { tool: ToolDefinition }) {
 function ToolHero({ tool }: { tool: ToolDefinition }) {
   return (
     <section className="border-b border-mist bg-paper">
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+      <div className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-32">
         <nav className="mb-10 flex flex-wrap items-center gap-2 text-[13px] text-ash">
           <Link
             href="/"
@@ -123,7 +123,7 @@ function ToolHero({ tool }: { tool: ToolDefinition }) {
 function ToolSeoContent({ tool }: { tool: ToolDefinition }) {
   return (
     <section id="tool-content" className="border-y border-mist bg-linen">
-      <div className="mx-auto grid w-full max-w-[1200px] gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8 lg:py-28">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-16 px-4 py-20 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8 lg:py-40">
         <SectionHeading
           eyebrow="Guide"
           title={`How to use ${tool.name}`}

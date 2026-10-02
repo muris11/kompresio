@@ -22,7 +22,7 @@ import { featuredTools } from "@/lib/constants/tools";
 
 export function PopularTools() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-40">
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <SectionHeading
           eyebrow="Popular tools"
@@ -67,7 +67,7 @@ export function BeforeAfterDemo() {
 
   return (
     <section className="border-y border-mist bg-linen">
-      <div className="mx-auto grid w-full max-w-[1200px] gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[0.85fr_1fr] lg:px-8 lg:py-28">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-16 px-4 py-20 sm:px-6 lg:grid-cols-[0.85fr_1fr] lg:px-8 lg:py-40">
         <Reveal>
           <div>
             <SectionHeading
@@ -103,7 +103,7 @@ export function BeforeAfterDemo() {
                 </p>
               </div>
               <div>
-                <div className="grid aspect-[4/3] place-items-center rounded-lg border border-signal-blue-blue/30 bg-signal-blue/6">
+                <div className="grid aspect-[4/3] place-items-center rounded-lg border border-signal-blue/30 bg-signal-blue/5">
                   <span className="font-display text-4xl text-cerulean">
                     WebP
                   </span>
@@ -143,7 +143,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-40">
       <SectionHeading
         align="center"
         eyebrow="Workflow"
@@ -244,7 +244,7 @@ export function FormatGuide() {
   const supported = ["JPG", "PNG", "WebP", "AVIF", "HEIC", "GIF", "SVG"];
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-40">
       <div className="overflow-hidden rounded-3xl border border-cerulean/20 bg-cerulean">
         <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-[0.9fr_1fr] lg:p-16">
           <div>
@@ -356,7 +356,7 @@ const useCases = [
 export function WhyKompresio() {
   return (
     <section className="border-y border-mist bg-linen">
-      <div className="mx-auto grid w-full max-w-[1200px] gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:px-8 lg:py-28">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-16 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:px-8 lg:py-40">
         <SectionHeading
           eyebrow="Why Kompresio"
           title="A working utility, not just an upload box"
@@ -406,7 +406,7 @@ export function WhyKompresio() {
 
 export function HomepageCta() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-40">
       <div className="rounded-3xl border border-mist bg-paper p-10 text-center shadow-subtle sm:p-16">
         <h2 className="mx-auto max-w-2xl font-display text-heading-sm leading-[1.15] text-graphite sm:text-heading">
           Start optimizing images in about thirty seconds
@@ -433,7 +433,7 @@ export function HomepageCta() {
                 key={item}
                 className="inline-flex items-center gap-2 text-[13px] text-ash"
               >
-                <Check className="size-3.5 text-signal-blue-blue" />
+                <Check className="size-3.5 text-signal-blue" />
                 {item}
               </li>
             ),

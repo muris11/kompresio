@@ -14,18 +14,16 @@ function Mark() {
     <Link
       href="/"
       aria-label="Kompresio home"
-      className="flex items-center gap-2 pr-2"
+      className="flex items-center pr-2"
     >
       <Image 
-        src="/icon.png" 
+        src="/logo.png" 
         alt="Kompresio" 
-        width={24} 
-        height={24} 
-        className="rounded-[4px] border border-twilight/20 shadow-subtle-2"
+        width={140} 
+        height={28} 
+        className="h-[26px] w-auto"
+        priority
       />
-      <span className="font-display text-subheading leading-none text-graphite">
-        Kompresio
-      </span>
     </Link>
   );
 }

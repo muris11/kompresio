@@ -47,7 +47,7 @@ function StickyMobileCta() {
     <div className="sticky bottom-0 z-40 border-t border-mist bg-parchment/95 p-3 backdrop-blur sm:hidden">
       <Link
         href="/compress-image"
-        className="flex min-h-12 w-full items-center justify-center rounded-lg border border-signal-blue-blue bg-transparent text-[15px] font-medium text-signal-blue-blue transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96]"
+        className="flex min-h-12 w-full items-center justify-center rounded-lg border border-signal-blue bg-transparent text-[15px] font-medium text-signal-blue transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96]"
       >
         Start optimizing
       </Link>
