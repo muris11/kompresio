@@ -13,13 +13,10 @@ function Mark() {
     <Link
       href="/"
       aria-label="Kompresio home"
-      className="flex items-center gap-2 pr-2"
+      className="flex items-center justify-center p-1"
     >
-      <span className="grid size-6 place-items-center rounded-[4px] border border-twilight/40">
-        <span className="size-2 rounded-[1px] bg-signal-blue" />
-      </span>
-      <span className="font-display text-subheading leading-none text-graphite">
-        Kompresio
+      <span className="grid size-6 place-items-center rounded-full border border-twilight bg-paper shadow-subtle">
+        <span className="size-2 rounded-full bg-signal-blue" />
       </span>
     </Link>
   );
@@ -41,7 +38,7 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-af text-[15px] font-medium text-charcoal transition-colors hover:text-ink-black"
+                className="font-af text-[15px] font-medium text-white transition-[opacity] duration-150 ease-out hover:opacity-70"
               >
                 {item.label}
               </Link>
@@ -49,10 +46,10 @@ export function SiteHeader() {
           </nav>
 
         <div className="hidden md:block">
-          <Button asChild size="sm" className="rounded-full pl-4 pr-1">
+          <Button asChild size="sm" variant="dark" className="rounded-full pl-4 pr-1">
             <Link href="/compress-image">
               Start optimizing
-              <span className="ml-1 flex size-6 items-center justify-center rounded-full border border-signal-blue-blue">
+              <span className="ml-1 flex size-6 items-center justify-center rounded-full border border-twilight">
                 <ArrowRight className="size-3.5" />
               </span>
             </Link>
@@ -94,10 +91,10 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Button asChild className="mt-1 justify-between pr-2" onClick={() => setOpen(false)}>
+            <Button asChild variant="dark" className="mt-1 justify-between pr-2" onClick={() => setOpen(false)}>
               <Link href="/compress-image">
                 Start optimizing
-                <span className="flex size-6 items-center justify-center rounded-full border border-signal-blue-blue">
+                <span className="flex size-6 items-center justify-center rounded-full border border-twilight">
                   <ArrowRight className="size-3.5" />
                 </span>
               </Link>
