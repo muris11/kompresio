@@ -9,6 +9,7 @@ export type ToolMode =
   | "batch"
   | "analyzer"
   | "pdf"
+  | "pdf-to-webp"
   | "heic";
 
 export type ToolDefinition = {

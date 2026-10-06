@@ -28,7 +28,7 @@ const severityConfig = {
   },
   info: {
     icon: Info,
-    containerClass: "border-signal-blue-blue/30 bg-signal-blue/6",
+    containerClass: "border-signal-blue/30 bg-signal-blue/6",
     textClass: "text-cerulean",
     iconClass: "text-signal-blue",
     label: "Info",

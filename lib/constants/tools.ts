@@ -537,6 +537,39 @@ export const tools: ToolDefinition[] = [
     ],
     faqs: commonFaqs,
   },
+  {
+    slug: "pdf-to-webp",
+    name: "PDF to WebP",
+    title: "PDF to WebP Converter - Fast and Private",
+    description:
+      "Convert PDF pages into WebP images directly in your browser with Kompresio. Render page ranges, pick a render scale, and export each page as a lightweight WebP file.",
+    h1: "PDF to WebP Converter",
+    eyebrow: "Document converter",
+    icon: "file",
+    mode: "pdf-to-webp",
+    primaryAction: "Convert PDF to WebP",
+    primaryKeyword: "PDF to WebP",
+    category: "Conversion",
+    supportedFormats: ["PDF"],
+    benefits: [
+      "Turn each PDF page into a web-ready WebP image.",
+      "Choose page ranges and a render scale for sharp output.",
+      "Powered by pdf.js with fully local browser rendering.",
+    ],
+    steps: [
+      "Upload one or more PDF documents.",
+      "Select pages, render scale, and page background.",
+      "Download every page as WebP or export a ZIP.",
+    ],
+    useCases: ["Web previews", "Slide and report images", "Thumbnails"],
+    related: [
+      "convert-to-webp",
+      "image-to-pdf",
+      "compress-image",
+      "batch-converter",
+    ],
+    faqs: commonFaqs,
+  },
 ];
 
 export const featuredTools = tools.filter((tool) =>

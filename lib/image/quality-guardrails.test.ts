@@ -22,6 +22,9 @@ function makeSettings(overrides: Partial<ProcessingSettings> = {}): ProcessingSe
     pdfOrientation: "portrait",
     pdfPageSize: "a4",
     pdfMargin: 24,
+    pdfPageRange: "all",
+    pdfScale: 2,
+    pdfBackground: "white",
     ...overrides,
   };
 }

@@ -36,6 +36,7 @@ This repository contains the MVP implementation for Kompresio:
 - Analyze image dimensions, format, size, metadata signals, and optimization suggestions.
 - Batch process files and download results as a ZIP archive.
 - Convert one or more images into a PDF with document-focused settings.
+- Convert PDF pages into WebP images with page range, scale, and background controls.
 - Generate output filenames and manifests for repeatable workflows.
 - Provide clear privacy messaging for local processing.
 
@@ -59,6 +60,7 @@ This repository contains the MVP implementation for Kompresio:
 - `/batch-converter`
 - `/image-analyzer`
 - `/image-to-pdf`
+- `/pdf-to-webp`
 
 ### Content and Company Pages
 
@@ -99,6 +101,7 @@ This repository contains the MVP implementation for Kompresio:
 | Batch Converter | `/batch-converter` | Batch output and ZIP export |
 | Image Analyzer | `/image-analyzer` | JSON-style analysis and recommendations |
 | Image to PDF | `/image-to-pdf` | Downloadable PDF document |
+| PDF to WebP | `/pdf-to-webp` | One `.webp` file per PDF page |
 
 ## Processing Model
 
@@ -128,6 +131,7 @@ This model reduces server cost, keeps the experience fast for light and medium w
 | Metadata | ExifReader |
 | HEIC | heic2any |
 | PDF | jsPDF |
+| PDF rendering | pdf.js (pdfjs-dist) |
 | ZIP | JSZip, FileSaver |
 | Local DB ready | Dexie |
 | Server-side optional | Sharp |
@@ -172,6 +176,7 @@ kompresio/
 |   |-- favicon.svg
 |   |-- icon.png
 |   |-- logo.png
+|   |-- pdf.worker.min.mjs
 |-- types/
 |-- package.json
 |-- vitest.config.ts
@@ -276,8 +281,10 @@ Test files:
 
 - `lib/image/image-rules.test.ts`
 - `lib/image/tool-behavior.test.ts`
+- `lib/image/quality-guardrails.test.ts`
+- `lib/image/pdf-pages.test.ts`
 
-The tests cover image presets, file rules, behavior mapping, and expected tool settings.
+The tests cover image presets, file rules, behavior mapping, expected tool settings, guardrail rules, and PDF page range parsing.
 
 ## Deployment
 

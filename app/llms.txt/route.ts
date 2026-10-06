@@ -34,7 +34,7 @@ export async function GET() {
 Kompresio is an online image optimization platform developed by Rifqy Saputra (https://rifqysaputra.dev).
 It processes all image conversions, compression, resizing, and EXIF stripping locally inside the user's web browser using WebAssembly and HTML5 Canvas APIs. Zero files are uploaded to any server.
 
-## Available Tools (15 Tools)
+## Available Tools (16 Tools)
 
 ${toolLines}
 

@@ -9,6 +9,7 @@ export type ToolCapabilities = {
   canCleanMetadata: boolean;
   canAnalyze: boolean;
   canCreatePdf: boolean;
+  canConvertPdf: boolean;
   canConvertHeic: boolean;
   canZip: boolean;
 };
@@ -61,6 +62,7 @@ export function getToolCapabilities(mode: ToolMode): ToolCapabilities {
     ].includes(mode),
     canAnalyze: ["analyzer", "metadata"].includes(mode),
     canCreatePdf: mode === "pdf",
+    canConvertPdf: mode === "pdf-to-webp",
     canConvertHeic: mode === "heic",
     canZip: [
       "compress",
@@ -73,6 +75,7 @@ export function getToolCapabilities(mode: ToolMode): ToolCapabilities {
       "heic",
       "analyzer",
       "remove-bg",
+      "pdf-to-webp",
     ].includes(mode),
   };
 }
@@ -81,7 +84,7 @@ export function resolvePrimaryOutput(
   mode: ToolMode,
   requested: OutputFormat,
 ): Exclude<OutputFormat, "original"> | "original" {
-  if (mode === "webp") return "webp";
+  if (mode === "webp" || mode === "pdf-to-webp") return "webp";
   if (mode === "avif") return "avif";
   if (mode === "heic") return requested === "webp" ? "webp" : "jpeg";
   if (mode === "remove-bg") return requested === "webp" ? "webp" : "png";

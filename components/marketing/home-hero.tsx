@@ -41,7 +41,7 @@ export function HomeHero() {
             <Button asChild size="lg" className="w-full sm:w-auto">
               <Link href="/compress-image">
                 Start optimizing
-                <span className="ml-2 flex size-5 items-center justify-center rounded-full border border-signal-blue-blue">
+                <span className="ml-2 flex size-5 items-center justify-center rounded-full border border-signal-blue">
                   <ArrowRight className="size-3" />
                 </span>
               </Link>
@@ -62,7 +62,7 @@ export function HomeHero() {
                 key={item}
                 className="inline-flex items-center gap-2 font-af text-[13px] text-ash"
               >
-                <Check className="size-3.5 text-signal-blue-blue" />
+                <Check className="size-3.5 text-signal-blue" />
                 {item}
               </li>
             ))}

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, IBM_Plex_Mono, Inter } from "next/font/google";
 
-import { SiteBottomNav } from "@/components/layout/site-bottom-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -151,9 +150,8 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col overflow-x-hidden bg-parchment text-charcoal">
         <JsonLd data={organizationSchema()} />
         <SiteHeader />
-        <main className="flex-1 pb-24 md:pb-0">{children}</main>
+        <main className="flex-1">{children}</main>
         <SiteFooter />
-        <SiteBottomNav />
       </body>
     </html>
   );

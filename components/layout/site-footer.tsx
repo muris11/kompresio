@@ -10,6 +10,7 @@ const footerColumns = [
       { label: "Tools", href: "/tools" },
       { label: "Compress Image", href: "/compress-image" },
       { label: "Convert to WebP", href: "/convert-to-webp" },
+      { label: "PDF to WebP", href: "/pdf-to-webp" },
       { label: "Resize Image", href: "/resize-image" },
       { label: "Batch Converter", href: "/batch-converter" },
     ],

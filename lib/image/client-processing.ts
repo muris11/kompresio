@@ -2,12 +2,17 @@
 
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 
 import {
   buildRecommendation,
   formatBytes,
   sanitizeFilename,
 } from "@/lib/image/image-rules";
+import {
+  calculatePdfRenderScale,
+  pdfPageFilename,
+} from "@/lib/image/pdf-pages";
 import {
   calculateCenteredCrop,
   resolvePrimaryOutput,
@@ -34,6 +39,9 @@ export type ProcessingSettings = {
   pdfOrientation: "portrait" | "landscape";
   pdfPageSize: "a4" | "letter";
   pdfMargin: number;
+  pdfPageRange: string;
+  pdfScale: number;
+  pdfBackground: "white" | "transparent";
 };
 
 export type ProcessedResult = {
@@ -50,7 +58,33 @@ export type ProcessedResult = {
   format: string;
   processingTime: number;
   pageCount?: number;
+  pages?: ProcessedPage[];
   analysis?: ImageInspection;
+};
+
+export type PdfPageRender = {
+  pageNumber: number;
+  totalPages: number;
+  width: number;
+  height: number;
+  previewUrl: string;
+};
+
+export type ProcessedPage = {
+  pageNumber: number;
+  blob: Blob;
+  url: string;
+  filename: string;
+  width: number;
+  height: number;
+};
+
+export type PdfDocumentSummary = {
+  pageCount: number;
+  title?: string;
+  author?: string;
+  pageWidth: number;
+  pageHeight: number;
 };
 
 export type ImageDimensions = {
@@ -128,6 +162,10 @@ export async function processImage(
 ): Promise<ProcessedResult> {
   if (settings.mode === "remove-bg") {
     return removeBackgroundFromImage(file, settings);
+  }
+
+  if (settings.mode === "pdf-to-webp") {
+    return convertPdfToWebp(file, settings);
   }
 
   if (settings.mode === "heic" || isHeicFile(file)) {
@@ -210,6 +248,186 @@ export async function processImage(
     format: outputFormat.toUpperCase(),
     processingTime: Math.round(performance.now() - startedAt),
   };
+}
+
+type PdfJsModule = typeof import("pdfjs-dist");
+
+let pdfJsPromise: Promise<PdfJsModule> | null = null;
+
+/**
+ * Loads pdf.js (github.com/mozilla/pdf.js) lazily on the client and points it
+ * at the worker file shipped in /public so parsing stays off the main thread.
+ */
+function loadPdfJs() {
+  pdfJsPromise ||= import("pdfjs-dist").then((pdfjs) => {
+    pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    return pdfjs;
+  });
+
+  return pdfJsPromise;
+}
+
+export async function readPdfSummary(file: File): Promise<PdfDocumentSummary> {
+  const pdfjs = await loadPdfJs();
+  const data = new Uint8Array(await file.arrayBuffer());
+  const loadingTask = pdfjs.getDocument({ data });
+  const document = await loadingTask.promise;
+
+  try {
+    const metadata = await document.getMetadata().catch(() => null);
+    const info = (metadata?.info || {}) as {
+      Title?: string;
+      Author?: string;
+    };
+    const firstPage = await document.getPage(1);
+    const viewport = firstPage.getViewport({ scale: 1 });
+
+    return {
+      pageCount: document.numPages,
+      title: info.Title?.trim() || undefined,
+      author: info.Author?.trim() || undefined,
+      pageWidth: Math.round(viewport.width),
+      pageHeight: Math.round(viewport.height),
+    };
+  } finally {
+    await loadingTask.destroy();
+  }
+}
+
+async function renderPdfPageToCanvas(
+  document: PDFDocumentProxy,
+  pageNumber: number,
+  settings: ProcessingSettings,
+) {
+  const page = await document.getPage(pageNumber);
+  const baseViewport = page.getViewport({ scale: 1 });
+  const scale = calculatePdfRenderScale(
+    baseViewport.width,
+    baseViewport.height,
+    settings.pdfScale,
+  );
+  const viewport = page.getViewport({ scale });
+  const canvas = window.document.createElement("canvas");
+  canvas.width = Math.max(1, Math.floor(viewport.width));
+  canvas.height = Math.max(1, Math.floor(viewport.height));
+  const context = canvas.getContext("2d", {
+    alpha: settings.pdfBackground === "transparent",
+  });
+
+  if (!context) {
+    throw new Error("Canvas is not available in this browser.");
+  }
+
+  context.fillStyle =
+    settings.pdfBackground === "transparent" ? "rgba(0,0,0,0)" : "#ffffff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  await page.render({
+    canvas,
+    canvasContext: context,
+    viewport,
+    background:
+      settings.pdfBackground === "transparent"
+        ? "rgba(0,0,0,0)"
+        : "rgb(255,255,255)",
+  }).promise;
+
+  page.cleanup();
+
+  return { canvas, width: canvas.width, height: canvas.height };
+}
+
+/**
+ * Renders selected PDF pages into WebP images entirely in the browser.
+ * The queue item keeps the first page as its download result while every page
+ * is collected into `pages` for individual or ZIP export.
+ */
+export async function convertPdfToWebp(
+  file: File,
+  settings: ProcessingSettings,
+  pages: number[] = [],
+): Promise<ProcessedResult> {
+  const startedAt = performance.now();
+  const pdfjs = await loadPdfJs();
+  const data = new Uint8Array(await file.arrayBuffer());
+  const loadingTask = pdfjs.getDocument({ data });
+  const document = await loadingTask.promise;
+  const quality = Math.max(0.01, Math.min(1, settings.quality / 100));
+
+  try {
+    const selectedPages =
+      pages.length > 0
+        ? pages.filter((page) => page >= 1 && page <= document.numPages)
+        : Array.from({ length: document.numPages }, (_, index) => index + 1);
+
+    if (selectedPages.length === 0) {
+      throw new Error("Select at least one page to convert.");
+    }
+
+    const baseName = sanitizeFilename(file.name);
+    const renderedPages: ProcessedPage[] = [];
+    let firstPageDimensions = { width: 0, height: 0 };
+
+    for (const pageNumber of selectedPages) {
+      const rendered = await renderPdfPageToCanvas(
+        document,
+        pageNumber,
+        settings,
+      );
+      const blob = await canvasToBlob(rendered.canvas, "image/webp", quality);
+      const filename = pdfPageFilename(
+        baseName,
+        pageNumber,
+        document.numPages,
+      );
+
+      renderedPages.push({
+        pageNumber,
+        blob,
+        url: URL.createObjectURL(blob),
+        filename,
+        width: rendered.width,
+        height: rendered.height,
+      });
+
+      if (firstPageDimensions.width === 0) {
+        firstPageDimensions = {
+          width: rendered.width,
+          height: rendered.height,
+        };
+      }
+
+      rendered.canvas.width = 0;
+      rendered.canvas.height = 0;
+    }
+
+    const totalOutputSize = renderedPages.reduce(
+      (total, page) => total + page.blob.size,
+      0,
+    );
+    const primary = renderedPages[0];
+    const savedBytes = Math.max(0, file.size - totalOutputSize);
+
+    return {
+      kind: "image",
+      blob: primary.blob,
+      url: primary.url,
+      filename: primary.filename,
+      originalSize: file.size,
+      outputSize: totalOutputSize,
+      savedBytes,
+      savedPercent:
+        file.size > 0 ? Math.round((savedBytes / file.size) * 100) : 0,
+      width: firstPageDimensions.width,
+      height: firstPageDimensions.height,
+      format: "WEBP",
+      processingTime: Math.round(performance.now() - startedAt),
+      pageCount: renderedPages.length,
+      pages: renderedPages,
+    };
+  } finally {
+    await loadingTask.destroy();
+  }
 }
 
 async function removeBackgroundFromImage(
@@ -318,22 +536,22 @@ function canvasToBlob(
   mimeType: string,
   quality: number,
 ) {
-  return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          resolve(blob);
-          return;
-        }
+  const { promise, resolve, reject } = Promise.withResolvers<Blob>();
 
-        reject(
-          new Error(`${mimeType} export is not supported in this browser.`),
-        );
-      },
-      mimeType,
-      quality,
-    );
-  });
+  canvas.toBlob(
+    (blob) => {
+      if (blob) {
+        resolve(blob);
+        return;
+      }
+
+      reject(new Error(`${mimeType} export is not supported in this browser.`));
+    },
+    mimeType,
+    quality,
+  );
+
+  return promise;
 }
 
 export async function convertHeicToImage(
@@ -690,14 +908,20 @@ export function summaryRowsToCsv(rows: Array<Record<string, string | number>>) {
 export async function downloadIndividualFiles(
   items: Array<{ file: File; result: ProcessedResult }>,
 ) {
-  if (items.length === 1) {
+  if (items.length === 1 && !items[0].result.pages) {
     downloadBlob(items[0].result.blob, items[0].result.filename);
     return;
   }
 
   for (const item of items) {
-    downloadBlob(item.result.blob, item.result.filename);
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    const files = item.result.pages ?? [
+      { blob: item.result.blob, filename: item.result.filename },
+    ];
+
+    for (const file of files) {
+      downloadBlob(file.blob, file.filename);
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
   }
 }
 
@@ -705,11 +929,28 @@ export async function downloadZip(
   items: Array<{ file: File; result: ProcessedResult }>,
 ) {
   const zip = new JSZip();
-  const summaryRows = items.map((item) =>
-    resultToSummaryRow(item.file, item.result),
+  const summaryRows = items.flatMap((item) =>
+    item.result.pages
+      ? item.result.pages.map((page) => ({
+          ...resultToSummaryRow(item.file, item.result),
+          outputFilename: page.filename,
+          outputSize: page.blob.size,
+          outputSizeReadable: formatBytes(page.blob.size),
+          width: page.width,
+          height: page.height,
+        }))
+      : [resultToSummaryRow(item.file, item.result)],
   );
 
   for (const item of items) {
+    if (item.result.pages) {
+      const folder = `webp/${sanitizeFilename(item.file.name)}`;
+      for (const page of item.result.pages) {
+        zip.file(`${folder}/${page.filename}`, page.blob);
+      }
+      continue;
+    }
+
     const folder = item.result.format.toLowerCase();
     zip.file(`${folder}/${item.result.filename}`, item.result.blob);
   }

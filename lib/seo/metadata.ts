@@ -292,7 +292,7 @@ export function yoastGraphSchema({
         {
           "@type": "WebPage",
           name: "All Image Tools",
-          description: "Explore all 15 free browser-based image tools",
+          description: "Explore all 16 free browser-based image tools",
           url: `${siteConfig.url}/tools`,
         },
         {

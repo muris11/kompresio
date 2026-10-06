@@ -36,6 +36,13 @@ describe("tool-specific behavior", () => {
       canResize: false,
       canZip: true,
     });
+
+    expect(getToolCapabilities("pdf-to-webp")).toMatchObject({
+      canConvertPdf: true,
+      canCreatePdf: false,
+      canCompress: false,
+      canZip: true,
+    });
   });
 
   it("resolves primary output per tool instead of using one generic export", () => {
@@ -44,6 +51,8 @@ describe("tool-specific behavior", () => {
     expect(resolvePrimaryOutput("heic", "webp")).toBe("webp");
     expect(resolvePrimaryOutput("remove-bg", "original")).toBe("png");
     expect(resolvePrimaryOutput("metadata", "original")).toBe("jpeg");
+    expect(resolvePrimaryOutput("pdf-to-webp", "original")).toBe("webp");
+    expect(resolvePrimaryOutput("pdf-to-webp", "png")).toBe("webp");
     expect(resolvePrimaryOutput("batch", "png")).toBe("png");
     expect(resolvePrimaryOutput("compress", "png")).toBe("png");
   });

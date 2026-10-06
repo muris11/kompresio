@@ -139,7 +139,7 @@ export default function PricingPage() {
               <Card
                 key={plan.name}
                 className={
-                  plan.featured ? "border-signal-blue-blue/40 p-7" : "p-7"
+                  plan.featured ? "border-signal-blue/40 p-7" : "p-7"
                 }
               >
                 <div className="flex items-center justify-between gap-4">

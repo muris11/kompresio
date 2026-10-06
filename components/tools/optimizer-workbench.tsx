@@ -36,6 +36,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
   buildQueueRecommendation,
+  convertPdfToWebp,
   createAnalysisResult,
   createPdfFromImages,
   downloadBlob,
@@ -44,12 +45,20 @@ import {
   inspectImage,
   processImage,
   readImageDimensions,
+  readPdfSummary,
   type ImageInspection,
   type OutputFormat,
+  type PdfDocumentSummary,
   type ProcessedResult,
   type ProcessingSettings,
 } from "@/lib/image/client-processing";
 import { formatBytes, validateImageFile } from "@/lib/image/image-rules";
+import {
+  describePageSelection,
+  isPdfFile,
+  parsePageSelection,
+  validatePdfFile,
+} from "@/lib/image/pdf-pages";
 import {
   applyGuardrailFix,
   buildFileProfile,
@@ -77,6 +86,7 @@ type QueueItem = {
     width: number;
     height: number;
   };
+  pdf?: PdfDocumentSummary;
   warning?: string;
   error?: string;
   invalid?: boolean;
@@ -135,6 +145,18 @@ const statusVariant: Record<
   failed: "destructive",
   skipped: "warning",
 };
+
+function revokeResultUrls(result?: ProcessedResult) {
+  if (!result) {
+    return;
+  }
+
+  URL.revokeObjectURL(result.url);
+
+  for (const page of result.pages ?? []) {
+    URL.revokeObjectURL(page.url);
+  }
+}
 
 export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
   const [items, setItems] = useState<QueueItem[]>([]);
@@ -198,6 +220,69 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
           progress: 0,
           status: "waiting",
         };
+
+        if (tool.mode === "pdf-to-webp") {
+          const pdfValidation = validatePdfFile(file);
+
+          if (!pdfValidation.ok) {
+            setItems((current) => [
+              ...current,
+              {
+                ...baseItem,
+                status: "failed",
+                invalid: true,
+                error: pdfValidation.reason,
+              },
+            ]);
+            continue;
+          }
+
+          setItems((current) => [...current, baseItem]);
+          setSelectedId((current) => current || baseItem.id);
+
+          try {
+            const pdf = await readPdfSummary(file);
+            setItems((current) =>
+              current.map((item) =>
+                item.id === baseItem.id
+                  ? {
+                      ...item,
+                      pdf,
+                      dimensions: {
+                        width: pdf.pageWidth,
+                        height: pdf.pageHeight,
+                      },
+                    }
+                  : item,
+              ),
+            );
+
+            if (!hasAdaptedRef.current) {
+              hasAdaptedRef.current = true;
+              setSettings((current) => ({
+                ...current,
+                pdfPageRange: "all",
+                outputFormat: "webp",
+              }));
+            }
+          } catch {
+            setItems((current) =>
+              current.map((item) =>
+                item.id === baseItem.id
+                  ? {
+                      ...item,
+                      status: "failed",
+                      invalid: true,
+                      error:
+                        "This PDF could not be read. It may be encrypted or corrupted.",
+                    }
+                  : item,
+              ),
+            );
+          }
+
+          continue;
+        }
 
         const validation = validateImageFile(file);
         const toolValidation = validateFileForTool(file, tool);
@@ -304,9 +389,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
     return () => {
       for (const item of itemsRef.current) {
         URL.revokeObjectURL(item.previewUrl);
-        if (item.result?.url) {
-          URL.revokeObjectURL(item.result.url);
-        }
+        revokeResultUrls(item.result);
       }
     };
   }, []);
@@ -316,9 +399,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
       const target = current.find((item) => item.id === id);
       if (target) {
         URL.revokeObjectURL(target.previewUrl);
-        if (target.result?.url) {
-          URL.revokeObjectURL(target.result.url);
-        }
+        revokeResultUrls(target.result);
       }
       const next = current.filter((item) => item.id !== id);
       if (selectedId === id) {
@@ -339,6 +420,15 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
                 : undefined,
           }
         : settings;
+
+    if (settings.mode === "pdf-to-webp") {
+      const totalPages = item.pdf?.pageCount || 1;
+      return convertPdfToWebp(
+        item.file,
+        itemSettings,
+        parsePageSelection(settings.pdfPageRange, totalPages),
+      );
+    }
 
     if (settings.mode === "analyzer") {
       return createAnalysisResult(item.file, item.dimensions);
@@ -382,9 +472,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             return entry;
           }
 
-          if (entry.result?.url) {
-            URL.revokeObjectURL(entry.result.url);
-          }
+          revokeResultUrls(entry.result);
 
           return {
             ...entry,
@@ -440,9 +528,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             return entry;
           }
 
-          if (entry.result?.url) {
-            URL.revokeObjectURL(entry.result.url);
-          }
+          revokeResultUrls(entry.result);
 
           if (entry.id === primaryId) {
             return {
@@ -568,8 +654,8 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
         hasFiles={items.length > 0}
         completedCount={completedItems.length}
       />
-      <div className="mt-6 grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)_360px]">
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+      <div className="mt-6 flex flex-col gap-5 lg:grid lg:grid-cols-[280px_minmax(0,1fr)_360px]">
+        <aside className="order-1 space-y-4 lg:order-none lg:sticky lg:top-24 lg:self-start">
           <Dropzone
             tool={tool}
             getRootProps={getRootProps}
@@ -585,7 +671,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
           />
         </aside>
 
-        <main className="min-w-0 space-y-5 lg:order-none">
+        <main className="order-3 min-w-0 space-y-5 lg:order-none">
           <PreviewPanel
             item={selectedItem}
             mode={tool.mode}
@@ -604,7 +690,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
           <PrivacyPanel mode={tool.mode} tool={tool} />
         </main>
 
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+        <aside className="order-2 space-y-4 lg:order-none lg:sticky lg:top-24 lg:self-start">
           <SettingsPanel
             tool={tool}
             capabilities={capabilities}
@@ -721,11 +807,13 @@ function defaultSettings(tool: ToolDefinition): ProcessingSettings {
           ? 90
           : mode === "pdf"
             ? 86
-            : mode === "resize"
-              ? 84
-              : 78,
+            : mode === "pdf-to-webp"
+              ? 86
+              : mode === "resize"
+                ? 84
+                : 78,
     outputFormat:
-      mode === "webp" || mode === "batch"
+      mode === "webp" || mode === "batch" || mode === "pdf-to-webp"
         ? "webp"
         : mode === "avif"
           ? "avif"
@@ -744,6 +832,9 @@ function defaultSettings(tool: ToolDefinition): ProcessingSettings {
     pdfOrientation: "portrait",
     pdfPageSize: "a4",
     pdfMargin: 24,
+    pdfPageRange: "all",
+    pdfScale: 2,
+    pdfBackground: "white",
   };
 }
 
@@ -760,6 +851,8 @@ function Dropzone({
   isDragActive: boolean;
   open: () => void;
 }) {
+  const isPdfTool = tool.mode === "pdf-to-webp";
+
   return (
     <Card
       {...getRootProps()}
@@ -779,11 +872,17 @@ function Dropzone({
             Step 1 — Upload
           </p>
           <h2 className="mt-1.5 font-display text-subheading text-graphite">
-            {isDragActive ? "Release to add images" : "Drag images here"}
+            {isDragActive
+              ? "Release to add images"
+              : isPdfTool
+                ? "Drag PDF documents here"
+                : "Drag images here"}
           </h2>
           <p className="mt-1.5 text-[13px] leading-6 text-ash">
-            For {tool.name}: {tool.supportedFormats.join(", ")}. Max 20 MB per
-            file, up to 50 files.
+            For {tool.name}: {tool.supportedFormats.join(", ")}.{" "}
+            {isPdfTool
+              ? "Max 50 MB per document, up to 100 pages per PDF."
+              : "Max 20 MB per file, up to 50 files."}
           </p>
         </div>
         <Button
@@ -793,7 +892,7 @@ function Dropzone({
           onClick={open}
         >
           <ImageIcon className="size-4" />
-          Browse images
+          {isPdfTool ? "Browse PDFs" : "Browse images"}
         </Button>
         <Badge variant="success">
           <Lock className="size-3" />
@@ -843,13 +942,15 @@ function QueueList({
               className={cn(
                 "group mb-2 w-full rounded-lg border p-3 text-left transition-colors",
                 selectedId === item.id
-                  ? "border-signal-blue-blue/40 bg-signal-blue/5"
+                  ? "border-signal-blue/40 bg-signal-blue/5"
                   : "border-transparent hover:border-mist hover:bg-linen",
               )}
             >
               <div className="flex gap-3">
                 <div className="relative grid size-12 place-items-center overflow-hidden rounded-[4px] border border-mist bg-linen">
-                  {canRenderPreview(item.file) ? (
+                  {item.pdf ? (
+                    <FileText className="size-5 text-fog" />
+                  ) : canRenderPreview(item.file) ? (
                     <Image
                       src={item.previewUrl}
                       alt={`Preview of ${item.file.name}`}
@@ -868,9 +969,11 @@ function QueueList({
                   </p>
                   <p className="font-mono text-[12px] text-ash">
                     {formatBytes(item.file.size)}
-                    {item.dimensions
-                      ? ` · ${item.dimensions.width}×${item.dimensions.height}`
-                      : ""}
+                    {item.pdf
+                      ? ` · ${item.pdf.pageCount} page${item.pdf.pageCount === 1 ? "" : "s"}`
+                      : item.dimensions
+                        ? ` · ${item.dimensions.width}×${item.dimensions.height}`
+                        : ""}
                   </p>
                   <div className="mt-2 flex items-center gap-2">
                     <Badge variant={statusVariant[item.status]}>
@@ -936,11 +1039,13 @@ function PreviewPanel({
   const outputTitle =
     mode === "pdf"
       ? "PDF document"
-      : mode === "analyzer"
-        ? "Analysis report"
-        : mode === "remove-bg"
-          ? "Background removed"
-          : "Optimized";
+      : mode === "pdf-to-webp"
+        ? "WebP pages"
+        : mode === "analyzer"
+          ? "Analysis report"
+          : mode === "remove-bg"
+            ? "Background removed"
+            : "Optimized";
 
   return (
     <Card className="overflow-hidden">
@@ -949,16 +1054,20 @@ function PreviewPanel({
           <h2 className="font-display text-subheading text-graphite">
             {mode === "analyzer"
               ? "Inspection preview"
-              : "Before and after preview"}
+              : mode === "pdf-to-webp"
+                ? "PDF page preview"
+                : "Before and after preview"}
           </h2>
           <p className="text-[13px] text-ash">
             {mode === "pdf"
               ? "Create a single downloadable PDF from the queue."
-              : mode === "analyzer"
-                ? "Generate a JSON report and readable metadata summary."
-                : mode === "remove-bg"
-                  ? "AI removes the background while preserving your subject."
-                  : "Compare visible quality before downloading."}
+              : mode === "pdf-to-webp"
+                ? "Each selected page renders to WebP locally with pdf.js."
+                : mode === "analyzer"
+                  ? "Generate a JSON report and readable metadata summary."
+                  : mode === "remove-bg"
+                    ? "AI removes the background while preserving your subject."
+                    : "Compare visible quality before downloading."}
           </p>
         </div>
         {item.warning ? (
@@ -975,14 +1084,18 @@ function PreviewPanel({
       </div>
 
       <div className="grid gap-4 p-5 md:grid-cols-2">
-        <PreviewImage
-          title="Original"
-          src={item.previewUrl}
-          canRender={canRenderPreview(item.file)}
-          alt={`Original ${item.file.name}`}
-          detail={formatBytes(item.file.size)}
-          reduceMotion={reduceMotion}
-        />
+        {mode === "pdf-to-webp" ? (
+          <PdfSourcePreview item={item} />
+        ) : (
+          <PreviewImage
+            title="Original"
+            src={item.previewUrl}
+            canRender={canRenderPreview(item.file)}
+            alt={`Original ${item.file.name}`}
+            detail={formatBytes(item.file.size)}
+            reduceMotion={reduceMotion}
+          />
+        )}
         {item.result?.kind === "image" ? (
           <PreviewImage
             title={outputTitle}
@@ -997,6 +1110,42 @@ function PreviewPanel({
         )}
       </div>
 
+      {item.result?.pages && item.result.pages.length > 1 ? (
+        <div className="border-t border-mist p-5">
+          <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
+            Converted pages
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {item.result.pages.map((page) => (
+              <a
+                key={page.filename}
+                href={page.url}
+                download={page.filename}
+                className="group overflow-hidden rounded-lg border border-mist bg-linen transition-colors hover:border-twilight/25"
+              >
+                <div className="relative aspect-[3/4] bg-paper">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={page.url}
+                    alt={`Page ${page.pageNumber} of ${item.file.name}`}
+                    loading="lazy"
+                    className="h-full w-full object-contain p-2"
+                  />
+                </div>
+                <div className="flex items-center justify-between gap-2 border-t border-mist px-3 py-2">
+                  <span className="font-mono text-[12px] text-ash">
+                    Page {page.pageNumber}
+                  </span>
+                  <span className="font-mono text-[11px] text-fog">
+                    {formatBytes(page.blob.size)}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       {item.error || item.warning ? (
         <div className="border-t border-mist p-5">
           <InlineMessage type={item.error ? "error" : "warning"}>
@@ -1005,6 +1154,58 @@ function PreviewPanel({
         </div>
       ) : null}
     </Card>
+  );
+}
+
+function PdfSourcePreview({ item }: { item: QueueItem }) {
+  const pdf = item.pdf;
+  const rows = [
+    { label: "File", value: item.file.name },
+    { label: "Size", value: formatBytes(item.file.size) },
+    {
+      label: "Pages",
+      value: pdf ? String(pdf.pageCount) : "Reading…",
+    },
+    {
+      label: "Page size",
+      value: pdf ? `${pdf.pageWidth}×${pdf.pageHeight} pt` : "Reading…",
+    },
+    { label: "Title", value: pdf?.title || "—" },
+    { label: "Author", value: pdf?.author || "—" },
+  ];
+
+  return (
+    <div className="overflow-hidden rounded-lg border border-mist bg-linen">
+      <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
+        <p className="text-[13px] font-medium text-graphite">PDF document</p>
+        <p className="font-mono text-[12px] text-ash">
+          {formatBytes(item.file.size)}
+        </p>
+      </div>
+      <div className="grid aspect-[4/3] place-items-center p-5">
+        <div className="w-full max-w-sm">
+          <FileText className="mx-auto size-8 text-signal-blue" />
+          <p className="mt-4 truncate text-center text-body-sm font-medium text-graphite">
+            {item.file.name}
+          </p>
+          <dl className="mt-5 space-y-2">
+            {rows.map((row) => (
+              <div
+                key={row.label}
+                className="flex items-start justify-between gap-4 border-t border-mist pt-2"
+              >
+                <dt className="text-[12px] uppercase tracking-[0.08em] text-ash">
+                  {row.label}
+                </dt>
+                <dd className="max-w-[60%] truncate text-right font-mono text-[12px] text-graphite">
+                  {row.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1275,7 +1476,7 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
         </div>
 
         {analysis.recommendation.notes.length ? (
-          <div className="rounded-lg border border-signal-blue-blue/25 bg-signal-blue/5 p-4">
+          <div className="rounded-lg border border-signal-blue/25 bg-signal-blue/5 p-4">
             <p className="text-body-sm font-medium text-graphite">
               Smart recommendation
             </p>
@@ -1370,11 +1571,13 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
   const savedValue =
     result?.kind === "pdf"
       ? `${result.pageCount || 1} page${result.pageCount === 1 ? "" : "s"}`
-      : result?.kind === "json"
-        ? `${result.analysis?.metadataCount || 0} tags`
-        : result
-          ? `${result.savedPercent}%`
-          : "-";
+      : result?.pages
+        ? `${result.pages.length} WebP`
+        : result?.kind === "json"
+          ? `${result.analysis?.metadataCount || 0} tags`
+          : result
+            ? `${result.savedPercent}%`
+            : "-";
 
   const metrics = [
     {
@@ -1387,7 +1590,13 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
     },
     {
       label:
-        mode === "pdf" ? "Pages" : mode === "analyzer" ? "Metadata" : "Saved",
+        mode === "pdf"
+          ? "Pages"
+          : mode === "pdf-to-webp"
+            ? "WebP pages"
+            : mode === "analyzer"
+              ? "Metadata"
+              : "Saved",
       value: savedValue,
       strong: Boolean(result),
     },
@@ -1444,10 +1653,18 @@ function SettingsPanel({
   hasRecommendation: boolean;
 }) {
   const formatOptions = getFormatOptions(tool.mode);
-  const showPresets = !["pdf", "analyzer", "remove-bg"].includes(tool.mode);
+  const showPresets = ![
+    "pdf",
+    "pdf-to-webp",
+    "analyzer",
+    "remove-bg",
+  ].includes(tool.mode);
   const showQuality = tool.mode !== "analyzer";
   const showOutput =
-    formatOptions.length > 0 && tool.mode !== "pdf" && tool.mode !== "analyzer";
+    formatOptions.length > 0 &&
+    tool.mode !== "pdf" &&
+    tool.mode !== "pdf-to-webp" &&
+    tool.mode !== "analyzer";
   const canResize = capabilities.canResize || tool.mode === "pdf";
 
   return (
@@ -1566,6 +1783,14 @@ function SettingsPanel({
           <PdfSettings settings={settings} setSettings={setSettings} />
         ) : null}
 
+        {tool.mode === "pdf-to-webp" ? (
+          <PdfToWebpSettings
+            selectedItem={selectedItem}
+            settings={settings}
+            setSettings={setSettings}
+          />
+        ) : null}
+
         {tool.mode === "crop" ? (
           <CropSettings
             selectedItem={selectedItem}
@@ -1604,6 +1829,7 @@ function SettingsPanel({
 
         {hasRecommendation &&
         tool.mode !== "pdf" &&
+        tool.mode !== "pdf-to-webp" &&
         tool.mode !== "analyzer" ? (
           <Button
             type="button"
@@ -1680,6 +1906,116 @@ function PdfSettings({
             }))
           }
         />
+      </div>
+    </div>
+  );
+}
+
+function PdfToWebpSettings({
+  selectedItem,
+  settings,
+  setSettings,
+}: {
+  selectedItem?: QueueItem;
+  settings: ProcessingSettings;
+  setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+}) {
+  const totalPages = selectedItem?.pdf?.pageCount || 0;
+  const selectedPages = totalPages
+    ? parsePageSelection(settings.pdfPageRange, totalPages)
+    : [];
+  const backgroundOptions: Array<{
+    value: ProcessingSettings["pdfBackground"];
+    label: string;
+  }> = [
+    { value: "white", label: "White" },
+    { value: "transparent", label: "Transparent" },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <InlineMessage type="info">
+        Every selected page becomes its own WebP file. Pages render locally with
+        pdf.js — your document never leaves this browser.
+      </InlineMessage>
+
+      <div className="space-y-2">
+        <Label htmlFor="pdf-page-range">Pages</Label>
+        <Input
+          id="pdf-page-range"
+          type="text"
+          inputMode="text"
+          placeholder="all, or 1-3, 5, 8-"
+          value={settings.pdfPageRange}
+          onChange={(event) =>
+            setSettings((current) => ({
+              ...current,
+              pdfPageRange: event.target.value,
+            }))
+          }
+        />
+        <p className="text-[12px] leading-5 text-ash">
+          Use <span className="font-mono">all</span>, a single page, ranges like{" "}
+          <span className="font-mono">1-3</span>, or open ranges like{" "}
+          <span className="font-mono">8-</span>.
+          {totalPages > 0
+            ? ` ${describePageSelection(selectedPages, totalPages)} selected.`
+            : ""}
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="pdf-scale">Render scale</Label>
+          <span className="font-mono text-[13px] text-graphite">
+            {settings.pdfScale.toFixed(2)}×
+          </span>
+        </div>
+        <input
+          id="pdf-scale"
+          type="range"
+          min="1"
+          max="4"
+          step="0.25"
+          value={settings.pdfScale}
+          className="w-full accent-cerulean"
+          onChange={(event) =>
+            setSettings((current) => ({
+              ...current,
+              pdfScale: Number(event.target.value),
+            }))
+          }
+        />
+        <p className="text-[12px] leading-5 text-ash">
+          Higher scale means sharper pages and larger WebP files. Oversized
+          pages are capped automatically to protect memory.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Page background</Label>
+        <div className="grid grid-cols-2 gap-2">
+          {backgroundOptions.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() =>
+                setSettings((current) => ({
+                  ...current,
+                  pdfBackground: option.value,
+                }))
+              }
+              className={cn(
+                "rounded-lg border px-3 py-2 text-[13px] transition-colors",
+                settings.pdfBackground === option.value
+                  ? "border-signal-blue bg-signal-blue/5 text-cerulean"
+                  : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1888,7 +2224,7 @@ function ActionPanel({
   const selectedReady = items.find((item) => item.result);
   const copy = getActionCopy(tool);
   const PrimaryIcon =
-    tool.mode === "pdf"
+    tool.mode === "pdf" || tool.mode === "pdf-to-webp"
       ? FileText
       : tool.mode === "analyzer" || tool.mode === "metadata"
         ? ScanSearch
@@ -2009,7 +2345,7 @@ function InlineMessage({
   const styles = {
     error: "border-destructive/30 bg-destructive/6 text-destructive",
     warning: "border-warning/30 bg-warning/6 text-warning",
-    info: "border-signal-blue-blue/30 bg-signal-blue/6 text-cerulean",
+    info: "border-signal-blue/30 bg-signal-blue/6 text-cerulean",
   };
 
   return (
@@ -2041,6 +2377,7 @@ function getDropzoneAccept(tool: ToolDefinition): Accept {
     if (normalized === "svg") accept["image/svg+xml"] = [".svg"];
     if (normalized === "heic") accept["image/heic"] = [".heic"];
     if (normalized === "heif") accept["image/heif"] = [".heif"];
+    if (normalized === "pdf") accept["application/pdf"] = [".pdf"];
   }
 
   return accept;
@@ -2080,11 +2417,17 @@ function matchesFormat(file: File, format: string) {
     return type === "image/heic" || name.endsWith(".heic");
   if (normalized === "heif")
     return type === "image/heif" || name.endsWith(".heif");
+  if (normalized === "pdf")
+    return type === "application/pdf" || name.endsWith(".pdf");
 
   return false;
 }
 
 function canRenderPreview(file: File) {
+  if (isPdfFile(file)) {
+    return false;
+  }
+
   return !(
     file.type === "image/heic" ||
     file.type === "image/heif" ||
@@ -2215,6 +2558,11 @@ function getActionCopy(tool: ToolDefinition) {
       processingLabel: "Creating PDF",
       singleLabel: "PDF",
     },
+    "pdf-to-webp": {
+      primaryLabel: "Convert pages to WebP",
+      processingLabel: "Rendering pages",
+      singleLabel: "WebP",
+    },
     heic: {
       primaryLabel: "Convert HEIC",
       processingLabel: "Converting",
@@ -2239,6 +2587,14 @@ function getPrivacyCopy(mode: ToolMode, tool?: ToolDefinition) {
       title: "Private PDF creation",
       description:
         "Images are converted into a PDF inside your browser using local canvas processing and a client-side PDF generator.",
+    };
+  }
+
+  if (mode === "pdf-to-webp") {
+    return {
+      title: "PDF to WebP stays on your device",
+      description:
+        "Pages are parsed and rendered with pdf.js (github.com/mozilla/pdf.js) inside this browser tab. The document is never uploaded to a server, and every exported WebP is generated locally.",
     };
   }
 
