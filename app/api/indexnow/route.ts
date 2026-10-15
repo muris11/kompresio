@@ -1,23 +1,30 @@
-import { blogPosts } from "@/lib/constants/blog";
+import { getBlogPosts } from "@/lib/constants/blog";
 import { siteConfig } from "@/lib/constants/site";
-import { tools } from "@/lib/constants/tools";
+import { getTools } from "@/lib/constants/tools";
+import { defaultLocale, locales, localePath } from "@/lib/i18n/config";
 
 const INDEXNOW_KEY = "c037920ab6a84d4fa7129f7cf7c65306";
 
 export async function GET() {
   const host = new URL(siteConfig.url).host;
+  const tools = getTools(defaultLocale);
+  const blogPosts = getBlogPosts(defaultLocale);
 
-  const urlList = [
-    `${siteConfig.url}/`,
-    `${siteConfig.url}/tools`,
-    `${siteConfig.url}/blog`,
-    `${siteConfig.url}/company`,
-    `${siteConfig.url}/pricing`,
-    `${siteConfig.url}/privacy`,
-    `${siteConfig.url}/terms`,
-    ...tools.map((t) => `${siteConfig.url}/${t.slug}`),
-    ...blogPosts.map((b) => `${siteConfig.url}/blog/${b.slug}`),
+  const paths = [
+    "/",
+    "/tools",
+    "/blog",
+    "/company",
+    "/pricing",
+    "/privacy",
+    "/terms",
+    ...tools.map((t) => `/${t.slug}`),
+    ...blogPosts.map((b) => `/blog/${b.slug}`),
   ];
+
+  const urlList = locales.flatMap((locale) =>
+    paths.map((path) => `${siteConfig.url}${localePath(locale, path)}`),
+  );
 
   try {
     const response = await fetch("https://api.indexnow.org/indexnow", {

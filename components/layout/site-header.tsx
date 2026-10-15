@@ -1,126 +1,142 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { BrandMark } from "@/components/layout/brand-mark";
+import { LocaleSwitcher } from "@/components/layout/locale-switcher";
+import { useDictionary, useLocale } from "@/components/providers/locale-provider";
 import { Button } from "@/components/ui/button";
-import { primaryNav } from "@/lib/constants/site";
+import { localeFromPathname } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
-
-function Mark() {
-  return (
-    <Link
-      href="/"
-      aria-label="Kompresio home"
-      className="flex items-center pr-2"
-    >
-      <Image 
-        src="/logo.png" 
-        alt="Kompresio" 
-        width={240} 
-        height={54} 
-        className="h-11 w-auto"
-        priority
-      />
-    </Link>
-  );
-}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  const rawPathname = usePathname() || "/";
+  const { locale, href } = useLocale();
+  const dictionary = useDictionary();
+
+  const { pathname } = localeFromPathname(rawPathname);
+
+  const nav = [
+    { label: dictionary.nav.tools, path: "/tools" },
+    { label: dictionary.nav.compress, path: "/compress-image" },
+    { label: dictionary.nav.convert, path: "/convert-to-webp" },
+    { label: dictionary.nav.resize, path: "/resize-image" },
+    { label: dictionary.nav.blog, path: "/blog" },
+  ];
 
   return (
-    <header className="fixed top-3 left-1/2 z-50 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-md md:max-w-fit md:top-6 -translate-x-1/2">
-      <div className="flex w-full items-center justify-between gap-4 md:gap-6 rounded-full border border-mist/80 bg-white/80 p-2 pl-4 pr-2 shadow-subtle backdrop-blur-md">
-        <Mark />
+    <header className="sticky top-0 z-50 border-b border-mist/70 bg-parchment/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <BrandMark locale={locale} />
 
         <nav
           aria-label="Primary navigation"
-          className="hidden items-center gap-1 md:flex"
+          className="hidden items-center gap-0.5 md:flex"
         >
-            {primaryNav.map((item) => {
-              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "rounded-full px-3 py-1.5 font-af text-[15px] font-medium transition-[opacity,color,background-color] duration-150 ease-out hover:text-ink-black",
-                    isActive
-                      ? "bg-mist/30 text-ink-black"
-                      : "text-charcoal hover:bg-mist/20 hover:opacity-70"
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          {nav.map((item) => {
+            const isActive =
+              pathname === item.path ||
+              (item.path !== "/" && pathname.startsWith(item.path));
+            return (
+              <Link
+                key={item.path}
+                href={href(item.path)}
+                className={cn(
+                  "rounded-lg px-3.5 py-2 text-[14px] font-medium transition-colors duration-150",
+                  isActive
+                    ? "bg-mist/60 text-graphite"
+                    : "text-ash hover:bg-mist/40 hover:text-graphite",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-        <div className="hidden md:block">
-          <Button asChild size="sm" variant="default" className="rounded-full pl-4 pr-1">
-            <Link href="/compress-image">
-              Start optimizing
-              <span className="ml-1 flex size-6 items-center justify-center rounded-full border border-signal-blue">
-                <ArrowRight className="size-3.5" />
-              </span>
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher />
+          <Button
+            asChild
+            size="sm"
+            variant="dark"
+            className="hidden md:inline-flex"
+          >
+            <Link href={href("/compress-image")}>
+              {dictionary.common.startOptimizing}
             </Link>
           </Button>
+          <button
+            type="button"
+            aria-label={open ? dictionary.header.closeMenu : dictionary.header.menu}
+            aria-expanded={open}
+            onClick={() => setOpen((value) => !value)}
+            className="grid size-10 place-items-center rounded-full border border-mist text-graphite transition-colors hover:bg-mist/40 md:hidden"
+          >
+            <span className="relative block h-[14px] w-[18px]">
+              <span
+                className={cn(
+                  "absolute left-0 top-0 h-0.5 w-[18px] rounded-full bg-current transition-transform duration-200",
+                  open && "translate-y-[6px] rotate-45",
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute left-0 top-[6px] h-0.5 w-[18px] rounded-full bg-current transition-opacity duration-150",
+                  open && "opacity-0",
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute left-0 top-[12px] h-0.5 w-[18px] rounded-full bg-current transition-transform duration-200",
+                  open && "-translate-y-[6px] -rotate-45",
+                )}
+              />
+            </span>
+          </button>
         </div>
-
-        <div className="md:hidden">
-            <Button
-              aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-              aria-expanded={open}
-              variant="ghost"
-              size="icon"
-              type="button"
-              onClick={() => setOpen((value) => !value)}
-            >
-              {open ? <X className="size-5" /> : <Menu className="size-5" />}
-            </Button>
-          </div>
-        </div>
+      </div>
 
       <div
         className={cn(
-          "fixed top-[68px] left-1/2 z-40 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)] max-w-md -translate-x-1/2 grid overflow-hidden transition-[grid-template-rows] duration-200 md:hidden",
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+          "grid overflow-hidden border-mist/70 transition-[grid-template-rows] duration-[250ms] md:hidden",
+          open ? "grid-rows-[1fr] border-t" : "grid-rows-[0fr]",
         )}
       >
         <div className="overflow-hidden">
           <nav
             aria-label="Mobile navigation"
-            className="flex flex-col gap-1 rounded-2xl border border-mist bg-paper/95 p-3 shadow-subtle backdrop-blur-xl"
+            className="mx-auto flex w-full max-w-[1200px] flex-col gap-1 px-4 py-3 sm:px-6"
           >
-            {primaryNav.map((item) => {
-              const isActive = pathname === item.href || (item.href !== "/" && pathname?.startsWith(item.href));
+            {nav.map((item) => {
+              const isActive =
+                pathname === item.path ||
+                (item.path !== "/" && pathname.startsWith(item.path));
               return (
                 <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "rounded-lg px-3 py-3 font-af text-[15px] font-medium transition-colors",
-                    isActive
-                      ? "bg-linen text-ink-black"
-                      : "text-charcoal hover:bg-linen hover:text-ink-black"
-                  )}
+                  key={item.path}
+                  href={href(item.path)}
                   onClick={() => setOpen(false)}
+                  className={cn(
+                    "rounded-xl px-3 py-3 text-[15px] font-medium transition-colors",
+                    isActive
+                      ? "bg-mist/60 text-graphite"
+                      : "text-ash hover:bg-mist/40 hover:text-graphite",
+                  )}
                 >
                   {item.label}
                 </Link>
               );
             })}
-            <Button asChild variant="default" className="mt-1 justify-between pr-2" onClick={() => setOpen(false)}>
-              <Link href="/compress-image">
-                Start optimizing
-                <span className="flex size-6 items-center justify-center rounded-full border border-signal-blue">
-                  <ArrowRight className="size-3.5" />
-                </span>
+            <Button asChild variant="dark" className="mt-1 rounded-xl">
+              <Link
+                href={href("/compress-image")}
+                onClick={() => setOpen(false)}
+              >
+                {dictionary.common.startOptimizing}
               </Link>
             </Button>
           </nav>

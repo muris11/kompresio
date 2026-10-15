@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -27,6 +26,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone, type Accept } from "react-dropzone";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 
+import { useLocale } from "@/components/providers/locale-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -65,6 +65,11 @@ import {
   evaluateGuardrails,
 } from "@/lib/image/quality-guardrails";
 import { getToolCapabilities } from "@/lib/image/tool-behavior";
+import { interpolate } from "@/lib/i18n/dictionaries";
+import {
+  getWorkbenchMessages,
+  type WorkbenchMessages,
+} from "@/lib/i18n/workbench";
 import { cn } from "@/lib/utils";
 import type { GuardrailFix, GuardrailResult } from "@/types/guardrail";
 import type { ToolDefinition, ToolMode } from "@/types/tool";
@@ -159,11 +164,13 @@ function revokeResultUrls(result?: ProcessedResult) {
 }
 
 export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
+  const { locale } = useLocale();
+  const t = getWorkbenchMessages(locale);
+
   const [items, setItems] = useState<QueueItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const itemsRef = useRef<QueueItem[]>([]);
-  const reduceMotion = useReducedMotion();
   const [settings, setSettings] = useState<ProcessingSettings>(() =>
     defaultSettings(tool),
   );
@@ -375,15 +382,15 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
         selectedItem.dimensions.width,
         selectedItem.dimensions.height,
       );
-      const result = evaluateGuardrails(settings, fileProfile);
+      const result = evaluateGuardrails(settings, fileProfile, locale);
       setGuardrailResult(result);
     } else if (selectedItem?.file) {
-      const result = evaluateGuardrails(settings);
+      const result = evaluateGuardrails(settings, undefined, locale);
       setGuardrailResult(result);
     } else {
       setGuardrailResult({ hasIssues: false, hasErrors: false, warnings: [] });
     }
-  }, [settings, selectedItem]);
+  }, [settings, selectedItem, locale]);
 
   useEffect(() => {
     return () => {
@@ -641,7 +648,8 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
     await downloadIndividualFiles(readyDownloadItems);
   }
 
-  const currentStep = items.length === 0 ? 1 : completedItems.length === 0 ? 2 : 3;
+  const currentStep =
+    items.length === 0 ? 1 : completedItems.length === 0 ? 2 : 3;
 
   return (
     <section
@@ -653,6 +661,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
         currentStep={currentStep}
         hasFiles={items.length > 0}
         completedCount={completedItems.length}
+        messages={t}
       />
       <div className="mt-6 flex flex-col gap-5 lg:grid lg:grid-cols-[280px_minmax(0,1fr)_360px]">
         <aside className="order-1 space-y-4 lg:order-none lg:sticky lg:top-24 lg:self-start">
@@ -662,12 +671,14 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             getInputProps={getInputProps}
             isDragActive={isDragActive}
             open={open}
+            messages={t}
           />
           <QueueList
             items={items}
             selectedId={selectedItem?.id}
             onSelect={setSelectedId}
             onRemove={removeItem}
+            messages={t}
           />
         </aside>
 
@@ -676,18 +687,24 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             item={selectedItem}
             mode={tool.mode}
             tool={tool}
-            reduceMotion={Boolean(reduceMotion)}
+            messages={t}
           />
           {tool.mode === "crop" ? (
             <CropEditorPanel
               item={selectedItem}
               settings={settings}
               setSettings={setSettings}
+              messages={t}
             />
           ) : null}
-          <InspectionPanel item={selectedItem} mode={tool.mode} />
-          <ResultSummary item={selectedItem} mode={tool.mode} tool={tool} />
-          <PrivacyPanel mode={tool.mode} tool={tool} />
+          <InspectionPanel item={selectedItem} mode={tool.mode} messages={t} />
+          <ResultSummary
+            item={selectedItem}
+            mode={tool.mode}
+            tool={tool}
+            messages={t}
+          />
+          <PrivacyPanel mode={tool.mode} tool={tool} messages={t} />
         </main>
 
         <aside className="order-2 space-y-4 lg:order-none lg:sticky lg:top-24 lg:self-start">
@@ -700,11 +717,13 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             onPreset={applyPreset}
             onRecommendation={applyRecommendation}
             hasRecommendation={Boolean(selectedItem?.recommendation)}
+            messages={t}
           />
           <GuardrailWarnings
             warnings={guardrailResult.warnings}
             hasErrors={guardrailResult.hasErrors}
             onApplyFix={handleApplyGuardrailFix}
+            messages={t}
           />
           <ActionPanel
             tool={tool}
@@ -716,6 +735,7 @@ export function OptimizerWorkbench({ tool }: { tool: ToolDefinition }) {
             onProcess={processAll}
             onDownloadZip={downloadAllResults}
             onDownloadFiles={handleDownloadIndividualFiles}
+            messages={t}
           />
         </aside>
       </div>
@@ -728,38 +748,42 @@ function WorkbenchSteps({
   currentStep,
   hasFiles,
   completedCount,
+  messages,
 }: {
   tool: ToolDefinition;
   currentStep: number;
   hasFiles: boolean;
   completedCount: number;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.steps;
   const steps = [
     {
       number: 1,
-      title: "Upload images",
-      description:
-        hasFiles === false
-          ? `Drag ${tool.supportedFormats.slice(0, 3).join(", ")} into the left panel, or browse.`
-          : "Files queued — continue to step 2.",
+      title: t.upload,
+      description: hasFiles
+        ? t.uploadReady
+        : interpolate(t.uploadEmpty, {
+            formats: tool.supportedFormats.slice(0, 3).join(", "),
+          }),
     },
     {
       number: 2,
-      title: "Adjust and process",
-      description: `The Balanced default suits most files. Then click “${tool.primaryAction}”.`,
+      title: t.adjust,
+      description: interpolate(t.adjustHint, { action: tool.primaryAction }),
     },
     {
       number: 3,
-      title: "Download results",
+      title: t.download,
       description:
         completedCount > 0
-          ? `${completedCount} ready — download single files or a ZIP.`
-          : "Results and download buttons appear here.",
+          ? interpolate(t.downloadReady, { count: completedCount })
+          : t.downloadHint,
     },
   ];
 
   return (
-    <ol className="grid gap-px overflow-hidden rounded-xl border border-mist bg-mist sm:grid-cols-3">
+    <ol className="grid gap-4 sm:grid-cols-3">
       {steps.map((step) => {
         const active = currentStep === step.number;
         const done =
@@ -769,23 +793,25 @@ function WorkbenchSteps({
           <li
             key={step.number}
             className={cn(
-              "flex gap-4 bg-paper p-5",
-              active && "bg-signal-blue/5",
+              "flex gap-3 rounded-2xl border bg-paper p-4 transition-colors",
+              active ? "border-cerulean/40 bg-brand-soft" : "border-mist",
             )}
           >
             <span
               className={cn(
-                "font-mono text-[13px]",
-                active ? "text-signal-blue" : done ? "text-signal-blue" : "text-fog",
+                "grid size-7 shrink-0 place-items-center rounded-full font-mono text-[12px]",
+                active || done
+                  ? "bg-cerulean text-white"
+                  : "bg-linen text-fog",
               )}
             >
               {done ? <CheckCircle2 className="size-4" /> : `0${step.number}`}
             </span>
-            <span>
-              <span className="block text-body-sm font-medium text-graphite">
+            <span className="min-w-0">
+              <span className="block text-body-sm font-semibold text-graphite">
                 {step.title}
               </span>
-              <span className="mt-1 block text-[13px] leading-6 text-ash">
+              <span className="mt-0.5 block text-[13px] leading-6 text-ash">
                 {step.description}
               </span>
             </span>
@@ -844,13 +870,16 @@ function Dropzone({
   getInputProps,
   isDragActive,
   open,
+  messages,
 }: {
   tool: ToolDefinition;
   getRootProps: ReturnType<typeof useDropzone>["getRootProps"];
   getInputProps: ReturnType<typeof useDropzone>["getInputProps"];
   isDragActive: boolean;
   open: () => void;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.dropzone;
   const isPdfTool = tool.mode === "pdf-to-webp";
 
   return (
@@ -860,29 +889,32 @@ function Dropzone({
       className={cn(
         "scroll-mt-24 border-dashed p-5 transition-colors",
         isDragActive
-          ? "border-signal-blue bg-signal-blue/5"
-          : "hover:border-twilight/25",
+          ? "border-cerulean bg-brand-soft"
+          : "hover:border-fog",
       )}
     >
       <input {...getInputProps()} />
       <div className="flex flex-col items-start gap-4">
-        <UploadCloud className="size-6 text-charcoal" aria-hidden="true" />
+        <span className="grid size-11 place-items-center rounded-xl bg-brand-soft text-cerulean">
+          <UploadCloud className="size-5" aria-hidden="true" />
+        </span>
         <div>
-          <p className="text-[13px] font-medium uppercase tracking-[0.12em] text-ash">
-            Step 1 — Upload
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-cerulean">
+            {messages.steps.upload}
           </p>
           <h2 className="mt-1.5 font-display text-subheading text-graphite">
             {isDragActive
-              ? "Release to add images"
+              ? t.release
               : isPdfTool
-                ? "Drag PDF documents here"
-                : "Drag images here"}
+                ? t.pdf
+                : t.images}
           </h2>
           <p className="mt-1.5 text-[13px] leading-6 text-ash">
-            For {tool.name}: {tool.supportedFormats.join(", ")}.{" "}
-            {isPdfTool
-              ? "Max 50 MB per document, up to 100 pages per PDF."
-              : "Max 20 MB per file, up to 50 files."}
+            {interpolate(t.formats, {
+              tool: tool.name,
+              formats: tool.supportedFormats.join(", "),
+            })}{" "}
+            {isPdfTool ? t.limitsPdf : t.limitsImage}
           </p>
         </div>
         <Button
@@ -892,11 +924,11 @@ function Dropzone({
           onClick={open}
         >
           <ImageIcon className="size-4" />
-          {isPdfTool ? "Browse PDFs" : "Browse images"}
+          {isPdfTool ? t.browsePdfs : t.browseImages}
         </Button>
         <Badge variant="success">
           <Lock className="size-3" />
-          Local processing
+          {t.local}
         </Badge>
       </div>
     </Card>
@@ -908,23 +940,26 @@ function QueueList({
   selectedId,
   onSelect,
   onRemove,
+  messages,
 }: {
   items: QueueItem[];
   selectedId?: string;
   onSelect: (id: string) => void;
   onRemove: (id: string) => void;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.queue;
+
   return (
     <Card className="overflow-hidden">
       <div className="flex items-center justify-between border-b border-mist p-4">
-        <h2 className="text-body-sm font-medium text-graphite">File queue</h2>
+        <h2 className="text-body-sm font-semibold text-graphite">
+          {t.title}
+        </h2>
         <Badge variant="muted">{items.length}/50</Badge>
       </div>
       {items.length === 0 ? (
-        <div className="p-5 text-[13px] leading-6 text-ash">
-          Step 1: upload first — the queue is empty. After upload, adjust in
-          step 2, then press the process button in step 3.
-        </div>
+        <div className="p-5 text-[13px] leading-6 text-ash">{t.empty}</div>
       ) : (
         <div className="max-h-[420px] overflow-y-auto p-2">
           {items.map((item) => (
@@ -940,14 +975,14 @@ function QueueList({
                 }
               }}
               className={cn(
-                "group mb-2 w-full rounded-lg border p-3 text-left transition-colors",
+                "group mb-2 w-full cursor-pointer rounded-xl border p-3 text-left transition-colors",
                 selectedId === item.id
-                  ? "border-signal-blue/40 bg-signal-blue/5"
+                  ? "border-cerulean/40 bg-brand-soft"
                   : "border-transparent hover:border-mist hover:bg-linen",
               )}
             >
               <div className="flex gap-3">
-                <div className="relative grid size-12 place-items-center overflow-hidden rounded-[4px] border border-mist bg-linen">
+                <div className="relative grid size-12 place-items-center overflow-hidden rounded-lg border border-mist bg-linen">
                   {item.pdf ? (
                     <FileText className="size-5 text-fog" />
                   ) : canRenderPreview(item.file) ? (
@@ -970,7 +1005,7 @@ function QueueList({
                   <p className="font-mono text-[12px] text-ash">
                     {formatBytes(item.file.size)}
                     {item.pdf
-                      ? ` · ${item.pdf.pageCount} page${item.pdf.pageCount === 1 ? "" : "s"}`
+                      ? ` · ${item.pdf.pageCount}`
                       : item.dimensions
                         ? ` · ${item.dimensions.width}×${item.dimensions.height}`
                         : ""}
@@ -982,7 +1017,7 @@ function QueueList({
                     <button
                       type="button"
                       aria-label={`Remove ${item.file.name}`}
-                      className="ml-auto rounded-[4px] p-1 text-fog opacity-0 transition-colors hover:bg-destructive/8 hover:text-destructive group-hover:opacity-100"
+                      className="ml-auto rounded-md p-1 text-fog opacity-0 transition-colors hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
                       onClick={(event) => {
                         event.stopPropagation();
                         onRemove(item.id);
@@ -1008,28 +1043,33 @@ function PreviewPanel({
   item,
   mode,
   tool,
-  reduceMotion,
+  messages,
 }: {
   item?: QueueItem;
   mode: ToolMode;
   tool: ToolDefinition;
-  reduceMotion: boolean;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.preview;
+
   if (!item) {
     return (
       <Card className="grid min-h-[420px] place-items-center p-8 text-center">
         <div className="max-w-sm">
-          <Gauge className="mx-auto size-7 text-fog" />
-          <p className="mt-5 text-[13px] font-medium uppercase tracking-[0.12em] text-ash">
-            Step 1 — No files yet
+          <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-brand-soft text-cerulean">
+            <Gauge className="size-6" />
+          </span>
+          <p className="mt-5 text-[12px] font-semibold uppercase tracking-[0.12em] text-cerulean">
+            {t.emptyEyebrow}
           </p>
           <h2 className="mt-2 font-display text-heading-sm text-graphite">
-            Upload to start {tool.name.toLowerCase()}
+            {interpolate(t.emptyTitle, { tool: tool.name.toLowerCase() })}
           </h2>
           <p className="mt-3 text-body-sm leading-7 text-ash">
-            Steps: 1) upload {tool.supportedFormats.slice(0, 3).join(", ")},
-            2) keep the Balanced preset, 3) click “{tool.primaryAction}” then
-            download. Everything runs locally in your browser.
+            {interpolate(t.emptyBody, {
+              formats: tool.supportedFormats.slice(0, 3).join(", "),
+              action: tool.primaryAction,
+            })}
           </p>
         </div>
       </Card>
@@ -1038,62 +1078,65 @@ function PreviewPanel({
 
   const outputTitle =
     mode === "pdf"
-      ? "PDF document"
+      ? t.pdfDocument
       : mode === "pdf-to-webp"
-        ? "WebP pages"
+        ? t.webpPages
         : mode === "analyzer"
-          ? "Analysis report"
+          ? t.analysisReport
           : mode === "remove-bg"
-            ? "Background removed"
-            : "Optimized";
+            ? t.backgroundRemoved
+            : t.optimized;
+
+  const heading =
+    mode === "analyzer"
+      ? t.inspectionPreview
+      : mode === "pdf-to-webp"
+        ? t.pdfPagePreview
+        : t.beforeAfter;
+
+  const description =
+    mode === "pdf"
+      ? t.descPdf
+      : mode === "pdf-to-webp"
+        ? t.descPdfToWebp
+        : mode === "analyzer"
+          ? t.descAnalyzer
+          : mode === "remove-bg"
+            ? t.descRemoveBg
+            : t.descCompare;
 
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-col justify-between gap-3 border-b border-mist p-5 sm:flex-row sm:items-center">
         <div>
           <h2 className="font-display text-subheading text-graphite">
-            {mode === "analyzer"
-              ? "Inspection preview"
-              : mode === "pdf-to-webp"
-                ? "PDF page preview"
-                : "Before and after preview"}
+            {heading}
           </h2>
-          <p className="text-[13px] text-ash">
-            {mode === "pdf"
-              ? "Create a single downloadable PDF from the queue."
-              : mode === "pdf-to-webp"
-                ? "Each selected page renders to WebP locally with pdf.js."
-                : mode === "analyzer"
-                  ? "Generate a JSON report and readable metadata summary."
-                  : mode === "remove-bg"
-                    ? "AI removes the background while preserving your subject."
-                    : "Compare visible quality before downloading."}
-          </p>
+          <p className="text-[13px] text-ash">{description}</p>
         </div>
         {item.warning ? (
           <Badge variant="warning">
             <AlertTriangle className="size-3" />
-            Warning
+            {t.warning}
           </Badge>
         ) : (
           <Badge variant="success">
             <ShieldCheck className="size-3" />
-            Private
+            {t.private}
           </Badge>
         )}
       </div>
 
       <div className="grid gap-4 p-5 md:grid-cols-2">
         {mode === "pdf-to-webp" ? (
-          <PdfSourcePreview item={item} />
+          <PdfSourcePreview item={item} messages={messages} />
         ) : (
           <PreviewImage
-            title="Original"
+            title={t.original}
             src={item.previewUrl}
             canRender={canRenderPreview(item.file)}
             alt={`Original ${item.file.name}`}
             detail={formatBytes(item.file.size)}
-            reduceMotion={reduceMotion}
           />
         )}
         {item.result?.kind === "image" ? (
@@ -1103,17 +1146,20 @@ function PreviewPanel({
             canRender
             alt={`Optimized ${item.file.name}`}
             detail={formatBytes(item.result.outputSize)}
-            reduceMotion={reduceMotion}
           />
         ) : (
-          <ResultFilePreview result={item.result} title={outputTitle} />
+          <ResultFilePreview
+            result={item.result}
+            title={outputTitle}
+            messages={messages}
+          />
         )}
       </div>
 
       {item.result?.pages && item.result.pages.length > 1 ? (
         <div className="border-t border-mist p-5">
-          <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
-            Converted pages
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-ash">
+            {t.convertedPages}
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {item.result.pages.map((page) => (
@@ -1121,20 +1167,20 @@ function PreviewPanel({
                 key={page.filename}
                 href={page.url}
                 download={page.filename}
-                className="group overflow-hidden rounded-lg border border-mist bg-linen transition-colors hover:border-twilight/25"
+                className="group overflow-hidden rounded-xl border border-mist bg-linen transition-colors hover:border-fog"
               >
                 <div className="relative aspect-[3/4] bg-paper">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={page.url}
-                    alt={`Page ${page.pageNumber} of ${item.file.name}`}
+                    alt={interpolate(t.page, { number: page.pageNumber })}
                     loading="lazy"
                     className="h-full w-full object-contain p-2"
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 border-t border-mist px-3 py-2">
                   <span className="font-mono text-[12px] text-ash">
-                    Page {page.pageNumber}
+                    {interpolate(t.page, { number: page.pageNumber })}
                   </span>
                   <span className="font-mono text-[11px] text-fog">
                     {formatBytes(page.blob.size)}
@@ -1157,34 +1203,42 @@ function PreviewPanel({
   );
 }
 
-function PdfSourcePreview({ item }: { item: QueueItem }) {
+function PdfSourcePreview({
+  item,
+  messages,
+}: {
+  item: QueueItem;
+  messages: WorkbenchMessages;
+}) {
   const pdf = item.pdf;
   const rows = [
     { label: "File", value: item.file.name },
-    { label: "Size", value: formatBytes(item.file.size) },
+    { label: messages.inspection.size, value: formatBytes(item.file.size) },
     {
-      label: "Pages",
-      value: pdf ? String(pdf.pageCount) : "Reading…",
+      label: messages.results.pages,
+      value: pdf ? String(pdf.pageCount) : "…",
     },
     {
-      label: "Page size",
-      value: pdf ? `${pdf.pageWidth}×${pdf.pageHeight} pt` : "Reading…",
+      label: messages.results.pageSize,
+      value: pdf ? `${pdf.pageWidth}×${pdf.pageHeight} pt` : "…",
     },
     { label: "Title", value: pdf?.title || "—" },
     { label: "Author", value: pdf?.author || "—" },
   ];
 
   return (
-    <div className="overflow-hidden rounded-lg border border-mist bg-linen">
+    <div className="overflow-hidden rounded-xl border border-mist bg-linen">
       <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
-        <p className="text-[13px] font-medium text-graphite">PDF document</p>
+        <p className="text-[13px] font-medium text-graphite">
+          {messages.preview.pdfDocument}
+        </p>
         <p className="font-mono text-[12px] text-ash">
           {formatBytes(item.file.size)}
         </p>
       </div>
       <div className="grid aspect-[4/3] place-items-center p-5">
         <div className="w-full max-w-sm">
-          <FileText className="mx-auto size-8 text-signal-blue" />
+          <FileText className="mx-auto size-8 text-cerulean" />
           <p className="mt-4 truncate text-center text-body-sm font-medium text-graphite">
             {item.file.name}
           </p>
@@ -1215,21 +1269,15 @@ function PreviewImage({
   canRender,
   alt,
   detail,
-  reduceMotion,
 }: {
   title: string;
   src?: string;
   canRender: boolean;
   alt: string;
   detail: string;
-  reduceMotion: boolean;
 }) {
   return (
-    <motion.div
-      initial={reduceMotion ? false : { opacity: 0 }}
-      animate={reduceMotion ? undefined : { opacity: 1 }}
-      className="overflow-hidden rounded-lg border border-mist bg-[linear-gradient(45deg,#f2f4f0_25%,transparent_25%),linear-gradient(-45deg,#f2f4f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f2f4f0_75%),linear-gradient(-45deg,transparent_75%,#f2f4f0_75%)] bg-[length:22px_22px] bg-[position:0_0,0_11px,11px_-11px,-11px_0]"
-    >
+    <div className="overflow-hidden rounded-xl border border-mist bg-[linear-gradient(45deg,#f2f4f0_25%,transparent_25%),linear-gradient(-45deg,#f2f4f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#f2f4f0_75%),linear-gradient(-45deg,transparent_75%,#f2f4f0_75%)] bg-[length:22px_22px] bg-[position:0_0,0_11px,11px_-11px,-11px_0]">
       <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
         <p className="text-[13px] font-medium text-graphite">{title}</p>
         <p className="font-mono text-[12px] text-ash">{detail}</p>
@@ -1242,7 +1290,7 @@ function PreviewImage({
             width={1200}
             height={900}
             unoptimized
-            className="h-full w-full rounded-[4px] object-contain"
+            className="h-full w-full rounded-lg object-contain"
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         ) : (
@@ -1252,46 +1300,50 @@ function PreviewImage({
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 function ResultFilePreview({
   result,
   title,
+  messages,
 }: {
   result?: ProcessedResult;
   title: string;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.preview;
+
   return (
-    <div className="overflow-hidden rounded-lg border border-mist bg-linen">
+    <div className="overflow-hidden rounded-xl border border-mist bg-linen">
       <div className="flex items-center justify-between border-b border-mist bg-paper/90 px-4 py-3">
         <p className="text-[13px] font-medium text-graphite">{title}</p>
         <p className="font-mono text-[12px] text-ash">
-          {result ? formatBytes(result.outputSize) : "Process to generate"}
+          {result ? formatBytes(result.outputSize) : t.processToGenerate}
         </p>
       </div>
       <div className="grid aspect-[4/3] place-items-center p-6 text-center">
         {result ? (
           <div>
             {result.kind === "json" ? (
-              <ScanSearch className="mx-auto size-7 text-signal-blue" />
+              <ScanSearch className="mx-auto size-7 text-cerulean" />
             ) : (
-              <FileText className="mx-auto size-7 text-signal-blue" />
+              <FileText className="mx-auto size-7 text-cerulean" />
             )}
-            <p className="mt-4 text-body-sm font-medium text-graphite">
+            <p className="mt-4 break-all text-body-sm font-medium text-graphite">
               {result.filename}
             </p>
             <p className="mt-2 text-[13px] leading-6 text-ash">
               {result.kind === "pdf"
-                ? `${result.pageCount || 1} page PDF ready to download.`
-                : "JSON inspection report ready to download."}
+                ? interpolate(t.pdfReady, { count: result.pageCount || 1 })
+                : t.jsonReady}
             </p>
           </div>
         ) : (
           <div className="text-[13px] text-ash">
             <FileText className="mx-auto mb-2 size-8 text-fog" />
-            No generated file yet
+            {t.noGeneratedFile}
           </div>
         )}
       </div>
@@ -1303,10 +1355,12 @@ function CropEditorPanel({
   item,
   settings,
   setSettings,
+  messages,
 }: {
   item?: QueueItem;
   settings: ProcessingSettings;
   setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+  messages: WorkbenchMessages;
 }) {
   const aspectRatio = settings.cropAspectRatio || sourceAspectRatio(item);
 
@@ -1314,7 +1368,7 @@ function CropEditorPanel({
     return (
       <Card className="p-5">
         <InlineMessage type="info">
-          Upload a browser-previewable image to use the crop editor.
+          {messages.crop.uploadHint}
         </InlineMessage>
       </Card>
     );
@@ -1326,6 +1380,7 @@ function CropEditorPanel({
       item={item}
       aspectRatio={aspectRatio}
       setSettings={setSettings}
+      messages={messages}
     />
   );
 }
@@ -1334,10 +1389,12 @@ function CropEditorSurface({
   item,
   aspectRatio,
   setSettings,
+  messages,
 }: {
   item: QueueItem;
   aspectRatio: number;
   setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+  messages: WorkbenchMessages;
 }) {
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -1355,16 +1412,16 @@ function CropEditorSurface({
       <div className="flex items-center justify-between border-b border-mist p-5">
         <div>
           <h2 className="font-display text-subheading text-graphite">
-            Crop editor
+            {messages.crop.title}
           </h2>
           <p className="text-[13px] text-ash">
-            Drag the image and adjust zoom before exporting.
+            {messages.crop.description}
           </p>
         </div>
         <Badge variant="outline">{formatRatioLabel(aspectRatio)}</Badge>
       </div>
       <div className="p-5">
-        <div className="relative h-[300px] overflow-hidden rounded-lg border border-mist bg-dusk sm:h-[380px]">
+        <div className="relative h-[300px] overflow-hidden rounded-xl border border-mist bg-dusk sm:h-[380px]">
           <Cropper
             image={item.previewUrl}
             crop={crop}
@@ -1378,7 +1435,7 @@ function CropEditorSurface({
         <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="crop-zoom">Zoom</Label>
+              <Label htmlFor="crop-zoom">{messages.crop.zoom}</Label>
               <span className="font-mono text-[13px] text-graphite">
                 {zoom.toFixed(2)}x
               </span>
@@ -1408,7 +1465,7 @@ function CropEditorSurface({
             }}
           >
             <RefreshCcw className="size-4" />
-            Reset crop
+            {messages.crop.reset}
           </Button>
         </div>
       </div>
@@ -1416,7 +1473,17 @@ function CropEditorSurface({
   );
 }
 
-function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
+function InspectionPanel({
+  item,
+  mode,
+  messages,
+}: {
+  item?: QueueItem;
+  mode: ToolMode;
+  messages: WorkbenchMessages;
+}) {
+  const t = messages.inspection;
+
   if (mode !== "analyzer" && mode !== "metadata") {
     return null;
   }
@@ -1427,9 +1494,7 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
     return (
       <Card className="p-5">
         <InlineMessage type="info">
-          {mode === "metadata"
-            ? "Run metadata cleaning to scan hidden camera, software, and location-related tags before exporting a clean file."
-            : "Run analysis to generate a JSON report with dimensions, file weight, metadata, and optimization recommendations."}
+          {mode === "metadata" ? t.runMetadata : t.runAnalyzer}
         </InlineMessage>
       </Card>
     );
@@ -1440,45 +1505,42 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
       <div className="flex items-center justify-between border-b border-mist p-5">
         <div>
           <h2 className="font-display text-subheading text-graphite">
-            Image inspection
+            {t.title}
           </h2>
-          <p className="text-[13px] text-ash">
-            Metadata, dimensions, memory estimate, and optimization advice.
-          </p>
+          <p className="text-[13px] text-ash">{t.description}</p>
         </div>
         <Badge
           variant={analysis.sensitiveMetadataCount ? "warning" : "success"}
         >
           {analysis.sensitiveMetadataCount
-            ? `${analysis.sensitiveMetadataCount} sensitive`
-            : "No sensitive tags"}
+            ? interpolate(t.sensitiveCount, {
+                count: analysis.sensitiveMetadataCount,
+              })
+            : t.noSensitive}
         </Badge>
       </div>
       <div className="space-y-5 p-5">
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <InspectionMetric label="Size" value={analysis.fileSizeReadable} />
+          <InspectionMetric label={t.size} value={analysis.fileSizeReadable} />
           <InspectionMetric
-            label="Dimensions"
+            label={t.dimensions}
             value={
               analysis.width && analysis.height
                 ? `${analysis.width}×${analysis.height}`
-                : "Unknown"
+                : t.unknown
             }
           />
           <InspectionMetric
-            label="Megapixels"
+            label={t.megapixels}
             value={`${analysis.megapixels} MP`}
           />
-          <InspectionMetric
-            label="Metadata tags"
-            value={analysis.metadataCount}
-          />
+          <InspectionMetric label={t.metadataTags} value={analysis.metadataCount} />
         </div>
 
         {analysis.recommendation.notes.length ? (
-          <div className="rounded-lg border border-signal-blue/25 bg-signal-blue/5 p-4">
-            <p className="text-body-sm font-medium text-graphite">
-              Smart recommendation
+          <div className="rounded-xl border border-cerulean/20 bg-brand-soft p-4">
+            <p className="text-body-sm font-semibold text-graphite">
+              {t.smartRecommendation}
             </p>
             <ul className="mt-3 space-y-2">
               {analysis.recommendation.notes.map((note) => (
@@ -1486,7 +1548,7 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
                   key={note}
                   className="flex gap-2 text-[13px] leading-6 text-charcoal"
                 >
-                  <CheckCircle2 className="mt-1 size-4 shrink-0 text-signal-blue" />
+                  <CheckCircle2 className="mt-1 size-4 shrink-0 text-cerulean" />
                   {note}
                 </li>
               ))}
@@ -1494,7 +1556,7 @@ function InspectionPanel({ item, mode }: { item?: QueueItem; mode: ToolMode }) {
           </div>
         ) : null}
 
-        <MetadataTable analysis={analysis} />
+        <MetadataTable analysis={analysis} messages={messages} />
       </div>
     </Card>
   );
@@ -1517,23 +1579,30 @@ function InspectionMetric({
   );
 }
 
-function MetadataTable({ analysis }: { analysis: ImageInspection }) {
+function MetadataTable({
+  analysis,
+  messages,
+}: {
+  analysis: ImageInspection;
+  messages: WorkbenchMessages;
+}) {
+  const t = messages.inspection;
   const tags = analysis.metadataTags.slice(0, 10);
 
   if (tags.length === 0) {
     return (
-      <div className="rounded-lg border border-success/30 bg-success/6 p-4 text-[13px] leading-6 text-success">
-        No readable EXIF metadata was found in this file.
+      <div className="rounded-xl border border-success/25 bg-success/8 p-4 text-[13px] leading-6 text-success">
+        {t.noExif}
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-mist">
+    <div className="overflow-x-auto rounded-xl border border-mist">
       <div className="grid min-w-[560px] grid-cols-[1fr_1fr_auto] gap-3 border-b border-mist bg-linen px-4 py-3 text-[12px] uppercase tracking-[0.08em] text-ash">
-        <span>Tag</span>
-        <span>Value</span>
-        <span>Risk</span>
+        <span>{t.tag}</span>
+        <span>{t.value}</span>
+        <span>{t.risk}</span>
       </div>
       <div className="divide-y divide-mist">
         {tags.map((tag) => (
@@ -1548,7 +1617,7 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
               {tag.value || "-"}
             </span>
             <Badge variant={tag.sensitive ? "warning" : "muted"}>
-              {tag.sensitive ? "Sensitive" : "Normal"}
+              {tag.sensitive ? t.sensitive : t.normal}
             </Badge>
           </div>
         ))}
@@ -1557,7 +1626,18 @@ function MetadataTable({ analysis }: { analysis: ImageInspection }) {
   );
 }
 
-function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode; tool: ToolDefinition }) {
+function ResultSummary({
+  item,
+  mode,
+  tool,
+  messages,
+}: {
+  item?: QueueItem;
+  mode: ToolMode;
+  tool: ToolDefinition;
+  messages: WorkbenchMessages;
+}) {
+  const t = messages.results;
   const result = item?.result;
   const noFile = !item;
   const originalSize = result ? result.originalSize : item ? item.file.size : 0;
@@ -1566,60 +1646,53 @@ function ResultSummary({ item, mode, tool }: { item?: QueueItem; mode: ToolMode;
     : item?.dimensions
       ? `${item.dimensions.width}×${item.dimensions.height}`
       : noFile
-        ? `Appears after clicking “${tool.primaryAction}”`
+        ? interpolate(t.appearsAfter, { action: tool.primaryAction })
         : "-";
   const savedValue =
     result?.kind === "pdf"
-      ? `${result.pageCount || 1} page${result.pageCount === 1 ? "" : "s"}`
+      ? `${result.pageCount || 1}`
       : result?.pages
-        ? `${result.pages.length} WebP`
+        ? `${result.pages.length}`
         : result?.kind === "json"
-          ? `${result.analysis?.metadataCount || 0} tags`
+          ? `${result.analysis?.metadataCount || 0}`
           : result
             ? `${result.savedPercent}%`
             : "-";
 
   const metrics = [
-    {
-      label: "Original size",
-      value: originalSize ? formatBytes(originalSize) : "-",
-    },
-    {
-      label: "Output size",
-      value: result ? formatBytes(result.outputSize) : "-",
-    },
+    { label: t.originalSize, value: originalSize ? formatBytes(originalSize) : "-" },
+    { label: t.outputSize, value: result ? formatBytes(result.outputSize) : "-" },
     {
       label:
         mode === "pdf"
-          ? "Pages"
+          ? t.pages
           : mode === "pdf-to-webp"
-            ? "WebP pages"
+            ? t.webpPages
             : mode === "analyzer"
-              ? "Metadata"
-              : "Saved",
+              ? t.metadata
+              : t.saved,
       value: savedValue,
       strong: Boolean(result),
     },
+    { label: t.format, value: result?.format || "-" },
     {
-      label: "Format",
-      value: result?.format || "-",
-    },
-    {
-      label: result?.kind === "pdf" ? "Page size" : "Dimensions",
+      label: result?.kind === "pdf" ? t.pageSize : t.dimensions,
       value: dimensions,
     },
-    {
-      label: "Time",
-      value: result ? `${result.processingTime}ms` : "-",
-    },
+    { label: t.time, value: result ? `${result.processingTime}ms` : "-" },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-mist bg-mist sm:grid-cols-3">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className={cn("bg-paper p-4", metric.strong && "bg-signal-blue/5")}
+          className={cn(
+            "rounded-xl border p-4",
+            metric.strong
+              ? "border-cerulean/25 bg-brand-soft"
+              : "border-mist bg-paper",
+          )}
         >
           <p className="text-[12px] uppercase tracking-[0.08em] text-ash">
             {metric.label}
@@ -1642,6 +1715,7 @@ function SettingsPanel({
   onPreset,
   onRecommendation,
   hasRecommendation,
+  messages,
 }: {
   tool: ToolDefinition;
   capabilities: ReturnType<typeof getToolCapabilities>;
@@ -1651,7 +1725,9 @@ function SettingsPanel({
   onPreset: (id: string) => void;
   onRecommendation: () => void;
   hasRecommendation: boolean;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.settings;
   const formatOptions = getFormatOptions(tool.mode);
   const showPresets = ![
     "pdf",
@@ -1670,37 +1746,35 @@ function SettingsPanel({
   return (
     <Card className="overflow-hidden">
       <div className="flex items-center gap-3 border-b border-mist p-5">
-        <Settings2 className="size-5 text-charcoal" />
+        <span className="grid size-9 place-items-center rounded-xl bg-brand-soft text-cerulean">
+          <Settings2 className="size-4.5" />
+        </span>
         <div>
-          <p className="text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
-            Step 2 — Settings
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-cerulean">
+            {messages.steps.adjust}
           </p>
           <h2 className="font-display text-subheading text-graphite">
             {tool.mode === "pdf"
-              ? "PDF settings"
+              ? t.pdfTitle
               : tool.mode === "analyzer"
-                ? "Analyzer settings"
-                : "Export settings"}
+                ? t.analyzerTitle
+                : t.title}
           </h2>
         </div>
       </div>
 
       <div className="space-y-5 p-5">
         <p className="text-[13px] leading-6 text-ash">
-          {tool.name} — the Balanced default is enough. Change only what you
-          need.
+          {interpolate(t.intro, { tool: tool.name })}
         </p>
 
         {tool.mode === "analyzer" ? (
-          <InlineMessage type="info">
-            Analyzer creates a JSON report and readable summary. It does not
-            change your image pixels.
-          </InlineMessage>
+          <InlineMessage type="info">{t.analyzerNote}</InlineMessage>
         ) : null}
 
         {showPresets ? (
           <div className="space-y-2">
-            <Label>Preset</Label>
+            <Label>{t.preset}</Label>
             <div className="grid grid-cols-2 gap-2">
               {presets.map((preset) => (
                 <button
@@ -1710,8 +1784,8 @@ function SettingsPanel({
                   className={cn(
                     "rounded-lg border px-3 py-2 text-left text-[13px] transition-colors",
                     settings.preset === preset.id
-                      ? "border-signal-blue bg-signal-blue/5 text-cerulean"
-                      : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
+                      ? "border-cerulean bg-brand-soft text-cerulean"
+                      : "border-mist text-charcoal hover:border-fog hover:bg-linen",
                   )}
                 >
                   {preset.label}
@@ -1725,7 +1799,7 @@ function SettingsPanel({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="quality">
-                {tool.mode === "pdf" ? "Image quality in PDF" : "Quality"}
+                {tool.mode === "pdf" ? t.pdfQuality : t.quality}
               </Label>
               <span className="font-mono text-[13px] text-graphite">
                 {settings.quality}
@@ -1751,16 +1825,16 @@ function SettingsPanel({
 
         {showOutput ? (
           <div className="space-y-2">
-            <Label htmlFor="format">Output format</Label>
+            <Label htmlFor="format">{t.outputFormat}</Label>
             {formatOptions.length === 1 ? (
-              <div className="flex h-10 items-center rounded-none border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal">
+              <div className="flex h-10 items-center rounded-lg border border-mist bg-linen px-3 text-[15px] text-charcoal">
                 {formatOptions[0].label}
               </div>
             ) : (
               <select
                 id="format"
                 value={settings.outputFormat}
-                className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal-blue focus:bg-paper"
+                className="h-10 w-full rounded-lg border border-mist bg-linen px-3 text-[15px] text-charcoal outline-none transition-colors focus:border-cerulean/60 focus:bg-paper focus:ring-4 focus:ring-cerulean/10"
                 onChange={(event) =>
                   setSettings((current) => ({
                     ...current,
@@ -1780,7 +1854,11 @@ function SettingsPanel({
         ) : null}
 
         {tool.mode === "pdf" ? (
-          <PdfSettings settings={settings} setSettings={setSettings} />
+          <PdfSettings
+            settings={settings}
+            setSettings={setSettings}
+            messages={messages}
+          />
         ) : null}
 
         {tool.mode === "pdf-to-webp" ? (
@@ -1788,6 +1866,7 @@ function SettingsPanel({
             selectedItem={selectedItem}
             settings={settings}
             setSettings={setSettings}
+            messages={messages}
           />
         ) : null}
 
@@ -1796,21 +1875,19 @@ function SettingsPanel({
             selectedItem={selectedItem}
             settings={settings}
             setSettings={setSettings}
+            messages={messages}
           />
         ) : null}
 
         {tool.mode === "metadata" ? (
-          <InlineMessage type="info">
-            Metadata Cleaner always re-encodes the export so common EXIF,
-            camera, software, and location tags are stripped.
-          </InlineMessage>
+          <InlineMessage type="info">{t.metadataNote}</InlineMessage>
         ) : null}
 
         {capabilities.canCleanMetadata && tool.mode !== "metadata" ? (
           <CheckboxControl
             checked={settings.stripMetadata}
-            label="Remove metadata during export"
-            description="Recommended before sharing photos publicly."
+            label={t.removeMetadata}
+            description={t.removeMetadataHint}
             onChange={(checked) =>
               setSettings((current) => ({
                 ...current,
@@ -1823,7 +1900,11 @@ function SettingsPanel({
         {canResize ? (
           <>
             <Separator />
-            <ResizeSettings settings={settings} setSettings={setSettings} />
+            <ResizeSettings
+              settings={settings}
+              setSettings={setSettings}
+              messages={messages}
+            />
           </>
         ) : null}
 
@@ -1838,7 +1919,7 @@ function SettingsPanel({
             onClick={onRecommendation}
           >
             <SlidersHorizontal className="size-4" />
-            Apply smart recommendation
+            {t.applyRecommendation}
           </Button>
         ) : null}
       </div>
@@ -1849,18 +1930,24 @@ function SettingsPanel({
 function PdfSettings({
   settings,
   setSettings,
+  messages,
 }: {
   settings: ProcessingSettings;
   setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.pdf;
+  const selectClass =
+    "h-10 w-full rounded-lg border border-mist bg-linen px-3 text-[15px] text-charcoal outline-none transition-colors focus:border-cerulean/60 focus:bg-paper focus:ring-4 focus:ring-cerulean/10";
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="space-y-2">
-        <Label htmlFor="pdf-page-size">Page size</Label>
+        <Label htmlFor="pdf-page-size">{t.pageSize}</Label>
         <select
           id="pdf-page-size"
           value={settings.pdfPageSize}
-          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal-blue focus:bg-paper"
+          className={selectClass}
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
@@ -1874,11 +1961,11 @@ function PdfSettings({
         </select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="pdf-orientation">Orientation</Label>
+        <Label htmlFor="pdf-orientation">{t.orientation}</Label>
         <select
           id="pdf-orientation"
           value={settings.pdfOrientation}
-          className="h-10 w-full rounded-none border-0 border-b border-charcoal/60 bg-linen px-3 text-[15px] text-charcoal outline-none focus:border-signal-blue focus:bg-paper"
+          className={selectClass}
           onChange={(event) =>
             setSettings((current) => ({
               ...current,
@@ -1887,12 +1974,12 @@ function PdfSettings({
             }))
           }
         >
-          <option value="portrait">Portrait</option>
-          <option value="landscape">Landscape</option>
+          <option value="portrait">{t.portrait}</option>
+          <option value="landscape">{t.landscape}</option>
         </select>
       </div>
       <div className="col-span-2 space-y-2">
-        <Label htmlFor="pdf-margin">Margin</Label>
+        <Label htmlFor="pdf-margin">{t.margin}</Label>
         <Input
           id="pdf-margin"
           type="number"
@@ -1915,11 +2002,14 @@ function PdfToWebpSettings({
   selectedItem,
   settings,
   setSettings,
+  messages,
 }: {
   selectedItem?: QueueItem;
   settings: ProcessingSettings;
   setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.pdfToWebp;
   const totalPages = selectedItem?.pdf?.pageCount || 0;
   const selectedPages = totalPages
     ? parsePageSelection(settings.pdfPageRange, totalPages)
@@ -1928,24 +2018,21 @@ function PdfToWebpSettings({
     value: ProcessingSettings["pdfBackground"];
     label: string;
   }> = [
-    { value: "white", label: "White" },
-    { value: "transparent", label: "Transparent" },
+    { value: "white", label: t.white },
+    { value: "transparent", label: t.transparent },
   ];
 
   return (
     <div className="space-y-5">
-      <InlineMessage type="info">
-        Every selected page becomes its own WebP file. Pages render locally with
-        pdf.js — your document never leaves this browser.
-      </InlineMessage>
+      <InlineMessage type="info">{t.note}</InlineMessage>
 
       <div className="space-y-2">
-        <Label htmlFor="pdf-page-range">Pages</Label>
+        <Label htmlFor="pdf-page-range">{t.pages}</Label>
         <Input
           id="pdf-page-range"
           type="text"
           inputMode="text"
-          placeholder="all, or 1-3, 5, 8-"
+          placeholder={t.pagesPlaceholder}
           value={settings.pdfPageRange}
           onChange={(event) =>
             setSettings((current) => ({
@@ -1955,18 +2042,16 @@ function PdfToWebpSettings({
           }
         />
         <p className="text-[12px] leading-5 text-ash">
-          Use <span className="font-mono">all</span>, a single page, ranges like{" "}
-          <span className="font-mono">1-3</span>, or open ranges like{" "}
-          <span className="font-mono">8-</span>.
+          {t.pagesHelp}
           {totalPages > 0
-            ? ` ${describePageSelection(selectedPages, totalPages)} selected.`
+            ? ` ${describePageSelection(selectedPages, totalPages)}`
             : ""}
         </p>
       </div>
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="pdf-scale">Render scale</Label>
+          <Label htmlFor="pdf-scale">{t.scale}</Label>
           <span className="font-mono text-[13px] text-graphite">
             {settings.pdfScale.toFixed(2)}×
           </span>
@@ -1986,14 +2071,11 @@ function PdfToWebpSettings({
             }))
           }
         />
-        <p className="text-[12px] leading-5 text-ash">
-          Higher scale means sharper pages and larger WebP files. Oversized
-          pages are capped automatically to protect memory.
-        </p>
+        <p className="text-[12px] leading-5 text-ash">{t.scaleHelp}</p>
       </div>
 
       <div className="space-y-2">
-        <Label>Page background</Label>
+        <Label>{t.background}</Label>
         <div className="grid grid-cols-2 gap-2">
           {backgroundOptions.map((option) => (
             <button
@@ -2008,8 +2090,8 @@ function PdfToWebpSettings({
               className={cn(
                 "rounded-lg border px-3 py-2 text-[13px] transition-colors",
                 settings.pdfBackground === option.value
-                  ? "border-signal-blue bg-signal-blue/5 text-cerulean"
-                  : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
+                  ? "border-cerulean bg-brand-soft text-cerulean"
+                  : "border-mist text-charcoal hover:border-fog hover:bg-linen",
               )}
             >
               {option.label}
@@ -2025,14 +2107,16 @@ function CropSettings({
   selectedItem,
   settings,
   setSettings,
+  messages,
 }: {
   selectedItem?: QueueItem;
   settings: ProcessingSettings;
   setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+  messages: WorkbenchMessages;
 }) {
   return (
     <div className="space-y-2">
-      <Label>Aspect target</Label>
+      <Label>{messages.cropSettings.aspect}</Label>
       <div className="grid grid-cols-3 gap-2">
         {cropPresets.map((preset) => {
           const ratio = preset.ratio || sourceAspectRatio(selectedItem);
@@ -2047,8 +2131,8 @@ function CropSettings({
               className={cn(
                 "rounded-lg border px-3 py-2 text-[13px] transition-colors",
                 active
-                  ? "border-signal-blue bg-signal-blue/5 text-cerulean"
-                  : "border-mist text-charcoal hover:border-twilight/25 hover:bg-linen",
+                  ? "border-cerulean bg-brand-soft text-cerulean"
+                  : "border-mist text-charcoal hover:border-fog hover:bg-linen",
               )}
               onClick={() =>
                 setSettings((current) => ({
@@ -2072,16 +2156,20 @@ function CropSettings({
 function ResizeSettings({
   settings,
   setSettings,
+  messages,
 }: {
   settings: ProcessingSettings;
   setSettings: React.Dispatch<React.SetStateAction<ProcessingSettings>>;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.resize;
+
   return (
     <div className="space-y-3">
       <CheckboxControl
         checked={settings.resizeEnabled}
-        label="Resize before export"
-        description="Useful for large photos, marketplace uploads, and PDF source images."
+        label={t.enable}
+        description={t.enableHint}
         onChange={(checked) =>
           setSettings((current) => ({
             ...current,
@@ -2094,7 +2182,7 @@ function ResizeSettings({
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="width">Width</Label>
+              <Label htmlFor="width">{t.width}</Label>
               <Input
                 id="width"
                 type="number"
@@ -2109,7 +2197,7 @@ function ResizeSettings({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="height">Height</Label>
+              <Label htmlFor="height">{t.height}</Label>
               <Input
                 id="height"
                 type="number"
@@ -2126,8 +2214,8 @@ function ResizeSettings({
           </div>
           <CheckboxControl
             checked={settings.keepAspectRatio}
-            label="Keep aspect ratio"
-            description="Avoid stretching images while resizing."
+            label={t.keepAspect}
+            description={t.keepAspectHint}
             onChange={(checked) =>
               setSettings((current) => ({
                 ...current,
@@ -2140,7 +2228,7 @@ function ResizeSettings({
               <button
                 key={preset.label}
                 type="button"
-                className="rounded-lg border border-mist px-3 py-2 text-left text-[12px] text-charcoal transition-colors hover:border-twilight/25 hover:bg-linen"
+                className="rounded-lg border border-mist px-3 py-2 text-left text-[12px] text-charcoal transition-colors hover:border-fog hover:bg-linen"
                 onClick={() =>
                   setSettings((current) => ({
                     ...current,
@@ -2173,10 +2261,10 @@ function CheckboxControl({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-mist bg-paper p-3 transition-colors hover:border-twilight/25">
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-mist bg-paper p-3 transition-colors hover:border-fog">
       <span
         className={cn(
-          "mt-0.5 grid size-4 shrink-0 place-items-center rounded-[3px] border",
+          "mt-0.5 grid size-4.5 shrink-0 place-items-center rounded-md border transition-colors",
           checked ? "border-cerulean bg-cerulean text-white" : "border-fog",
         )}
       >
@@ -2210,6 +2298,7 @@ function ActionPanel({
   onProcess,
   onDownloadZip,
   onDownloadFiles,
+  messages,
 }: {
   tool: ToolDefinition;
   capabilities: ReturnType<typeof getToolCapabilities>;
@@ -2220,9 +2309,11 @@ function ActionPanel({
   onProcess: () => Promise<void>;
   onDownloadZip: () => Promise<void>;
   onDownloadFiles: () => Promise<void>;
+  messages: WorkbenchMessages;
 }) {
+  const t = messages.actions;
   const selectedReady = items.find((item) => item.result);
-  const copy = getActionCopy(tool);
+  const copy = getActionCopy(tool, t);
   const PrimaryIcon =
     tool.mode === "pdf" || tool.mode === "pdf-to-webp"
       ? FileText
@@ -2234,8 +2325,8 @@ function ActionPanel({
 
   return (
     <Card className="p-5">
-      <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.12em] text-ash">
-        Step 3 — Process and download
+      <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-cerulean">
+        {messages.steps.download}
       </p>
       <div className="space-y-3">
         <Button
@@ -2276,7 +2367,7 @@ function ActionPanel({
             }
           >
             <Download className="size-4" />
-            Download {copy.singleLabel}
+            {interpolate(t.downloadSingle, { label: copy.singleLabel })}
           </Button>
         ) : readyItems.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -2287,7 +2378,7 @@ function ActionPanel({
               onClick={onDownloadFiles}
             >
               <Download className="size-4" />
-              Files ({readyItems.length})
+              {interpolate(t.files, { count: readyItems.length })}
             </Button>
             <Button
               type="button"
@@ -2297,29 +2388,39 @@ function ActionPanel({
               disabled={!capabilities.canZip}
             >
               <FileArchive className="size-4" />
-              ZIP ({readyItems.length})
+              {interpolate(t.zip, { count: readyItems.length })}
             </Button>
           </div>
         ) : null}
       </div>
       <p className="mt-4 text-[13px] leading-6 text-ash">
         {items.length === 0
-          ? `Step 1 first: upload images, then click “${copy.primaryLabel}”.`
+          ? interpolate(t.emptyHint, { action: copy.primaryLabel })
           : completedCount > 0
-            ? `${completedCount} result${completedCount === 1 ? "" : "s"} ready — download single files or a ZIP with summary.`
-            : `When done, choose Single, Download files, or ZIP.`}
+            ? interpolate(t.readyHint, { count: completedCount })
+            : t.idleHint}
       </p>
     </Card>
   );
 }
 
-function PrivacyPanel({ mode, tool }: { mode: ToolDefinition["mode"]; tool: ToolDefinition }) {
-  const copy = getPrivacyCopy(mode, tool);
+function PrivacyPanel({
+  mode,
+  tool,
+  messages,
+}: {
+  mode: ToolDefinition["mode"];
+  tool: ToolDefinition;
+  messages: WorkbenchMessages;
+}) {
+  const copy = getPrivacyCopy(mode, messages, tool);
 
   return (
     <Card className="p-5">
       <div className="flex gap-4">
-        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-success" />
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-success/10 text-success">
+          <ShieldCheck className="size-5" />
+        </span>
         <div>
           <h2 className="font-display text-subheading text-graphite">
             {copy.title}
@@ -2343,15 +2444,15 @@ function InlineMessage({
   const Icon =
     type === "error" ? XCircle : type === "warning" ? AlertTriangle : Info;
   const styles = {
-    error: "border-destructive/30 bg-destructive/6 text-destructive",
-    warning: "border-warning/30 bg-warning/6 text-warning",
-    info: "border-signal-blue/30 bg-signal-blue/6 text-cerulean",
+    error: "border-destructive/25 bg-destructive/6 text-destructive",
+    warning: "border-warning/25 bg-warning/6 text-warning",
+    info: "border-cerulean/25 bg-brand-soft text-cerulean",
   };
 
   return (
     <div
       className={cn(
-        "flex gap-3 rounded-lg border p-3 text-[13px] leading-6",
+        "flex gap-3 rounded-xl border p-3 text-[13px] leading-6",
         styles[type],
       )}
     >
@@ -2503,121 +2604,77 @@ function formatRatioLabel(ratio: number) {
   return ratio > 1 ? `${ratio.toFixed(2)}:1` : `1:${(1 / ratio).toFixed(2)}`;
 }
 
-function getActionCopy(tool: ToolDefinition) {
-  const labels: Record<
-    ToolMode,
-    { primaryLabel: string; processingLabel: string; singleLabel: string }
-  > = {
-    compress: {
-      primaryLabel: tool.primaryAction,
-      processingLabel: "Compressing",
-      singleLabel: "Single",
-    },
-    webp: {
-      primaryLabel: tool.primaryAction,
-      processingLabel: "Converting",
-      singleLabel: "WebP",
-    },
-    avif: {
-      primaryLabel: tool.primaryAction,
-      processingLabel: "Converting",
-      singleLabel: "AVIF",
-    },
-    resize: {
-      primaryLabel: tool.primaryAction,
-      processingLabel: "Resizing",
-      singleLabel: "Image",
-    },
-    crop: {
-      primaryLabel: "Crop image",
-      processingLabel: "Cropping",
-      singleLabel: "Image",
-    },
-    "remove-bg": {
-      primaryLabel: "Remove background",
-      processingLabel: "Removing background",
-      singleLabel: "Cutout",
-    },
-    metadata: {
-      primaryLabel: "Scan and clean metadata",
-      processingLabel: "Cleaning",
-      singleLabel: "Clean file",
-    },
-    batch: {
-      primaryLabel: tool.primaryAction,
-      processingLabel: "Processing",
-      singleLabel: "Single",
-    },
-    analyzer: {
-      primaryLabel: tool.primaryAction,
-      processingLabel: "Analyzing",
-      singleLabel: "Report",
-    },
-    pdf: {
-      primaryLabel: "Create PDF",
-      processingLabel: "Creating PDF",
-      singleLabel: "PDF",
-    },
-    "pdf-to-webp": {
-      primaryLabel: "Convert pages to WebP",
-      processingLabel: "Rendering pages",
-      singleLabel: "WebP",
-    },
-    heic: {
-      primaryLabel: "Convert HEIC",
-      processingLabel: "Converting",
-      singleLabel: "JPG",
-    },
+function getActionCopy(
+  tool: ToolDefinition,
+  t: WorkbenchMessages["actions"],
+): { primaryLabel: string; processingLabel: string; singleLabel: string } {
+  const processingByMode: Record<ToolMode, string> = {
+    compress: t.processing,
+    webp: t.processing,
+    avif: t.processing,
+    resize: t.processing,
+    crop: t.processing,
+    "remove-bg": t.processing,
+    metadata: t.processing,
+    batch: t.processing,
+    analyzer: t.processing,
+    pdf: t.processing,
+    "pdf-to-webp": t.processing,
+    heic: t.processing,
   };
 
-  return labels[tool.mode];
+  const singleByMode: Record<ToolMode, string> = {
+    compress: t.single,
+    webp: "WebP",
+    avif: "AVIF",
+    resize: t.single,
+    crop: t.single,
+    "remove-bg": t.single,
+    metadata: t.single,
+    batch: t.single,
+    analyzer: t.single,
+    pdf: "PDF",
+    "pdf-to-webp": "WebP",
+    heic: "JPG",
+  };
+
+  return {
+    primaryLabel: tool.primaryAction,
+    processingLabel: processingByMode[tool.mode],
+    singleLabel: singleByMode[tool.mode],
+  };
 }
 
-function getPrivacyCopy(mode: ToolMode, tool?: ToolDefinition) {
+function getPrivacyCopy(
+  mode: ToolMode,
+  messages: WorkbenchMessages,
+  tool?: ToolDefinition,
+) {
+  const t = messages.privacy;
+
   if (mode === "metadata") {
-    return {
-      title: "Metadata cleaner",
-      description:
-        "Kompresio scans readable EXIF data and re-encodes visible pixels in the browser to remove common hidden camera, software, and location-related metadata.",
-    };
+    return { title: t.metadataTitle, description: t.metadataBody };
   }
-
   if (mode === "pdf") {
-    return {
-      title: "Private PDF creation",
-      description:
-        "Images are converted into a PDF inside your browser using local canvas processing and a client-side PDF generator.",
-    };
+    return { title: t.pdfTitle, description: t.pdfBody };
   }
-
   if (mode === "pdf-to-webp") {
-    return {
-      title: "PDF to WebP stays on your device",
-      description:
-        "Pages are parsed and rendered with pdf.js (github.com/mozilla/pdf.js) inside this browser tab. The document is never uploaded to a server, and every exported WebP is generated locally.",
-    };
+    return { title: t.pdfToWebpTitle, description: t.pdfToWebpBody };
   }
-
   if (mode === "analyzer") {
-    return {
-      title: "Local inspection",
-      description:
-        "Analysis runs in the browser and creates a downloadable JSON report without uploading your images to an API route.",
-    };
+    return { title: t.analyzerTitle, description: t.analyzerBody };
   }
-
   if (mode === "remove-bg") {
-    return {
-      title: "Free AI background removal",
-      description:
-        "Background removal uses an open-source model loaded in your browser. Your image stays local while the model runs client-side inference.",
-    };
+    return { title: t.removeBgTitle, description: t.removeBgBody };
   }
 
   return {
-    title: "Your images stay on your device",
+    title: t.defaultTitle,
     description: tool
-      ? `${tool.name} runs locally in your browser: ${tool.supportedFormats.slice(0, 4).join(", ")} never leave your device for compression, preview, or ZIP export.`
-      : "Core optimization runs in the browser. Files are not sent to an API route for MVP compression, conversion, resize, crop, preview, or ZIP export.",
+      ? interpolate(t.defaultBody, {
+          tool: tool.name,
+          formats: tool.supportedFormats.slice(0, 4).join(", "),
+        })
+      : t.defaultBodyNoTool,
   };
 }

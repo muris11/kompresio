@@ -14,14 +14,10 @@
   "dependencies": {
     "@imgly/background-removal": "^1.7.0",
     "@radix-ui/react-slot": "^1.2.4",
-    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "compressorjs": "^1.3.0",
-    "dexie": "^4.4.2",
     "exifreader": "^4.39.1",
     "file-saver": "^2.0.5",
-    "framer-motion": "^12.39.0",
     "heic2any": "^0.0.4",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
@@ -33,8 +29,7 @@
     "react-dropzone": "^15.0.0",
     "react-easy-crop": "^5.5.7",
     "sharp": "^0.34.5",
-    "tailwind-merge": "^3.6.0",
-    "zod": "^4.4.3"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

@@ -1,70 +1,113 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors */
-  --color-parchment: #fefffc;
+  /* ---- Surfaces & ink (warm paper system) ---- */
+  --color-parchment: #fbfcfa;
   --color-paper: #ffffff;
-  --color-linen: #f9faf7;
-  --color-ink-black: #171717;
-  --color-graphite: #2c2c2c;
-  --color-charcoal: #444141;
-  --color-ash: #646464;
-  --color-fog: #b4b8b4;
-  --color-mist: #dee2de;
-  --color-twilight: #282834;
-  --color-dusk: #1f1f29;
-  --color-signal-blue: #41a1cf;
-  --color-cerulean: #0081c0;
+  --color-linen: #f5f7f4;
+  --color-ink-black: #14161a;
+  --color-graphite: #1f2328;
+  --color-charcoal: #3d434b;
+  --color-ash: #656d78;
+  --color-fog: #a7aeb8;
+  --color-mist: #e4e8e4;
+  --color-twilight: #232733;
+  --color-dusk: #171a22;
 
-  /* Typography */
-  --font-ppmondwest: 'ppmondwest', var(--font-fraunces), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-af: 'af', var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* ---- Brand ---- */
+  --color-signal-blue: #3f9fd0;
+  --color-cerulean: #0079bd;
+  --color-brand: #0079bd;
+  --color-brand-soft: #e8f4fb;
 
-  /* Typography — Scale */
+  /* ---- Status ---- */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-destructive: #dc2626;
+
+  /* ---- Typography ---- */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-af: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, "SFMono-Regular", Menlo,
+    monospace;
+
+  /* ---- Type scale ---- */
   --text-caption: 13px;
-  --leading-caption: 1.3;
-  --tracking-caption: -0.13px;
+  --leading-caption: 1.35;
+  --tracking-caption: -0.01em;
   --text-body-sm: 15px;
-  --leading-body-sm: 1;
-  --tracking-body-sm: -0.15px;
+  --leading-body-sm: 1.5;
+  --tracking-body-sm: -0.006em;
   --text-subheading: 18px;
-  --leading-subheading: 1.3;
-  --tracking-subheading: -0.18px;
+  --leading-subheading: 1.35;
+  --tracking-subheading: -0.014em;
   --text-heading-sm: 27px;
-  --leading-heading-sm: 1.5;
-  --tracking-heading-sm: -1.08px;
-  --text-heading: 40px;
-  --leading-heading: 1.1;
-  --tracking-heading: -0.8px;
+  --leading-heading-sm: 1.25;
+  --tracking-heading-sm: -0.024em;
+  --text-heading: 38px;
+  --leading-heading: 1.12;
+  --tracking-heading: -0.028em;
   --text-heading-lg: 48px;
-  --leading-heading-lg: 1.1;
-  --tracking-heading-lg: -0.96px;
-  --text-display: 54px;
-  --leading-display: 1.1;
-  --tracking-display: -1.08px;
+  --leading-heading-lg: 1.08;
+  --tracking-heading-lg: -0.032em;
+  --text-display: 56px;
+  --leading-display: 1.05;
+  --tracking-display: -0.036em;
 
+  /* ---- Radius ---- */
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --radius-3xl: 26px;
+  --radius-full: 9999px;
 
-  /* Border Radius */
-  --radius-md: 4px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
-  --radius-3xl: 24px;
-  --radius-full: 50.496px;
-
-  /* Shadows */
-  --shadow-sm: rgba(0, 0, 0, 0.15) 0px 2px 6px 0px;
-  --shadow-subtle: rgba(0, 0, 0, 0.08) 0px 1px 1px 0px, rgba(0, 0, 0, 0.08) 0px 4px 5px 0px;
+  /* ---- Elevation ---- */
+  --shadow-subtle: 0 1px 2px rgba(16, 24, 40, 0.04),
+    0 6px 16px -8px rgba(16, 24, 40, 0.12);
+  --shadow-raised: 0 2px 4px rgba(16, 24, 40, 0.05),
+    0 14px 32px -12px rgba(16, 24, 40, 0.18);
+  --shadow-brand: 0 10px 30px -12px rgba(0, 121, 189, 0.45);
+  --shadow-sm: rgba(0, 0, 0, 0.12) 0px 2px 6px 0px;
   --shadow-subtle-2: rgb(222, 226, 222) 0px 0px 0px 1px;
-  --shadow-subtle-3: rgba(0, 0, 0, 0.06) 0px 2px 2px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 5px;
+  --shadow-subtle-3: rgba(0, 0, 0, 0.06) 0px 2px 2px 0px,
+    rgba(0, 0, 0, 0.04) 0px 0px 0px 5px;
   --shadow-sm-2: rgba(0, 0, 0, 0.05) 0px 1px 8px 0px;
+
+  /* ---- Motion ---- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-rise: rise 0.6s var(--ease-out-soft) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 body {
   background: var(--color-parchment);
   color: var(--color-charcoal);
-  font-family: var(--font-af);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -72,25 +115,49 @@ body {
 }
 
 ::selection {
-  background: rgba(65, 161, 207, 0.22);
+  background: rgba(63, 159, 208, 0.22);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* Display serif: set, not shouted. Weight 400 always. */
+/* Display type: confident, tight, never shouted. */
 .font-display {
-  font-family: var(--font-ppmondwest);
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), var(--font-inter), ui-sans-serif, system-ui,
+    sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.024em;
+  line-height: 1.1;
 }
 
-/* Focus ring, consistent across the system */
+/* Consistent focus ring across the system */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-signal-blue);
+  outline: 2px solid var(--color-cerulean);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
+}
+
+/* Scroll-reveal: pure CSS, no JS runtime cost. */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.6s var(--ease-out-soft),
+    transform 0.6s var(--ease-out-soft);
+}
+
+/* Never hide content when JavaScript is unavailable. */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -98,6 +165,10 @@ html {
     scroll-behavior: auto;
   }
 
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
   *,
   *::before,
   *::after {
@@ -105,5 +176,13 @@ html {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Subtle scrollbars that match the paper system. */
+@supports (scrollbar-width: thin) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-mist) transparent;
   }
 }

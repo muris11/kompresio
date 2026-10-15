@@ -1,41 +1,48 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { useDictionary, useLocale } from "@/components/providers/locale-provider";
 import { Reveal } from "@/components/shared/reveal";
 import { Button } from "@/components/ui/button";
-import { blogPosts } from "@/lib/constants/blog";
-
-const featuredPosts = blogPosts.slice(0, 3);
+import { getBlogPosts } from "@/lib/constants/blog";
 
 export function BlogHighlights() {
+  const dictionary = useDictionary();
+  const { locale, href } = useLocale();
+  const copy = dictionary.home.blog;
+  const featuredPosts = getBlogPosts(locale).slice(0, 3);
+
   return (
     <section className="border-y border-mist bg-linen">
       <div className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div className="max-w-2xl">
-            <p className="text-[13px] font-medium uppercase tracking-[0.16em] text-ash">
-              Learn
+            <p className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-cerulean">
+              <span className="h-px w-5 bg-cerulean/40" aria-hidden="true" />
+              {copy.eyebrow}
             </p>
             <h2 className="mt-3 font-display text-heading-sm leading-[1.15] text-graphite sm:text-heading">
-              Guides for image optimization
+              {copy.title}
             </h2>
           </div>
           <Button asChild variant="ghost" className="shrink-0">
-            <Link href="/blog">
-              View all articles
+            <Link href={href("/blog")}>
+              {dictionary.common.viewAllArticles}
               <ArrowRight className="size-4" />
             </Link>
           </Button>
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-mist bg-mist lg:grid-cols-3">
+        <div className="mt-12 grid gap-4 lg:grid-cols-3">
           {featuredPosts.map((post, index) => (
             <Reveal key={post.slug} delay={index * 0.04}>
               <Link
-                href={`/blog/${post.slug}`}
-                className="group flex h-full flex-col bg-paper p-7 transition-colors hover:bg-parchment"
+                href={href(`/blog/${post.slug}`)}
+                className="group flex h-full flex-col rounded-2xl border border-mist bg-paper p-7 shadow-subtle transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-fog hover:shadow-raised"
               >
-                <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-fog">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-cerulean">
                   {post.category}
                 </p>
                 <h3 className="mt-5 flex-1 font-display text-subheading leading-[1.25] text-graphite">
@@ -46,8 +53,8 @@ export function BlogHighlights() {
                 </p>
                 <div className="mt-6 flex items-center justify-between border-t border-mist pt-4 text-[13px] text-ash">
                   <span>{post.readTime}</span>
-                  <span className="inline-flex items-center gap-1 text-charcoal">
-                    Read
+                  <span className="inline-flex items-center gap-1 font-medium text-charcoal">
+                    {dictionary.common.read}
                     <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                   </span>
                 </div>

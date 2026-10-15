@@ -16,7 +16,8 @@ export function SectionHeading({
       }
     >
       {eyebrow ? (
-        <p className="text-[13px] font-medium uppercase tracking-[0.16em] text-ash">
+        <p className="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-cerulean">
+          <span className="h-px w-5 bg-cerulean/40" aria-hidden="true" />
           {eyebrow}
         </p>
       ) : null}

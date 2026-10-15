@@ -1,7 +1,11 @@
 import {
   Archive,
+  BadgeCheck,
+  BookOpenText,
+  Clock3,
   Code2,
   Crop,
+  DatabaseZap,
   FileText,
   Gauge,
   Globe,
@@ -10,8 +14,13 @@ import {
   Lock,
   Maximize2,
   RefreshCcw,
+  Rocket,
+  Scale,
   Search,
+  ShieldAlert,
   ShieldCheck,
+  Trash2,
+  TrendingUp,
   Zap,
 } from "lucide-react";
 
@@ -32,6 +41,15 @@ const iconMap = {
   search: Search,
   shield: ShieldCheck,
   zap: Zap,
+  trending: TrendingUp,
+  book: BookOpenText,
+  clock: Clock3,
+  database: DatabaseZap,
+  trash: Trash2,
+  rocket: Rocket,
+  badge: BadgeCheck,
+  alert: ShieldAlert,
+  scale: Scale,
 };
 
 export function ToolIcon({

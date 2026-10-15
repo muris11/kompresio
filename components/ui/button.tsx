@@ -5,34 +5,34 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /*
-  Editorial button system.
-  - outlined signal blue = primary marketing action (border only, no fill)
-  - dark = the single filled button, reserved for high-emphasis workbench actions
-  - secondary = neutral outlined (twilight)
-  - ghost = inline text link
-  No decorative shadows; identity comes from the border.
+  Button system.
+  - default = brand action (cerulean fill, the primary call to action)
+  - dark    = single high-emphasis workbench action
+  - secondary = neutral hairline outline
+  - ghost   = inline text link
+  - accent  = lighter brand outline for secondary emphasis
 */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-lg font-af text-[15px] font-medium leading-none transition-[color,background-color,border-color,transform] duration-150 ease-out active:scale-[0.96] disabled:pointer-events-none disabled:opacity-45",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-sans text-[15px] font-semibold leading-none transition-[background-color,border-color,color,transform,box-shadow] duration-150 ease-out active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45",
   {
     variants: {
       variant: {
         default:
-          "border border-signal-blue bg-transparent text-signal-blue hover:bg-signal-blue/8",
-        dark: "border border-twilight bg-dusk text-white hover:bg-dusk/90",
+          "bg-cerulean text-white shadow-[0_1px_2px_rgba(16,24,40,0.08)] hover:bg-[#006aa6] hover:shadow-[0_8px_20px_-8px_rgba(0,121,189,0.55)]",
+        dark: "bg-dusk text-white hover:bg-dusk/90",
         secondary:
-          "border border-twilight bg-transparent text-twilight hover:bg-twilight/6",
+          "border border-mist bg-paper text-graphite hover:border-fog hover:bg-linen",
         ghost:
-          "border border-transparent text-charcoal hover:bg-linen hover:text-graphite",
+          "text-ash hover:bg-mist/50 hover:text-graphite",
         destructive:
-          "border border-destructive bg-transparent text-destructive hover:bg-destructive/8",
+          "border border-destructive/30 bg-destructive/5 text-destructive hover:bg-destructive/10",
         accent:
-          "border border-cerulean bg-transparent text-cerulean hover:bg-cerulean/8",
+          "border border-cerulean/35 bg-brand-soft text-cerulean hover:border-cerulean/60",
       },
       size: {
-        sm: "px-3 py-[5px]",
-        md: "px-3 py-[5px]",
-        lg: "px-4 py-2",
+        sm: "h-9 px-3.5",
+        md: "h-10 px-4",
+        lg: "h-12 px-6 text-[16px]",
         icon: "size-10",
       },
     },

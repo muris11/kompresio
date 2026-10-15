@@ -1,6 +1,7 @@
-import { blogPosts } from "@/lib/constants/blog";
+import { getBlogPosts } from "@/lib/constants/blog";
 import { siteConfig } from "@/lib/constants/site";
-import { tools } from "@/lib/constants/tools";
+import { getTools } from "@/lib/constants/tools";
+import { defaultLocale } from "@/lib/i18n/config";
 
 const pages = [
   { label: "All image tools directory", path: "/tools" },
@@ -13,6 +14,8 @@ const pages = [
 
 export async function GET() {
   const base = siteConfig.url;
+  const tools = getTools(defaultLocale);
+  const blogPosts = getBlogPosts(defaultLocale);
 
   const toolLines = tools
     .map((t) => `- ${t.name} (${t.title}): ${base}/${t.slug}`)
@@ -33,8 +36,9 @@ export async function GET() {
 ## Overview
 Kompresio is an online image optimization platform developed by Rifqy Saputra (https://rifqysaputra.dev).
 It processes all image conversions, compression, resizing, and EXIF stripping locally inside the user's web browser using WebAssembly and HTML5 Canvas APIs. Zero files are uploaded to any server.
+The site is available in English (default) and Indonesian at ${base}/id.
 
-## Available Tools (16 Tools)
+## Available Tools (${tools.length} Tools)
 
 ${toolLines}
 

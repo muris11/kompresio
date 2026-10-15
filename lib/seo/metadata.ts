@@ -1,13 +1,41 @@
 import type { Metadata } from "next";
 
 import { siteConfig } from "@/lib/constants/site";
+import {
+  defaultLocale,
+  localeHtmlLang,
+  localeOgLocale,
+  locales,
+  type Locale,
+} from "@/lib/i18n/config";
 import type { ToolDefinition } from "@/types/tool";
 
 export const TITLE_SEPARATOR = " - ";
 
-export function absoluteUrl(path = "") {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  return `${siteConfig.url}${normalizedPath === "/" ? "" : normalizedPath}`;
+/** Absolute URL for a path in a given locale (English stays prefix-free). */
+export function localeUrl(locale: Locale, path = "/"): string {
+  const clean =
+    path === "/" || path === ""
+      ? ""
+      : path.startsWith("/")
+        ? path
+        : `/${path}`;
+
+  if (locale === defaultLocale) {
+    return `${siteConfig.url}${clean}`;
+  }
+
+  return `${siteConfig.url}/${locale}${clean}`;
+}
+
+/** hreflang map covering every locale plus x-default. */
+export function alternateLanguages(path: string) {
+  const languages: Record<string, string> = {};
+  for (const locale of locales) {
+    languages[locale] = localeUrl(locale, path);
+  }
+  languages["x-default"] = localeUrl(defaultLocale, path);
+  return languages;
 }
 
 export function formatMetaTitle(title: string): string {
@@ -21,6 +49,7 @@ export type PageMetadataOptions = {
   title: string;
   description: string;
   path: string;
+  locale?: Locale;
   image?: string;
   keywords?: string[] | string;
   type?: "website" | "article";
@@ -35,6 +64,7 @@ export function createPageMetadata({
   title,
   description,
   path,
+  locale = defaultLocale,
   image = "/opengraph-image",
   keywords,
   type = "website",
@@ -45,13 +75,15 @@ export function createPageMetadata({
   noindex = false,
 }: PageMetadataOptions): Metadata {
   const fullTitle = formatMetaTitle(title);
-  const canonicalUrl = absoluteUrl(path);
-  const imageUrl = absoluteUrl(image);
+  const canonicalUrl = localeUrl(locale, path);
+  const imageUrl = localeUrl(locale, image);
 
   const parsedKeywords = Array.isArray(keywords)
     ? Array.from(new Set(["Kompresio", ...keywords]))
     : typeof keywords === "string"
-      ? Array.from(new Set(["Kompresio", ...keywords.split(",").map((k) => k.trim())]))
+      ? Array.from(
+          new Set(["Kompresio", ...keywords.split(",").map((k) => k.trim())]),
+        )
       : [
           "Kompresio",
           "Kompresio online",
@@ -80,11 +112,7 @@ export function createPageMetadata({
     category: "technology",
     alternates: {
       canonical: canonicalUrl,
-      languages: {
-        "en-US": canonicalUrl,
-        "id-ID": canonicalUrl,
-        "x-default": canonicalUrl,
-      },
+      languages: alternateLanguages(path),
     },
     robots: noindex
       ? {
@@ -107,7 +135,7 @@ export function createPageMetadata({
       description,
       url: canonicalUrl,
       siteName: siteConfig.name,
-      locale: "en_US",
+      locale: localeOgLocale[locale],
       type,
       images: [
         {
@@ -140,11 +168,15 @@ export function createPageMetadata({
   };
 }
 
-export function createToolMetadata(tool: ToolDefinition): Metadata {
+export function createToolMetadata(
+  tool: ToolDefinition,
+  locale: Locale = defaultLocale,
+): Metadata {
   return createPageMetadata({
     title: tool.title,
     description: tool.description,
     path: `/${tool.slug}`,
+    locale,
     image: `/${tool.slug}/opengraph-image`,
     keywords: [
       tool.primaryKeyword,
@@ -153,27 +185,18 @@ export function createToolMetadata(tool: ToolDefinition): Metadata {
       "free online image tool",
       "client side image compression",
       "privacy friendly image optimizer",
-      ...tool.supportedFormats.map((f) => `${f.toLowerCase()} ${tool.category.toLowerCase()}`),
+      ...tool.supportedFormats.map(
+        (f) => `${f.toLowerCase()} ${tool.category.toLowerCase()}`,
+      ),
     ],
   });
 }
 
-/**
- * Yoast SEO Connected Schema Graph (@graph)
- * Links Organization -> WebSite -> WebPage -> BreadcrumbList -> SoftwareApplication / Article -> FAQPage
- */
-export function yoastGraphSchema({
-  path,
-  title,
-  description,
-  breadcrumbs,
-  tool,
-  article,
-  faqs,
-}: {
+type YoastGraphInput = {
   path: string;
   title: string;
   description: string;
+  locale?: Locale;
   breadcrumbs?: Array<{ name: string; path: string }>;
   tool?: ToolDefinition;
   article?: {
@@ -185,9 +208,25 @@ export function yoastGraphSchema({
     category?: string;
   };
   faqs?: Array<{ question: string; answer: string }>;
-}) {
-  const pageUrl = absoluteUrl(path);
+};
+
+/**
+ * Yoast SEO Connected Schema Graph (@graph)
+ * Links Organization -> WebSite -> WebPage -> BreadcrumbList -> SoftwareApplication / Article -> FAQPage
+ */
+export function yoastGraphSchema({
+  path,
+  title,
+  description,
+  locale = defaultLocale,
+  breadcrumbs,
+  tool,
+  article,
+  faqs,
+}: YoastGraphInput) {
+  const pageUrl = localeUrl(locale, path);
   const fullTitle = formatMetaTitle(title);
+  const inLanguage = localeHtmlLang[locale] === "id" ? "id-ID" : "en-US";
 
   const graph: Array<Record<string, unknown>> = [
     // 1. Organization
@@ -206,7 +245,7 @@ export function yoastGraphSchema({
       logo: {
         "@type": "ImageObject",
         "@id": `${siteConfig.url}/#logo`,
-        inLanguage: "en-US",
+        inLanguage,
         url: `${siteConfig.url}/logo.png`,
         contentUrl: `${siteConfig.url}/logo.png`,
         width: 512,
@@ -244,7 +283,11 @@ export function yoastGraphSchema({
       "@id": `${siteConfig.url}/#website`,
       url: `${siteConfig.url}/`,
       name: siteConfig.name,
-      alternateName: ["Kompresio", "Kompresio Online", "Kompresio Image Toolkit"],
+      alternateName: [
+        "Kompresio",
+        "Kompresio Online",
+        "Kompresio Image Toolkit",
+      ],
       description: siteConfig.description,
       publisher: { "@id": `${siteConfig.url}/#organization` },
       potentialAction: [
@@ -257,9 +300,9 @@ export function yoastGraphSchema({
           "query-input": "required name=search_term_string",
         },
       ],
-      inLanguage: "en-US",
+      inLanguage,
     },
-    // 2.5. SiteNavigationElement (For Google Sitelinks)
+    // 2.5. SiteNavigationElement (for Google Sitelinks)
     {
       "@type": "SiteNavigationElement",
       "@id": `${siteConfig.url}/#navigation`,
@@ -268,38 +311,40 @@ export function yoastGraphSchema({
         {
           "@type": "WebPage",
           name: "Compress Image",
-          description: "Compress JPG, PNG, and WebP images online directly in your browser",
-          url: `${siteConfig.url}/compress-image`,
+          description:
+            "Compress JPG, PNG, and WebP images online directly in your browser",
+          url: localeUrl(locale, "/compress-image"),
         },
         {
           "@type": "WebPage",
           name: "Convert to WebP",
           description: "Convert PNG and JPG images to modern WebP format",
-          url: `${siteConfig.url}/convert-to-webp`,
+          url: localeUrl(locale, "/convert-to-webp"),
         },
         {
           "@type": "WebPage",
           name: "Resize Image",
           description: "Resize image dimensions with pixel precision",
-          url: `${siteConfig.url}/resize-image`,
+          url: localeUrl(locale, "/resize-image"),
         },
         {
           "@type": "WebPage",
           name: "Remove Background",
-          description: "Remove background from images automatically in your browser",
-          url: `${siteConfig.url}/remove-background`,
+          description:
+            "Remove background from images automatically in your browser",
+          url: localeUrl(locale, "/remove-background"),
         },
         {
           "@type": "WebPage",
           name: "All Image Tools",
           description: "Explore all 16 free browser-based image tools",
-          url: `${siteConfig.url}/tools`,
+          url: localeUrl(locale, "/tools"),
         },
         {
           "@type": "WebPage",
           name: "Guides & Blog",
           description: "Image optimization tutorials and web performance guides",
-          url: `${siteConfig.url}/blog`,
+          url: localeUrl(locale, "/blog"),
         },
       ],
     },
@@ -313,7 +358,7 @@ export function yoastGraphSchema({
       about: { "@id": `${siteConfig.url}/#organization` },
       description,
       breadcrumb: breadcrumbs ? { "@id": `${pageUrl}#breadcrumb` } : undefined,
-      inLanguage: "en-US",
+      inLanguage,
       potentialAction: [
         {
           "@type": "ReadAction",
@@ -332,7 +377,7 @@ export function yoastGraphSchema({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,
-        item: absoluteUrl(item.path),
+        item: localeUrl(locale, item.path),
       })),
     });
   }
@@ -346,7 +391,8 @@ export function yoastGraphSchema({
       url: pageUrl,
       applicationCategory: "MultimediaApplication",
       operatingSystem: "All, Modern Web Browser",
-      browserRequirements: "Requires HTML5 Canvas and WebAssembly capable browser",
+      browserRequirements:
+        "Requires HTML5 Canvas and WebAssembly capable browser",
       description: tool.description,
       offers: {
         "@type": "Offer",
@@ -394,11 +440,11 @@ export function yoastGraphSchema({
       image: article.image
         ? {
             "@type": "ImageObject",
-            url: absoluteUrl(article.image),
+            url: localeUrl(locale, article.image),
           }
         : undefined,
       articleSection: article.category,
-      inLanguage: "en-US",
+      inLanguage,
     });
   }
 
@@ -424,82 +470,6 @@ export function yoastGraphSchema({
   };
 }
 
-// Standalone backward-compatible helpers
-export function websiteSchema() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${siteConfig.url}/#website`,
-    name: siteConfig.name,
-    url: `${siteConfig.url}/`,
-    publisher: {
-      "@id": `${siteConfig.url}/#organization`,
-    },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${siteConfig.url}/tools?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-}
-
-export function softwareApplicationSchema(tool: ToolDefinition) {
-  return {
-    "@context": "https://schema.org",
-    "@type": ["SoftwareApplication", "WebApplication"],
-    "@id": `${absoluteUrl(tool.slug)}#software`,
-    name: `Kompresio ${tool.name}`,
-    applicationCategory: "MultimediaApplication",
-    operatingSystem: "All, Modern Web Browser",
-    description: tool.description,
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-    },
-    featureList: tool.benefits.join(". "),
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "1480",
-      bestRating: "5",
-      worstRating: "1",
-    },
-  };
-}
-
-export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.name,
-      item: absoluteUrl(item.path),
-    })),
-  };
-}
-
-export function faqSchema(faqs: Array<{ question: string; answer: string }>) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-}
-
 export function personSchema() {
   return {
     "@type": "Person",
@@ -511,13 +481,14 @@ export function personSchema() {
   };
 }
 
-export function organizationSchema() {
+export function organizationSchema(locale: Locale = defaultLocale) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${siteConfig.url}/#organization`,
     name: siteConfig.name,
     url: `${siteConfig.url}/`,
+    inLanguage: localeHtmlLang[locale] === "id" ? "id-ID" : "en-US",
     logo: {
       "@type": "ImageObject",
       "@id": `${siteConfig.url}/#logo`,
@@ -530,31 +501,5 @@ export function organizationSchema() {
     description: siteConfig.description,
     founder: personSchema(),
     sameAs: Object.values(siteConfig.social),
-  };
-}
-
-export function articleSchema({
-  headline,
-  description,
-  image,
-  datePublished,
-  dateModified,
-}: {
-  headline: string;
-  description: string;
-  image: string;
-  datePublished: string;
-  dateModified?: string;
-}) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline,
-    description,
-    image: image.startsWith("http") ? image : `${siteConfig.url}${image}`,
-    author: personSchema(),
-    publisher: organizationSchema(),
-    datePublished,
-    dateModified: dateModified ?? datePublished,
   };
 }

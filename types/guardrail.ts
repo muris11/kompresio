@@ -1,4 +1,4 @@
-import type { OutputFormat, ProcessingSettings } from "@/lib/image/client-processing";
+import type { OutputFormat } from "@/lib/image/client-processing";
 
 export type GuardrailSeverity = "error" | "warning" | "info";
 
