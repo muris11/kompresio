@@ -182,7 +182,7 @@ export default async function BlogDetailPage({ params }: BlogDetailProps) {
             </div>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {relatedTools.map((tool) => (
-                <ToolCard key={tool.slug} tool={tool} />
+                <ToolCard key={tool.slug} tool={tool} locale={locale} />
               ))}
             </div>
           </section>

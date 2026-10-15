@@ -5,10 +5,13 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /*
-  CSS-driven scroll reveal. Replaces the previous framer-motion implementation
-  so the marketing pages ship no animation runtime. Content is always present
-  in the SSR HTML; `@media (scripting: none)` in globals.css keeps it visible
-  when JavaScript is unavailable.
+  CSS-driven scroll reveal with progressive enhancement.
+
+  The element starts visible in the server HTML. Only after hydration, and only
+  when the browser supports IntersectionObserver without reduced-motion, do we
+  switch it to the "reveal" (hidden) state and animate it in. That keeps the
+  first paint free of layout work on mobile and guarantees the content is
+  present for crawlers, no-JS users, and reduced-motion users.
 */
 export function Reveal({
   children,
@@ -28,10 +31,14 @@ export function Reveal({
     }
 
     if (typeof IntersectionObserver === "undefined") {
-      element.classList.add("is-visible");
       return;
     }
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    element.classList.add("reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -41,7 +48,7 @@ export function Reveal({
           }
         }
       },
-      { rootMargin: "0px 0px -60px 0px" },
+      { rootMargin: "0px 0px -40px 0px" },
     );
 
     observer.observe(element);
@@ -51,7 +58,7 @@ export function Reveal({
   return (
     <div
       ref={ref}
-      className={cn("reveal", className)}
+      className={cn(className)}
       style={delay ? { transitionDelay: `${delay}s` } : undefined}
     >
       {children}

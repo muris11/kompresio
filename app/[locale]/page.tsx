@@ -71,17 +71,17 @@ export default async function Home({ params }: PageProps) {
           faqs: content.home.faqs,
         })}
       />
-      <HomeHero />
-      <StatsSection />
-      <PopularTools />
-      <BeforeAfterDemo />
-      <HowItWorks />
-      <FormatGuide />
-      <WhyKompresio />
-      <Testimonials />
-      <HomeFaq />
-      <BlogHighlights />
-      <HomepageCta />
+      <HomeHero locale={locale} />
+      <StatsSection locale={locale} />
+      <PopularTools locale={locale} />
+      <BeforeAfterDemo locale={locale} />
+      <HowItWorks locale={locale} />
+      <FormatGuide locale={locale} />
+      <WhyKompresio locale={locale} />
+      <Testimonials locale={locale} />
+      <HomeFaq locale={locale} />
+      <BlogHighlights locale={locale} />
+      <HomepageCta locale={locale} />
     </>
   );
 }

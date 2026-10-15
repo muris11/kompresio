@@ -28,7 +28,7 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-mist/70 bg-parchment/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-mist/70 bg-parchment">
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <BrandMark locale={locale} />
 

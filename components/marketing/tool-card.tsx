@@ -1,18 +1,20 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { useLocale } from "@/components/providers/locale-provider";
 import { ToolIcon } from "@/components/shared/tool-icon";
+import { localePath, type Locale } from "@/lib/i18n/config";
 import type { ToolDefinition } from "@/types/tool";
 
-export function ToolCard({ tool }: { tool: ToolDefinition }) {
-  const { href } = useLocale();
-
+export function ToolCard({
+  tool,
+  locale,
+}: {
+  tool: ToolDefinition;
+  locale: Locale;
+}) {
   return (
     <Link
-      href={href(`/${tool.slug}`)}
+      href={localePath(locale, `/${tool.slug}`)}
       className="group flex h-full flex-col rounded-2xl border border-mist bg-paper p-6 shadow-subtle transition-[border-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-1 hover:border-fog hover:shadow-raised active:scale-[0.99]"
     >
       <div className="flex items-start justify-between gap-4">

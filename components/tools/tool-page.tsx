@@ -36,7 +36,7 @@ export function ToolPage({
         />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {relatedTools.map((related) => (
-            <ToolCard key={related.slug} tool={related} />
+            <ToolCard key={related.slug} tool={related} locale={locale} />
           ))}
         </div>
       </section>

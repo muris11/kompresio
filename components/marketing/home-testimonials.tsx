@@ -1,14 +1,11 @@
-"use client";
-
 import { SectionHeading } from "@/components/marketing/section-heading";
-import { useDictionary, useLocale } from "@/components/providers/locale-provider";
 import { Reveal } from "@/components/shared/reveal";
 import { getContent } from "@/lib/content";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/lib/i18n/config";
 
-export function Testimonials() {
-  const dictionary = useDictionary();
-  const { locale } = useLocale();
-  const copy = dictionary.home.testimonials;
+export function Testimonials({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).home.testimonials;
   const testimonials = getContent(locale).home.testimonials;
 
   return (

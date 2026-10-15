@@ -1,16 +1,14 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import { useDictionary, useLocale } from "@/components/providers/locale-provider";
 import { Reveal } from "@/components/shared/reveal";
 import { Button } from "@/components/ui/button";
 import { getBlogPosts } from "@/lib/constants/blog";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { localePath, type Locale } from "@/lib/i18n/config";
 
-export function BlogHighlights() {
-  const dictionary = useDictionary();
-  const { locale, href } = useLocale();
+export function BlogHighlights({ locale }: { locale: Locale }) {
+  const dictionary = getDictionary(locale);
   const copy = dictionary.home.blog;
   const featuredPosts = getBlogPosts(locale).slice(0, 3);
 
@@ -28,7 +26,7 @@ export function BlogHighlights() {
             </h2>
           </div>
           <Button asChild variant="ghost" className="shrink-0">
-            <Link href={href("/blog")}>
+            <Link href={localePath(locale, "/blog")}>
               {dictionary.common.viewAllArticles}
               <ArrowRight className="size-4" />
             </Link>
@@ -39,7 +37,7 @@ export function BlogHighlights() {
           {featuredPosts.map((post, index) => (
             <Reveal key={post.slug} delay={index * 0.04}>
               <Link
-                href={href(`/blog/${post.slug}`)}
+                href={localePath(locale, `/blog/${post.slug}`)}
                 className="group flex h-full flex-col rounded-2xl border border-mist bg-paper p-7 shadow-subtle transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-fog hover:shadow-raised"
               >
                 <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-cerulean">

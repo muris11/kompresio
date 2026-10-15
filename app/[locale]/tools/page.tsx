@@ -76,7 +76,7 @@ export default async function ToolsPage({ params }: PageProps) {
       <section className="mx-auto w-full max-w-[1200px] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tools.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
+            <ToolCard key={tool.slug} tool={tool} locale={locale} />
           ))}
         </div>
       </section>

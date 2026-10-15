@@ -1,11 +1,9 @@
-"use client";
-
-import { useDictionary } from "@/components/providers/locale-provider";
 import { Reveal } from "@/components/shared/reveal";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/lib/i18n/config";
 
-export function StatsSection() {
-  const dictionary = useDictionary();
-  const stats = dictionary.home.stats.items;
+export function StatsSection({ locale }: { locale: Locale }) {
+  const stats = getDictionary(locale).home.stats.items;
 
   return (
     <section className="border-b border-mist bg-paper">

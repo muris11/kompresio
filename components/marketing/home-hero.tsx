@@ -1,12 +1,11 @@
-"use client";
-
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 
-import { useDictionary, useLocale } from "@/components/providers/locale-provider";
 import { HeroBackdrop } from "@/components/shared/hero-backdrop";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { localePath, type Locale } from "@/lib/i18n/config";
 
 const sample = [
   { name: "marketplace-product.jpg", from: "2.4 MB", to: "312 KB", saved: 87 },
@@ -14,10 +13,8 @@ const sample = [
   { name: "hero-image.webp", from: "980 KB", to: "284 KB", saved: 71 },
 ];
 
-export function HomeHero() {
-  const dictionary = useDictionary();
-  const { href } = useLocale();
-  const copy = dictionary.home.hero;
+export function HomeHero({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).home.hero;
 
   return (
     <section className="relative overflow-hidden border-b border-mist">
@@ -25,9 +22,7 @@ export function HomeHero() {
 
       <div className="mx-auto grid w-full max-w-[1200px] items-center gap-12 px-4 pb-16 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:pb-24 lg:pt-24">
         <div className="min-w-0">
-          <Badge className="animate-rise">
-            {copy.badge}
-          </Badge>
+          <Badge>{copy.badge}</Badge>
 
           <h1 className="mt-6 max-w-2xl break-words font-display text-[38px] leading-[1.06] tracking-[-0.03em] text-graphite sm:text-[46px] lg:text-display">
             {copy.title}
@@ -39,7 +34,7 @@ export function HomeHero() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button asChild size="lg" className="w-full sm:w-auto">
-              <Link href={href("/compress-image")}>
+              <Link href={localePath(locale, "/compress-image")}>
                 {copy.ctaPrimary}
                 <ArrowRight className="size-4" />
               </Link>
@@ -50,7 +45,9 @@ export function HomeHero() {
               variant="secondary"
               className="w-full sm:w-auto"
             >
-              <Link href={href("/tools")}>{copy.ctaSecondary}</Link>
+              <Link href={localePath(locale, "/tools")}>
+                {copy.ctaSecondary}
+              </Link>
             </Button>
           </div>
 
@@ -70,7 +67,7 @@ export function HomeHero() {
         </div>
 
         <div className="mx-auto w-full max-w-md">
-          <div className="rounded-2xl border border-mist bg-paper/90 p-6 shadow-raised backdrop-blur-xl">
+          <div className="rounded-2xl border border-mist bg-paper p-6 shadow-raised">
             <div className="flex items-center justify-between">
               <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-ash">
                 {copy.sampleTitle}

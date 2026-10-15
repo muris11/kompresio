@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import {
   ArrowRight,
@@ -16,19 +14,19 @@ import {
 
 import { SectionHeading } from "@/components/marketing/section-heading";
 import { ToolCard } from "@/components/marketing/tool-card";
-import { useDictionary, useLocale } from "@/components/providers/locale-provider";
 import { Reveal } from "@/components/shared/reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getFeaturedTools } from "@/lib/constants/tools";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { localePath, type Locale } from "@/lib/i18n/config";
 
 const stepIcons = [Upload, SlidersHorizontal, Download];
 const reasonIcons = [ShieldCheck, Gauge, FileArchive];
 
-export function PopularTools() {
-  const dictionary = useDictionary();
-  const { locale, href } = useLocale();
+export function PopularTools({ locale }: { locale: Locale }) {
+  const dictionary = getDictionary(locale);
   const copy = dictionary.home.popularTools;
 
   return (
@@ -40,7 +38,7 @@ export function PopularTools() {
           description={copy.description}
         />
         <Button asChild variant="ghost" className="hidden shrink-0 sm:inline-flex">
-          <Link href={href("/tools")}>
+          <Link href={localePath(locale, "/tools")}>
             {dictionary.common.viewAll}
             <ArrowRight className="size-4" />
           </Link>
@@ -50,14 +48,14 @@ export function PopularTools() {
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {getFeaturedTools(locale).map((tool, index) => (
           <Reveal key={tool.slug} delay={index * 0.04}>
-            <ToolCard tool={tool} />
+            <ToolCard tool={tool} locale={locale} />
           </Reveal>
         ))}
       </div>
 
       <div className="mt-8 sm:hidden">
         <Button asChild variant="secondary" className="w-full">
-          <Link href={href("/tools")}>
+          <Link href={localePath(locale, "/tools")}>
             {dictionary.common.viewAll}
             <ArrowRight className="size-4" />
           </Link>
@@ -67,9 +65,8 @@ export function PopularTools() {
   );
 }
 
-export function BeforeAfterDemo() {
-  const dictionary = useDictionary();
-  const copy = dictionary.home.beforeAfter;
+export function BeforeAfterDemo({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).home.beforeAfter;
 
   return (
     <section className="border-y border-mist bg-linen">
@@ -133,9 +130,8 @@ export function BeforeAfterDemo() {
   );
 }
 
-export function HowItWorks() {
-  const dictionary = useDictionary();
-  const copy = dictionary.home.howItWorks;
+export function HowItWorks({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).home.howItWorks;
 
   return (
     <section className="mx-auto w-full max-w-[1200px] px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
@@ -234,9 +230,8 @@ function BoolMark({ value }: { value: boolean }) {
   );
 }
 
-export function FormatGuide() {
-  const dictionary = useDictionary();
-  const copy = dictionary.home.formatGuide;
+export function FormatGuide({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).home.formatGuide;
   const supported = ["JPG", "PNG", "WebP", "AVIF", "HEIC", "GIF", "SVG"];
 
   return (
@@ -316,9 +311,8 @@ export function FormatGuide() {
   );
 }
 
-export function WhyKompresio() {
-  const dictionary = useDictionary();
-  const copy = dictionary.home.why;
+export function WhyKompresio({ locale }: { locale: Locale }) {
+  const copy = getDictionary(locale).home.why;
 
   return (
     <section className="border-y border-mist bg-linen">
@@ -372,9 +366,8 @@ export function WhyKompresio() {
   );
 }
 
-export function HomepageCta() {
-  const dictionary = useDictionary();
-  const { href } = useLocale();
+export function HomepageCta({ locale }: { locale: Locale }) {
+  const dictionary = getDictionary(locale);
   const copy = dictionary.home.cta;
 
   return (
@@ -393,13 +386,15 @@ export function HomepageCta() {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button asChild size="lg">
-              <Link href={href("/compress-image")}>
+              <Link href={localePath(locale, "/compress-image")}>
                 {dictionary.common.openCompressor}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="secondary">
-              <Link href={href("/tools")}>{dictionary.common.browseTools}</Link>
+              <Link href={localePath(locale, "/tools")}>
+                {dictionary.common.browseTools}
+              </Link>
             </Button>
           </div>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
