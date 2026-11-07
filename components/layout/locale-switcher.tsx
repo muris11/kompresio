@@ -41,8 +41,12 @@ export function LocaleSwitcher() {
     const { pathname } = localeFromPathname(rawPathname);
     writeLocaleCookie(next);
     setOpen(false);
+    // Note: do NOT call router.refresh() here. router.refresh() re-requests
+    // the *current* path (still the old locale prefix), and the proxy would
+    // force the cookie back to that prefix (e.g. id), undoing the language
+    // just selected. router.push() already fetches fresh data for the target
+    // route while the cookie carries the new locale.
     router.push(localePath(next, pathname));
-    router.refresh();
   }
 
   return (

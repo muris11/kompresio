@@ -49,7 +49,13 @@ export function proxy(request: NextRequest) {
 
   if (isLocale(firstSegment)) {
     const response = NextResponse.next();
-    if (request.cookies.get(LOCALE_COOKIE)?.value !== firstSegment) {
+    // Only persist the URL's locale as the visitor's preference when they have
+    // no existing preference yet. Never override an explicit choice (e.g. an
+    // English visitor who opens a shared /id/… link): otherwise any request for
+    // the prefixed path — including router.refresh() or prefetches — would
+    // silently flip the saved language back to Indonesian.
+    const existing = request.cookies.get(LOCALE_COOKIE)?.value;
+    if (!isLocale(existing)) {
       response.cookies.set(LOCALE_COOKIE, firstSegment, {
         path: "/",
         maxAge: 60 * 60 * 24 * 365,
