@@ -103,30 +103,11 @@
 }
 
 body {
-  background-color: var(--color-parchment);
-  /* Full dek.png backdrop: contain so the whole image is visible (uncropped). */
-  background-image: url("/dek.png");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: var(--color-parchment);
   color: var(--color-charcoal);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-}
-
-/* TEMPORARY: show only dek.png until reverted. Covers all site content so the
-   page displays just the image full-screen. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background-image: url("/dek.png");
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: var(--color-parchment);
 }
 
 * {
