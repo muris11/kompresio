@@ -104,9 +104,9 @@
 
 body {
   background-color: var(--color-parchment);
-  /* Full-screen dek.png backdrop, shown clean (no wash). */
+  /* Full dek.png backdrop: contain so the whole image is visible (uncropped). */
   background-image: url("/dek.png");
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   color: var(--color-charcoal);
@@ -123,10 +123,10 @@ body::before {
   inset: 0;
   z-index: 9999;
   background-image: url("/dek.png");
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #000;
+  background-color: var(--color-parchment);
 }
 
 * {
