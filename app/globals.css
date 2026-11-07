@@ -115,6 +115,20 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* TEMPORARY: show only dek.png until reverted. Covers all site content so the
+   page displays just the image full-screen. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-image: url("/dek.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #000;
+}
+
 * {
   box-sizing: border-box;
 }
