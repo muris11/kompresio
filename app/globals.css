@@ -103,7 +103,14 @@
 }
 
 body {
-  background: var(--color-parchment);
+  background-color: var(--color-parchment);
+  /* Full-page backdrop from /dek.png with a soft parchment wash so the
+     content stays readable over the photo. */
+  background-image: linear-gradient(rgba(251, 252, 250, 0.45), rgba(251, 252, 250, 0.45)),
+    url("/dek.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: var(--color-charcoal);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
